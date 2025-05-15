@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discovery Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', 'Inter', sans-serif;
+    }
+    body {
+      background: #fff;
+      color: #202124;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode {
+      background: #202124;
+      color: #e8eaed;
+    }
+    header {
+      background: #e8eaed;
+      padding: 1rem 2rem;
+      color: #202124;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 200px;
+      right: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #dadce0;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    body.dark-mode header {
+      background: #303134;
+      border-bottom: 1px solid #5f6368;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0 auto;
+      text-align: center;
+      font-weight: 500;
+      background: linear-gradient(to right, #ef4444, #f97316);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .header-buttons {
+      position: absolute;
+      right: 2rem;
+      top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .language-button, .night-mode-button {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      border: none;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .language-button:hover, .night-mode-button:hover {
+      background: #185abc;
+    }
+    .top-menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #e8eaed;
+      padding: 0.5rem 1rem;
+      margin-top: 4rem;
+      margin-left: 200px;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #dadce0;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    body.dark-mode .top-menu {
+      background: #303134;
+      border-bottom: 1px solid #5f6368;
+    }
+    .top-menu a {
+      color: #202124;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.3s;
+    }
+    body.dark-mode .top-menu a {
+      color: #e8eaed;
+    }
+    .top-menu a:hover {
+      background: #f1f3f4;
+    }
+    body.dark-mode .top-menu a:hover {
+      background: #424548;
+    }
+    .new-datetime-display {
+      text-align: center;
+      padding: 1rem;
+      font-size: 1rem;
+      color: #202124;
+      width: calc(100% - 200px);
+      margin-left: 200px;
+      background: #fff;
+      line-height: 1.6;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode .new-datetime-display {
+      background: #202124;
+      color: #e8eaed;
+    }
+    .datetime-container {
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: #f1f3f4;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    body.dark-mode .datetime-container {
+      border-color: #5f6368;
+      background: #303134;
+    }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      gap: 0.5rem;
+      width: calc(100% - 200px);
+      margin-left: 200px;
+      background: #fff;
+      transition: background 0.3s;
+    }
+    body.dark-mode .search-bar {
+      background: #202124;
+    }
+    .search-bar input {
+      width: 50%;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      transition: border-color 0.2s, background 0.3s, color 0.3s;
+    }
+    body.dark-mode .search-bar input {
+      background: #303134;
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+    .search-bar input:focus {
+      border-color: #1a73e8;
+      outline: none;
+    }
+    .search-bar select {
+      padding: 0.6rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      transition: border-color 0.2s, background 0.3s, color 0.3s;
+    }
+    body.dark-mode .search-bar select {
+      background: #303134;
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+    .search-bar select:focus {
+      border-color: #1a73e8;
+      outline: none;
+    }
+    .search-bar button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover {
+      background: #185abc;
+    }
+    .content-section {
+      text-align: center;
+      padding: 2rem;
+      width: calc(100% - 200px);
+      margin-left: 200px;
+      background: #fff;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode .content-section {
+      background: #202124;
+      color: #e8eaed;
+    }
+    .content-section h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #202124;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+    body.dark-mode .content-section h2 {
+      color: #e8eaed;
+    }
+    .content-section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #202124;
+      margin: 2rem 0 1rem;
+      transition: color 0.3s;
+    }
+    body.dark-mode .content-section h3 {
+      color: #e8eaed;
+    }
+    .content-section .features-container h3, .content-section .why-choose-container h3, .content-section .category-container h3 {
+      color: #1a73e8;
+    }
+    body.dark-mode .content-section .features-container h3, body.dark-mode .content-section .why-choose-container h3, body.dark-mode .content-section .category-container h3 {
+      color: #8ab4f8;
+    }
+    .content-section h4 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #5f6368;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+    body.dark-mode .content-section h4 {
+      color: #bdc1c6;
+    }
+    .content-section p, .content-section li {
+      font-size: 1rem;
+      color: #5f6368;
+      margin: 0.5rem 0;
+      transition: color 0.3s;
+    }
+    body.dark-mode .content-section p, body.dark-mode .content-section li {
+      color: #bdc1c6;
+    }
+    .content-section .emoji {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+    .content-section .features-container, .content-section .why-choose-container, .content-section .category-container {
+      max-width: 900px;
+      margin: 1rem auto;
+      padding: 1rem;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      background: #f1f3f4;
+      text-align: center;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    body.dark-mode .content-section .features-container, body.dark-mode .content-section .why-choose-container, body.dark-mode .content-section .category-container {
+      background: #303134;
+      border-color: #5f6368;
+    }
+    .content-section table {
+      width: 100%;
+      max-width: 900px;
+      margin: 1rem auto;
+      border-collapse: collapse;
+      border: 1px solid #dadce0;
+      transition: border-color 0.3s;
+    }
+    body.dark-mode .content-section table {
+      border-color: #5f6368;
+    }
+    .content-section th, .content-section td {
+      padding: 0.75rem;
+      text-align: left;
+      border: 1px solid #dadce0;
+      transition: border-color 0.3s;
+    }
+    body.dark-mode .content-section th, body.dark-mode .content-section td {
+      border-color: #5f6368;
+    }
+    .content-section th {
+      background: #e8eaed;
+      font-weight: 600;
+      color: #202124;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode .content-section th {
+      background: #303134;
+      color: #e8eaed;
+    }
+    .content-section td {
+      color: #5f6368;
+      transition: color 0.3s;
+    }
+    body.dark-mode .content-section td {
+      color: #bdc1c6;
+    }
+    .content-section .category-name {
+      white-space: nowrap;
+    }
+    .content-section .list-container {
+      max-width: 900px;
+      margin: 1rem auto;
+      padding: 0;
+    }
+    .content-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-section li {
+      display: flex;
+      align-items: flex-start;
+    }
+    .highlight-grid, .top-picks-grid, .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      max-width: 600px;
+      margin: 1rem auto;
+    }
+    .highlight-container, .top-picks-container, .tool-container {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s, background 0.3s, color 0.3s;
+      text-align: left;
+    }
+    body.dark-mode .highlight-container, body.dark-mode .top-picks-container, body.dark-mode .tool-container {
+      background: #303134;
+      color: #e8eaed;
+    }
+    .highlight-container:hover, .top-picks-container:hover, .tool-container:hover {
+      transform: translateY(-5px);
+    }
+    .highlight-container a, .top-picks-container a, .tool-container a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .highlight-title, .top-picks-title, .tool-title {
+      font-weight: 500;
+      font-size: 1.1rem;
+      margin: 0;
+      color: #202124;
+      transition: color 0.3s;
+    }
+    body.dark-mode .highlight-title, body.dark-mode .top-picks-title, body.dark-mode .tool-title {
+      color: #e8eaed;
+    }
+    .highlight-desc, .top-picks-desc, .tool-desc {
+      font-size: 0.9rem;
+      color: #5f6368;
+      margin-top: 0.5rem;
+      transition: color 0.3s;
+    }
+    body.dark-mode .highlight-desc, body.dark-mode .top-picks-desc, body.dark-mode .tool-desc {
+      color: #bdc1c6;
+    }
+    .tool-logo {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+    .tool-features {
+      margin-top: 0.5rem;
+      list-style: none;
+      padding: 0;
+    }
+    .tool-features li {
+      font-size: 0.9rem;
+      color: #5f6368;
+      margin: 0.25rem 0;
+      display: block;
+    }
+    body.dark-mode .tool-features li {
+      color: #bdc1c6;
+    }
+    .sidebar {
+      width: 200px;
+      background: #e8eaed;
+      color: #202124;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 4rem;
+      border-right: 1px solid #dadce0;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    body.dark-mode .sidebar {
+      background: #303134;
+      border-right: 1px solid #5f6368;
+    }
+    .sidebar nav a {
+      display: block;
+      padding: 0.8rem 1rem;
+      margin: 0.5rem 0.5rem;
+      color: #202124;
+      text-decoration: none;
+      background: #ffffff;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.1s, color 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    body.dark-mode .sidebar nav a {
+      color: #e8eaed;
+      background: #424548;
+    }
+    .sidebar nav a:hover {
+      background: #f1f3f4;
+      transform: translateX(4px);
+    }
+    body.dark-mode .sidebar nav a:hover {
+      background: #5f6368;
+    }
+    .container {
+      margin-left: 200px;
+      padding: 1rem 2rem 2rem 2rem;
+      flex: 1;
+      width: calc(100% - 200px);
+      background: #fff;
+      transition: background 0.3s;
+    }
+    body.dark-mode .container {
+      background: #202124;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s, background 0.3s, color 0.3s;
+    }
+    body.dark-mode .card {
+      background: #303134;
+      color: #e8eaed;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .card-header img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    .card-title {
+      font-weight: 500;
+      font-size: 1rem;
+      margin: 0;
+      color: #202124;
+      transition: color 0.3s;
+    }
+    body.dark-mode .card-title {
+      color: #e8eaed;
+    }
+    .card-purpose, .card-features {
+      font-size: 0.9rem;
+      color: #5f6368;
+      margin-top: 0.5rem;
+      transition: color 0.3s;
+    }
+    body.dark-mode .card-purpose, body.dark-mode .card-features {
+      color: #bdc1c6;
+    }
+    .card-features ul {
+      padding-left: 1rem;
+      margin-top: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #5f6368;
+      font-size: 0.8rem;
+      width: calc(100% - 200px);
+      margin-left: 200px;
+      background: #fff;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode footer {
+      background: #202124;
+      color: #bdc1c6;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <nav>
+      <a href="#" data-lang-key="home">Home</a>
+      <a href="#" data-lang-key="aigc">AIGC Tools</a>
+      <a href="#" data-lang-key="technology">Technology</a>
+      <a href="#" data-lang-key="social">Social</a>
+      <a href="#" data-lang-key="music">Music</a>
+      <a href="#" data-lang-key="video">Video</a>
+      <a href="#" data-lang-key="finance">Finance</a>
+      <a href="#" data-lang-key="news">News</a>
+      <a href="#" data-lang-key="learning">Learning</a>
+      <a href="#" data-lang-key="lifestyle">Lifestyle</a>
+      <a href="#" data-lang-key="more">More</a>
+    </nav>
+  </div>
+
+  <header>
+    <h1>Discovery Panel</h1>
+    <div class="header-buttons">
+      <button class="language-button" onclick="switchLanguage()">中文/English</button>
+      <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+    </div>
+  </header>
+
+  <div class="top-menu">
+    <a href="#" data-lang-key="home">Home</a>
+    <a href="#" data-lang-key="aigc">AIGC Tools</a>
+    <a href="#" data-lang-key="technology">Technology</a>
+    <a href="#" data-lang-key="social">Social</a>
+    <a href="#" data-lang-key="music">Music</a>
+    <a href="#" data-lang-key="video">Video</a>
+    <a href="#" data-lang-key="finance">Finance</a>
+    <a href="#" data-lang-key="news">News</a>
+    <a href="#" data-lang-key="learning">Learning</a>
+    <a href="#" data-lang-key="lifestyle">Lifestyle</a>
+    <a href="#" data-lang-key="more">More</a>
+  </div>
+
+  <div class="datetime-container">
+    <div class="new-datetime-display" id="newDatetimeDisplay">
+      <div id="chinese-zodiac" data-lang-key="chinese-zodiac-label"></div>
+      <div id="western-zodiac" data-lang-key="western-zodiac-label"></div>
+      <div id="current-date" data-lang-key="date-label"></div>
+      <div id="week-info" data-lang-key="week-info"></div>
+      <div id="current-time" data-lang-key="time-label"></div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" data-lang-placeholder="search">
+    <select id="searchEngine">
+      <option value="internal" data-lang-key="internal">Internal Search</option>
+      <option value="google">Google</option>
+      <option value="bing">Bing</option>
+      <option value="baidu">Baidu</option>
+      <option value="360">360 Search</option>
+    </select>
+    <button onclick="performSearch()" data-lang-key="searchButton">Search</button>
+  </div>
+
+  <div class="container">
+    <section class="content-section">
+      <h2 data-lang-key="content-heading">A one-stop hub for AI, tech, social, music, finance, video, learning & more.</h2>
+      <p><span class="emoji">📍</span><span data-lang-key="content-bullet1">Connects you to global tools, platforms, and inspiration.</span></p>
+      <p><span class="emoji">🎯</span><span data-lang-key="content-bullet2">From inspiration to productivity, your personalized smart navigation hub.</span></p>
+
+      <div class="features-container">
+        <h3 data-lang-key="features-title">Explore the Infinite Tools</h3>
+        <h4><span class="emoji">💼</span><span data-lang-key="features-subtitle">All you need. All in one place.</span></h4>
+        <p data-lang-key="features-desc">Curated resources covering trending digital domains: AIGC, tech, social, music, video, finance, news, learning & growth, and more.</p>
+      </div>
+
+      <h3 data-lang-key="categories-title">Categories Overview</h3>
+      <table>
+        <thead>
+          <tr>
+            <th data-lang-key="category">Category</th>
+            <th data-lang-key="description">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="emoji">🧠</span><span class="category-name" data-lang-key="cat-aigc">AIGC Tools</span></td>
+            <td data-lang-key="cat-aigc-desc">Prompt tools, AI drawing, intelligent writing, speech-to-text, AI music, AI video, and more innovative tools.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">📡</span><span class="category-name" data-lang-key="cat-tech">Technology</span></td>
+            <td data-lang-key="cat-tech-desc">Latest tech products, AI platforms, development tools, automation, and productivity resources.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">🌐</span><span class="category-name" data-lang-key="cat-social">Social</span></td>
+            <td data-lang-key="cat-social-desc">Covers WeChat, Xiaohongshu, Weibo, Telegram, Discord, Twitter, and other global social platforms.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">🎵</span><span class="category-name" data-lang-key="cat-music">Music</span></td>
+            <td data-lang-key="cat-music-desc">AI music generation, mixing platforms, royalty-free music libraries, composition tools, and Web3 music NFTs.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">🎬</span><span class="category-name" data-lang-key="cat-video">Video</span></td>
+            <td data-lang-key="cat-video-desc">Video editing, animation generation, auto-subtitles, film resources, and all-in-one video creation tools.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">💰</span><span class="category-name" data-lang-key="cat-finance">Finance</span></td>
+            <td data-lang-key="cat-finance-desc">Blockchain markets, stock data, crypto tools, investment platforms, and financial news.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">📰</span><span class="category-name" data-lang-key="cat-news">News</span></td>
+            <td data-lang-key="cat-news-desc">AI/tech trends, global news aggregation, professional blogs, and multilingual reading platforms.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">📘</span><span class="category-name" data-lang-key="learning">Learning</span></td>
+            <td data-lang-key="learning-desc">Online courses, AI self-learning, reading lists, community resources, and personal growth tools.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">🛍️</span><span class="category-name" data-lang-key="cat-lifestyle">Lifestyle</span></td>
+            <td data-lang-key="cat-lifestyle-desc">Shopping, inspiration, and cozy lifestyle platforms for everyday moments.</td>
+          </tr>
+          <tr>
+            <td><span class="emoji">🌈</span><span class="category-name" data-lang-key="cat-more">More</span></td>
+            <td data-lang-key="cat-more-desc">Creator tools, mental health platforms, design inspiration, developer resources, and utility toolboxes.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>You Might Like These Top Picks</h3>
+      <div class="top-picks-grid">
+        <div class="top-picks-container">
+          <a href="blog-midjourney-prompt-tips.html">
+            <h3 class="top-picks-title"><span class="emoji">🎨</span>Midjourney Prompt Tips</h3>
+            <p class="top-picks-desc">Boost your AI art with these Midjourney tips!</p>
+          </a>
+        </div>
+        <div class="top-picks-container">
+          <a href="blog-royalty-free-image-libraries.html">
+            <h3 class="top-picks-title"><span class="emoji">🖼️</span>Royalty-Free Image Libraries</h3>
+            <p class="top-picks-desc">Find stunning visuals for your projects.</p>
+          </a>
+        </div>
+        <div class="top-picks-container">
+          <a href="blog-essential-toolbox-content-creators.html">
+            <h3 class="top-picks-title"><span class="emoji">🎥</span>Essential Toolbox for Content Creators</h3>
+            <p class="top-picks-desc">Top tools to elevate your content game.</p>
+          </a>
+        </div>
+        <div class="top-picks-container">
+          <a href="blog-essential-remote-work-tools.html">
+            <h3 class="top-picks-title"><span class="emoji">💼</span>Essential Remote Work Tools</h3>
+            <p class="top-picks-desc">Stay productive from anywhere.</p>
+          </a>
+        </div>
+        <div class="top-picks-container">
+          <a href="blog-must-have-apps-travel-bloggers.html">
+            <h3 class="top-picks-title"><span class="emoji">✈️</span>Must-Have Apps for Travel Bloggers</h3>
+            <p class="top-picks-desc">Simplify your travel blogging journey.</p>
+          </a>
+        </div>
+        <div class="top-picks-container">
+          <a href="blog-top-10-royalty-free-image-sites.html">
+            <h3 class="top-picks-title"><span class="emoji">📸</span>Top 10 Royalty-Free Image Sites</h3>
+            <p class="top-picks-desc">Best sites for high-quality images.</p>
+          </a>
+        </div>
+        <div class="top-picks-container">
+          <a href="blog-best-pkm-tools.html">
+            <h3 class="top-picks-title"><span class="emoji">🗂️</span>Best PKM Tools</h3>
+            <p class="top-picks-desc">Organize your knowledge efficiently.</p>
+          </a>
+        </div>
+      </div>
+
+      <h3 data-lang-key="highlights-title">Highlights</h3>
+      <div class="highlight-grid">
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">🚀</span><span data-lang-key="highlight-speed">Instant access, maximum efficiency</span></h3>
+            <p class="highlight-desc">Get to your tools quickly and seamlessly.</p>
+          </a>
+        </div>
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">🌍</span><span data-lang-key="highlight-lang">Serves global users, language barrier-free</span></h3>
+            <p class="highlight-desc">Accessible in multiple languages.</p>
+          </a>
+        </div>
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">🧩</span><span data-lang-key="highlight-update">Editorial team updates quality content daily</span></h3>
+            <p class="highlight-desc">Fresh content curated every day.</p>
+          </a>
+        </div>
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">💌</span><span data-lang-key="highlight-contrib">Contribute your discoveries, build the smart info universe</span></h3>
+            <p class="highlight-desc">Join our community and share insights.</p>
+          </a>
+        </div>
+      </div>
+
+      <div class="why-choose-container">
+        <h3 data-lang-key="why-title">Why Choose Us?</h3>
+        <div class="list-container">
+          <ul>
+            <li><span class="emoji">✅</span><span data-lang-key="why-coverage">Covers work, entertainment, interests, and growth</span></li>
+            <li><span class="emoji">✅</span><span data-lang-key="why-nav">Clear navigation, quick access to needs</span></li>
+            <li><span class="emoji">✅</span><span data-lang-key="why-update">Daily manual updates, fresh and reliable</span></li>
+            <li><span class="emoji">✅</span><span data-lang-key="why-design">Responsive design for mobile and desktop</span></li>
+            <li><span class="emoji">✅</span><span data-lang-key="why-community">Community-driven, grows with users</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dynamic Category Sections -->
+      <div id="category-sections"></div>
+    </section>
+
+    <div class="card-grid" id="websiteGrid"></div>
+  </div>
+
+  <footer>
+    <div>© 2025 Discovery Panel. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Chinese Zodiac Cycle
+    const chineseZodiac = [
+      { animal: { en: "Rat", zh: "鼠" }, start: "2020-01-25", end: "2021-02-11" },
+      { animal: { en: "Ox", zh: "牛" }, start: "2021-02-12", end: "2022-01-31" },
+      { animal: { en: "Tiger", zh: "虎" }, start: "2022-02-01", end: "2023-01-21" },
+      { animal: { en: "Rabbit", zh: "兔" }, start: "2023-01-22", end: "2024-02-09" },
+      { animal: { en: "Dragon", zh: "龙" }, start: "2024-02-10", end: "2025-01-28" },
+      { animal: { en: "Snake", zh: "蛇" }, start: "2025-01-29", end: "2026-02-16" },
+      { animal: { en: "Horse", zh: "马" }, start: "2026-02-17", end: "2027-02-05" },
+      { animal: { en: "Goat", zh: "羊" }, start: "2027-02-06", end: "2028-01-25" },
+      { animal: { en: "Monkey", zh: "猴" }, start: "2028-01-26", end: "2029-02-12" },
+      { animal: { en: "Rooster", zh: "鸡" }, start: "2029-02-13", end: "2030-02-02" },
+      { animal: { en: "Dog", zh: "狗" }, start: "2030-02-03", end: "2031-01-22" },
+      { animal: { en: "Pig", zh: "猪" }, start: "2031-01-23", end: "2032-02-10" }
+    ];
+
+    // Western Zodiac Ranges
+    const westernZodiac = [
+      { sign: { en: "Capricorn", zh: "摩羯座" }, start: "12-22", end: "01-19" },
+      { sign: { en: "Aquarius", zh: "水瓶座" }, start: "01-20", end: "02-18" },
+      { sign: { en: "Pisces", zh: "双鱼座" }, start: "02-19", end: "03-20" },
+      { sign: { en: "Aries", zh: "白羊座" }, start: "03-21", end: "04-19" },
+      { sign: { en: "Taurus", zh: "金牛座" }, start: "04-20", end: "05-20" },
+      { sign: { en: "Gemini", zh: "双子座" }, start: "05-21", end: "06-21" },
+      { sign: { en: "Cancer", zh: "巨蟹座" }, start: "06-22", end: "07-22" },
+      { sign: { en: "Leo", zh: "狮子座" }, start: "07-23", end: "08-22" },
+      { sign: { en: "Virgo", zh: "处女座" }, start: "08-23", end: "09-22" },
+      { sign: { en: "Libra", zh: "天秤座" }, start: "09-23", end: "10-23" },
+      { sign: { en: "Scorpio", zh: "天蝎座" }, start: "10-24", end: "11-22" },
+      { sign: { en: "Sagittarius", zh: "射手座" }, start: "11-23", end: "12-21" }
+    ];
+
+    // Website Data (Simulated "auto-pulled" from websites)
+    const websites = [
+      {
+        name: { en: "GitHub", zh: "GitHub" },
+        logo: "https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg",
+        url: "https://github.com",
+        purpose: { en: "Platform for version control, collaborative coding, and open-source projects.", zh: "版本控制、协作编码和开源项目的平台" },
+        features: { en: ["Git repository hosting", "Pull requests and code review", "GitHub Actions for CI/CD", "Community-driven open-source collaboration"], zh: ["Git仓库托管", "拉取请求和代码审查", "GitHub Actions用于CI/CD", "社区驱动的开源协作"] },
+        category: "technology"
+      },
+      {
+        name: { en: "Visual Studio Code", zh: "Visual Studio Code" },
+        logo: "https://code.visualstudio.com/assets/favicon.ico",
+        url: "https://code.visualstudio.com",
+        purpose: { en: "Lightweight source-code editor with support for debugging and extensions.", zh: "支持调试和扩展的轻量级源码编辑器" },
+        features: { en: ["IntelliSense code completion", "Built-in Git integration", "Customizable themes and extensions", "Embedded terminal"], zh: ["IntelliSense代码补全", "内置Git集成", "可定制主题和扩展", "嵌入式终端"] },
+        category: "technology"
+      },
+      {
+        name: { en: "Discord", zh: "Discord" },
+        logo: "https://discord.com/assets/2c21aeda16de354ba93c.png",
+        url: "https://discord.com",
+        purpose: { en: "Community platform for gamers, creators, and teams to connect via voice, video, and text.", zh: "面向游戏玩家、创作者和团队的语音、视频和文本连接社区平台" },
+        features: { en: ["Voice and video chat", "Customizable servers and channels", "Bot integration for automation", "Cross-platform support"], zh: ["语音和视频聊天", "可定制的服务器和频道", "机器人集成用于自动化", "跨平台支持"] },
+        category: "social"
+      },
+      {
+        name: { en: "X", zh: "X" },
+        logo: "https://x.com/favicon.ico",
+        url: "https://x.com",
+        purpose: { en: "Social media platform for real-time updates, conversations, and global trends.", zh: "实时更新、对话和全球趋势的社交媒体平台" },
+        features: { en: ["Real-time posting and replies", "Hashtag and trend discovery", "Direct messaging", "Multimedia sharing"], zh: ["实时发布和回复", "标签和趋势发现", "直接消息", "多媒体分享"] },
+        category: "social"
+      },
+      {
+        name: { en: "Etsy", zh: "Etsy" },
+        logo: "https://www.etsy.com/images/favicon.ico",
+        url: "https://www.etsy.com",
+        purpose: { en: "Marketplace for handmade, vintage, and unique goods.", zh: "手工、复古和独特商品的市场" },
+        features: { en: ["Shop personalized and custom items", "Seller tools for small businesses", "Buyer reviews and ratings", "Global artisan marketplace"], zh: ["购买个性化定制商品", "小型企业的卖家工具", "买家评价和评分", "全球手工市场"] },
+        category: "lifestyle"
+      },
+      {
+        name: { en: "Pinterest", zh: "Pinterest" },
+        logo: "https://s.pinimg.com/webapp/favicon-54a5b2af.png",
+        url: "https://www.pinterest.com",
+        purpose: { en: "Visual discovery engine for inspiration in lifestyle, design, and creativity.", zh: "生活方式、设计和创意的视觉灵感发现引擎" },
+        features: { en: ["Pin and board organization", "Visual search with Lens", "Idea Pins for storytelling", "Shopping integration"], zh: ["图钉和看板组织", "Lens视觉搜索", "创意故事的Idea Pins", "购物整合"] },
+        category: "lifestyle"
+      }
+    ];
+
+    let currentLang = 'en';
+    let isNightMode = false;
+
+    const translations = {
+      home: { en: "Home", zh: "首页" },
+      aigc: { en: "AIGC Tools", zh: "AIGC工具" },
+      technology: { en: "Technology", zh: "科技" },
+      social: { en: "Social", zh: "社交" },
+      music: { en: "Music", zh: "音乐" },
+      video: { en: "Video", zh: "视频" },
+      finance: { en: "Finance", zh: "金融" },
+      news: { en: "News", zh: "新闻" },
+      learning: { en: "Learning", zh: "学习" },
+      lifestyle: { en: "Lifestyle", zh: "生活方式" },
+      more: { en: "More", zh: "更多" },
+      search: { en: "Search websites...", zh: "搜索网站..." },
+      searchButton: { en: "Search", zh: "搜索" },
+      internal: { en: "Internal Search", zh: "内部搜索" },
+      'chinese-zodiac-label': { en: "Chinese Zodiac: ", zh: "生肖: " },
+      'western-zodiac-label': { en: "Today's Zodiac Sign: ", zh: "今日星座: " },
+      'date-label': { en: "Today's Date: ", zh: "今日日期: " },
+      'week-info': { en: "Week ", zh: "第 " },
+      'time-label': { en: "Current Time (Eastern): ", zh: "当前时间 (东部): " },
+      'content-heading': {
+        en: "A one-stop hub for AI, tech, social, music, finance, video, learning & more.",
+        zh: "人工智能、科技、社交、音乐、金融、视频、学习等一站式中心"
+      },
+      'content-bullet1': {
+        en: "Connects you to global tools, platforms, and inspiration.",
+        zh: "连接全球工具、平台和灵感"
+      },
+      'content-bullet2': {
+        en: "From inspiration to productivity, your personalized smart navigation hub.",
+        zh: "从灵感到生产力，您的个性化智能导航中心"
+      },
+      'features-title': {
+        en: "Explore the Infinite Tools",
+        zh: "探索无限工具"
+      },
+      'features-subtitle': {
+        en: "All you need. All in one place.",
+        zh: "一切所需，一站式平台"
+      },
+      'features-desc': {
+        en: "Curated resources covering trending digital domains: AIGC, tech, social, music, video, finance, news, learning & growth, and more.",
+        zh: "精选资源，涵盖热门数字领域：AIGC、科技、社交、音乐、视频、金融、新闻、学习与成长等"
+      },
+      'categories-title': {
+        en: "Categories Overview",
+        zh: "分类概览"
+      },
+      category: { en: "Category", zh: "分类" },
+      description: { en: "Description", zh: "描述" },
+      'cat-aigc': { en: "AIGC Tools", zh: "AIGC工具" },
+      'cat-aigc-desc': {
+        en: "Prompt tools, AI drawing, intelligent writing, speech-to-text, AI music, AI video, and more innovative tools.",
+        zh: "提示工具、AI绘画、智能写作、语音转文字、AI音乐、AI视频等创新工具"
+      },
+      'cat-tech': { en: "Technology", zh: "科技" },
+      'cat-tech-desc': {
+        en: "Latest tech products, AI platforms, development tools, automation, and productivity resources.",
+        zh: "最新科技产品、AI平台、开发工具、自动化和生产力资源"
+      },
+      'cat-social': { en: "Social", zh: "社交" },
+      'cat-social-desc': {
+        en: "Covers WeChat, Xiaohongshu, Weibo, Telegram, Discord, Twitter, and other global social platforms.",
+        zh: "涵盖微信、小红书、微博、Telegram、Discord、Twitter等全球社交平台"
+      },
+      'cat-music': { en: "Music", zh: "音乐" },
+      'cat-music-desc': {
+        en: "AI music generation, mixing platforms, royalty-free music libraries, composition tools, and Web3 music NFTs.",
+        zh: "AI音乐生成、混音平台、免版税音乐库、作曲工具和Web3音乐NFT"
+      },
+      'cat-video': { en: "Video", zh: "视频" },
+      'cat-video-desc': {
+        en: "Video editing, animation generation, auto-subtitles, film resources, and all-in-one video creation tools.",
+        zh: "视频编辑、动画生成、自动字幕、影视资源和一体化视频创作工具"
+      },
+      'cat-finance': { en: "Finance", zh: "金融" },
+      'cat-finance-desc': {
+        en: "Blockchain markets, stock data, crypto tools, investment platforms, and financial news.",
+        zh: "区块链市场、股票数据、加密工具、投资平台和金融新闻"
+      },
+      'cat-news': { en: "News", zh: "新闻" },
+      'cat-news-desc': {
+        en: "AI/tech trends, global news aggregation, professional blogs, and multilingual reading platforms.",
+        zh: "AI/科技趋势、全球新闻聚合、专业博客和多语言阅读平台"
+      },
+      'cat-lifestyle': { en: "Lifestyle", zh: "生活方式" },
+      'cat-lifestyle-desc': {
+        en: "Shopping, inspiration, and cozy lifestyle platforms for everyday moments.",
+        zh: "购物、灵感和日常温馨生活方式平台"
+      },
+      learning: { en: "Learning", zh: "学习" },
+      'learning-desc': {
+        en: "Online courses, AI self-learning, reading lists, community resources, and personal growth tools.",
+        zh: "在线课程、AI自学、阅读清单、社区资源和个人成长工具"
+      },
+      'cat-more': { en: "More", zh: "更多" },
+      'cat-more-desc': {
+        en: "Creator tools, mental health platforms, design inspiration, developer resources, and utility toolboxes.",
+        zh: "创作者工具、心理健康平台、设计灵感、开发者资源和实用工具箱"
+      },
+      'highlights-title': {
+        en: "Highlights",
+        zh: "亮点"
+      },
+      'highlight-speed': {
+        en: "Instant access, maximum efficiency",
+        zh: "即时访问，最高效率"
+      },
+      'highlight-lang': {
+        en: "Serves global users, language barrier-free",
+        zh: "服务全球用户，无语言障碍"
+      },
+      'highlight-update': {
+        en: "Editorial team updates quality content daily",
+        zh: "编辑团队每日更新优质内容"
+      },
+      'highlight-contrib': {
+        en: "Contribute your discoveries, build the smart info universe",
+        zh: "贡献您的发现，构建智能信息宇宙"
+      },
+      'why-title': {
+        en: "Why Choose Us?",
+        zh: "为何选择我们？"
+      },
+      'why-coverage': {
+        en: "Covers work, entertainment, interests, and growth",
+        zh: "涵盖工作、娱乐、兴趣和成长"
+      },
+      'why-nav': {
+        en: "Clear navigation, quick access to needs",
+        zh: "清晰导航，快速访问需求"
+      },
+      'why-update': {
+        en: "Daily manual updates, fresh and reliable",
+        zh: "每日人工更新，新鲜可靠"
+      },
+      'why-design': {
+        en: "Responsive design for mobile and desktop",
+        zh: "响应式设计，适配移动和桌面"
+      },
+      'why-community': {
+        en: "Community-driven, grows with users",
+        zh: "社区驱动，与用户共同成长"
+      }
+    };
+
+    function getChineseZodiac() {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const zodiac = chineseZodiac.find(z => today >= z.start && today <= z.end);
+      if (zodiac) {
+        return `${translations['chinese-zodiac-label'][currentLang]}${zodiac.animal[currentLang]} (${zodiac.start} - ${zodiac.end})`;
+      }
+      return `${translations['chinese-zodiac-label'][currentLang]}${currentLang === 'en' ? 'Unknown' : '未知'}`;
+    }
+
+    function getWesternZodiac() {
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const dateStr = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      for (const zodiac of westernZodiac) {
+        const start = zodiac.start;
+        const end = zodiac.end;
+        if (start > end) {
+          if (dateStr >= start || dateStr <= end) {
+            return `${translations['western-zodiac-label'][currentLang]}${zodiac.sign[currentLang]} (${start} - ${end})`;
+          }
+        } else {
+          if (dateStr >= start && dateStr <= end) {
+            return `${translations['western-zodiac-label'][currentLang]}${zodiac.sign[currentLang]} (${start} - ${end})`;
+          }
+        }
+      }
+      return `${translations['western-zodiac-label'][currentLang]}${currentLang === 'en' ? 'Unknown' : '未知'}`;
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      const options = { timeZone: 'America/New_York' };
+      const date = now.toLocaleDateString('en-US', { ...options, month: '2-digit', day: '2-digit', year: 'numeric' });
+      const fullDate = now.toLocaleDateString('en-US', { ...options, month: 'long', day: 'numeric', year: 'numeric' });
+      const weekday = now.toLocaleDateString('en-US', { ...options, weekday: 'long' });
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const diffInDays = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+      const weekNumber = Math.ceil((now - startOfYear) / (1000 * 60 * 60 * 24 * 7));
+      const time = now.toLocaleTimeString('en-US', { ...options, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+      document.getElementById('chinese-zodiac').textContent = getChineseZodiac();
+      document.getElementById('western-zodiac').textContent = getWesternZodiac();
+      document.getElementById('current-date').textContent = `${translations['date-label'][currentLang]}${date} (${fullDate}) ${weekday}`;
+      document.getElementById('week-info').textContent = `${translations['week-info'][currentLang]}${weekNumber} of 52, Day ${diffInDays} of 365`;
+      document.getElementById('current-time').textContent = `${translations['time-label'][currentLang]}${time}`;
+    }
+
+    function switchLanguage() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      updateLanguage();
+      renderCategorySections();
+      updateDateTime();
+    }
+
+    function updateLanguage() {
+      document.querySelectorAll('[data-lang-key]').forEach(element => {
+        const key = element.getAttribute('data-lang-key');
+        if (translations[key]) {
+          if (element.id === 'chinese-zodiac' || element.id === 'western-zodiac' || element.id === 'current-date' || element.id === 'week-info' || element.id === 'current-time') {
+            return; // Skip dynamic date/time elements
+          }
+          element.innerText = translations[key][currentLang];
+        }
+      });
+
+      const searchInput = document.getElementById('searchInput');
+      searchInput.placeholder = translations.search[currentLang];
+
+      const searchButton = document.querySelector('.search-bar button');
+      searchButton.innerText = translations.searchButton[currentLang];
+
+      document.querySelectorAll('#searchEngine option').forEach(option => {
+        const key = option.getAttribute('data-lang-key');
+        if (key && translations[key]) {
+          option.innerText = translations[key][currentLang];
+        }
+      });
+
+      const langButton = document.querySelector('.language-button');
+      langButton.innerText = currentLang === 'en' ? '中文/English' : 'English/中文';
+    }
+
+    function toggleNightMode() {
+      isNightMode = !isNightMode;
+      document.body.classList.toggle('dark-mode');
+      const nightModeButton = document.querySelector('.night-mode-button');
+      nightModeButton.innerText = isNightMode ? 'Light Mode' : 'Dark Mode';
+    }
+
+    function batchAddWebsites(newWebsites) {
+      newWebsites.forEach(website => {
+        websites.push({
+          name: website.name || { en: "Unknown", zh: "未知" },
+          purpose: website.purpose || { en: "No description", zh: "无描述" },
+          url: website.url || "#",
+          logo: website.logo || "",
+          features: website.features || { en: [], zh: [] },
+          category: website.category || "more"
+        });
+      });
+      renderCategorySections();
+    }
+
+    function renderCategorySections() {
+      const categorySections = document.getElementById('category-sections');
+      categorySections.innerHTML = '';
+
+      const categories = [...new Set(websites.map(w => w.category))];
+      categories.forEach(category => {
+        const categoryWebsites = websites.filter(w => w.category === category);
+        if (categoryWebsites.length === 0) return;
+
+        const categoryContainer = document.createElement('div');
+        categoryContainer.className = 'category-container';
+        const langKey = category === 'technology' ? 'cat-tech' : category === 'social' ? 'cat-social' : category === 'lifestyle' ? 'cat-lifestyle' : 'cat-more';
+        categoryContainer.innerHTML = `
+          <h3 data-lang-key="${langKey}">${translations[langKey][currentLang]}</h3>
+          <div class="tool-grid">
+            ${categoryWebsites.map(website => `
+              <div class="tool-container">
+                <h5 class="tool-title"><a href="${website.url}" target="_blank"><img src="${website.logo}" class="tool-logo" alt="${website.name[currentLang]} logo"></a> ${website.name[currentLang]}</h5>
+                <p class="tool-desc">${website.purpose[currentLang]}</p>
+                <ul class="tool-features">
+                  ${website.features[currentLang].map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        categorySections.appendChild(categoryContainer);
+      });
+    }
+
+    function performSearch() {
+      const query = document.getElementById('searchInput').value.trim();
+      const engine = document.getElementById('searchEngine').value;
+
+      if (!query) {
+        renderCategorySections();
+        return;
+      }
+
+      if (engine === 'internal') {
+        const filteredWebsites = websites.filter(site =>
+          site.name[currentLang].toLowerCase().includes(query.toLowerCase()) ||
+          site.purpose[currentLang].toLowerCase().includes(query.toLowerCase()) ||
+          (site.features && site.features[currentLang].some(f => f.toLowerCase().includes(query.toLowerCase())))
+        );
+        const tempWebsites = websites;
+        websites = filteredWebsites;
+        renderCategorySections();
+        websites = tempWebsites;
+      } else {
+        let searchUrl;
+        switch (engine) {
+          case 'google':
+            searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case 'bing':
+            searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case 'baidu':
+            searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+            break;
+          case '360':
+            searchUrl = `https://www.so.com/s?q=${encodeURIComponent(query)}`;
+            break;
+        }
+        window.open(searchUrl, '_blank');
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+      renderCategorySections();
+      updateLanguage();
+    });
+  </script>
+</body>
+</html>
