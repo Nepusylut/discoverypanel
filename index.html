@@ -25,27 +25,62 @@
     }
     header {
       background: #e8eaed;
-      padding: 1rem 2rem;
       color: #202124;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       position: fixed;
       top: 0;
-      left: 200px;
+      left: 0;
       right: 0;
-      z-index: 1000;
+      z-index: 998;
       border-bottom: 1px solid #dadce0;
       transition: background 0.3s, border-color 0.3s;
+      padding: 0;
     }
     body.dark-mode header {
       background: #303134;
       border-bottom: 1px solid #5f6368;
     }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      width: 100%;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+    .menu-toggle {
+      width: 40px;
+      height: 40px;
+      background: #1a73e8;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .menu-toggle:hover {
+      background: #185abc;
+    }
+    .menu-toggle::before {
+      content: '☰';
+      color: white;
+      font-size: 1.2rem;
+    }
+    .menu-toggle.active::before {
+      content: '✕';
+    }
+    .header-title {
+      flex: 2;
+      text-align: center;
+    }
     header h1 {
       font-size: 1.5rem;
-      margin: 0 auto;
-      text-align: center;
       font-weight: 500;
       background: linear-gradient(to right, #ef4444, #f97316);
       -webkit-background-clip: text;
@@ -53,11 +88,10 @@
       color: transparent;
     }
     .header-buttons {
-      position: absolute;
-      right: 2rem;
-      top: 1rem;
       display: flex;
       gap: 0.5rem;
+      flex: 1;
+      justify-content: flex-end;
     }
     .language-button, .night-mode-button {
       padding: 0.4rem 0.8rem;
@@ -78,59 +112,119 @@
       align-items: center;
       background-color: #e8eaed;
       padding: 0.5rem 1rem;
-      margin-top: 4rem;
-      margin-left: 200px;
       gap: 1rem;
       flex-wrap: wrap;
-      border-bottom: 1px solid #dadce0;
+      border-top: 1px solid #dadce0;
       transition: background 0.3s, border-color 0.3s;
+      width: 100%;
+      z-index: 998;
     }
     body.dark-mode .top-menu {
       background: #303134;
-      border-bottom: 1px solid #5f6368;
+      border-top: 1px solid #5f6368;
     }
-    .top-menu a {
+    .top-menu .menu-item {
+      position: relative;
+    }
+    .top-menu a, .top-menu .menu-item > button {
       color: #202124;
       text-decoration: none;
       padding: 0.4rem 0.8rem;
       font-size: 1rem;
       transition: background 0.2s, color 0.3s;
+      background: none;
+      border: none;
+      cursor: pointer;
     }
-    body.dark-mode .top-menu a {
+    body.dark-mode .top-menu a, body.dark-mode .top-menu .menu-item > button {
       color: #e8eaed;
     }
-    .top-menu a:hover {
-      background: #f1f3f4;
+    .top-menu a:hover, .top-menu .menu-item > button:hover {
+      background: #1a73e8;
+      color: white;
+      border-radius: 8px;
     }
-    body.dark-mode .top-menu a:hover {
-      background: #424548;
+    .top-menu .submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      min-width: 300px;
+      padding: 0.5rem 0;
+      z-index: 1001;
+    }
+    body.dark-mode .top-menu .submenu {
+      background: #303134;
+      border-color: #5f6368;
+    }
+    .top-menu .menu-item:hover > .submenu {
+      display: block;
+    }
+    .top-menu .submenu .menu-item > button {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #202124;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    body.dark-mode .top-menu .submenu .menu-item > button {
+      color: #e8eaed;
+    }
+    .top-menu .submenu .menu-item > button:hover {
+      background: #1a73e8;
+      color: white;
+    }
+    .top-menu .submenu .submenu {
+      top: 0;
+      left: 100%;
+      min-width: 300px;
     }
     .new-datetime-display {
       text-align: center;
       padding: 1rem;
       font-size: 1rem;
       color: #202124;
-      width: calc(100% - 200px);
-      margin-left: 200px;
+      margin-top: 120px;
       background: #fff;
       line-height: 1.6;
       transition: background 0.3s, color 0.3s;
+      position: relative;
+    }
+    .new-datetime-display::after {
+      content: '';
+      display: block;
+      width: 50%;
+      height: 1px;
+      background: #dadce0;
+      margin: 1rem auto 0;
+      transition: background 0.3s;
     }
     body.dark-mode .new-datetime-display {
       background: #202124;
       color: #e8eaed;
     }
-    .datetime-container {
-      border: 1px solid #dadce0;
-      border-radius: 8px;
-      padding: 1rem;
-      margin: 1rem 0;
-      background: #f1f3f4;
-      transition: border-color 0.3s, background 0.3s;
+    body.dark-mode .new-datetime-display::after {
+      background: #5f6368;
     }
-    body.dark-mode .datetime-container {
-      border-color: #5f6368;
-      background: #303134;
+    .datetime-highlight {
+      background-color: #e6ffe6;
+      color: #2e7d32;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      display: inline;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode .datetime-highlight {
+      background-color: #388e3c;
+      color: #e8eaed;
     }
     .search-bar {
       display: flex;
@@ -138,8 +232,6 @@
       align-items: center;
       padding: 1rem;
       gap: 0.5rem;
-      width: calc(100% - 200px);
-      margin-left: 200px;
       background: #fff;
       transition: background 0.3s;
     }
@@ -195,8 +287,6 @@
     .content-section {
       text-align: center;
       padding: 2rem;
-      width: calc(100% - 200px);
-      margin-left: 200px;
       background: #fff;
       transition: background 0.3s, color 0.3s;
     }
@@ -207,7 +297,6 @@
     .content-section h2 {
       font-size: 1.8rem;
       font-weight: 600;
-      color: #202124;
       margin-bottom: 1rem;
       transition: color 0.3s;
     }
@@ -254,7 +343,6 @@
       margin-right: 0.5rem;
     }
     .content-section .features-container, .content-section .why-choose-container, .content-section .category-container {
-      max-width: 900px;
       margin: 1rem auto;
       padding: 1rem;
       border: 1px solid #dadce0;
@@ -262,55 +350,82 @@
       background: #f1f3f4;
       text-align: center;
       transition: background 0.3s, border-color 0.3s;
+      width: calc(100% - 2rem);
+      max-width: 100%;
     }
     body.dark-mode .content-section .features-container, body.dark-mode .content-section .why-choose-container, body.dark-mode .content-section .category-container {
       background: #303134;
       border-color: #5f6368;
     }
     .content-section table {
-      width: 100%;
-      max-width: 900px;
+      width: calc(100% - 2rem);
+      max-width: 100%;
       margin: 1rem auto;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       border: 1px solid #dadce0;
-      transition: border-color 0.3s;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f1f3f4;
+      transition: border-color 0.3s, background 0.3s;
     }
     body.dark-mode .content-section table {
       border-color: #5f6368;
+      background: #303134;
     }
     .content-section th, .content-section td {
-      padding: 0.75rem;
+      padding: 1rem;
       text-align: left;
-      border: 1px solid #dadce0;
+      border-bottom: 1px solid #dadce0;
       transition: border-color 0.3s;
     }
     body.dark-mode .content-section th, body.dark-mode .content-section td {
-      border-color: #5f6368;
+      border-bottom: 1px solid #5f6368;
     }
     .content-section th {
       background: #e8eaed;
       font-weight: 600;
+      font-size: 1.1rem;
       color: #202124;
       transition: background 0.3s, color 0.3s;
     }
     body.dark-mode .content-section th {
-      background: #303134;
+      background: #3c4043;
       color: #e8eaed;
     }
     .content-section td {
       color: #5f6368;
+      font-size: 0.95rem;
       transition: color 0.3s;
     }
     body.dark-mode .content-section td {
       color: #bdc1c6;
     }
+    .content-section tr:nth-child(even) {
+      background: #fafafa;
+    }
+    body.dark-mode .content-section tr:nth-child(even) {
+      background: #353639;
+    }
+    .content-section tr:hover {
+      background: #e8f0fe;
+    }
+    body.dark-mode .content-section tr:hover {
+      background: #4a4e53;
+    }
     .content-section .category-name {
       white-space: nowrap;
+      font-weight: 500;
+    }
+    .content-section .category-name .emoji {
+      font-size: 1.1rem;
+      vertical-align: middle;
     }
     .content-section .list-container {
-      max-width: 900px;
       margin: 1rem auto;
       padding: 0;
+      width: calc(100% - 2rem);
+      max-width: 100%;
     }
     .content-section ul {
       list-style: none;
@@ -320,50 +435,84 @@
       display: flex;
       align-items: flex-start;
     }
-    .highlight-grid, .top-picks-grid, .tool-grid {
+    .highlight-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 1rem auto;
+      width: calc(100% - 2rem);
+      max-width: 100%;
+    }
+    .tool-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
-      max-width: 600px;
       margin: 1rem auto;
+      width: calc(100% - 2rem);
+      max-width: 100%;
     }
-    .highlight-container, .top-picks-container, .tool-container {
+    .highlight-container, .tool-container {
       background: white;
       border-radius: 8px;
-      padding: 1rem;
+      padding: 0.8rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       transition: transform 0.2s, background 0.3s, color 0.3s;
       text-align: left;
     }
-    body.dark-mode .highlight-container, body.dark-mode .top-picks-container, body.dark-mode .tool-container {
+    body.dark-mode .highlight-container, body.dark-mode .tool-container {
       background: #303134;
       color: #e8eaed;
     }
-    .highlight-container:hover, .top-picks-container:hover, .tool-container:hover {
+    .highlight-container:hover, .tool-container:hover {
       transform: translateY(-5px);
     }
-    .highlight-container a, .top-picks-container a, .tool-container a {
+    .highlight-container a, .tool-container a {
       text-decoration: none;
       color: inherit;
       display: block;
     }
-    .highlight-title, .top-picks-title, .tool-title {
+    .highlight-title {
+      font-weight: 500;
+      font-size: 1rem;
+      margin: 0;
+      color: #202124;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    body.dark-mode .highlight-title {
+      color: #e8eaed;
+    }
+    .highlight-title .emoji {
+      font-size: 1rem;
+      margin-right: 0.3rem;
+    }
+    .highlight-desc {
+      font-size: 0.85rem;
+      color: #5f6368;
+      margin-top: 0.4rem;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    body.dark-mode .highlight-desc {
+      color: #bdc1c6;
+    }
+    .tool-title {
       font-weight: 500;
       font-size: 1.1rem;
       margin: 0;
       color: #202124;
       transition: color 0.3s;
     }
-    body.dark-mode .highlight-title, body.dark-mode .top-picks-title, body.dark-mode .tool-title {
+    body.dark-mode .tool-title {
       color: #e8eaed;
     }
-    .highlight-desc, .top-picks-desc, .tool-desc {
+    .tool-desc {
       font-size: 0.9rem;
       color: #5f6368;
       margin-top: 0.5rem;
       transition: color 0.3s;
     }
-    body.dark-mode .highlight-desc, body.dark-mode .top-picks-desc, body.dark-mode .tool-desc {
+    body.dark-mode .tool-desc {
       color: #bdc1c6;
     }
     .tool-logo {
@@ -386,51 +535,9 @@
     body.dark-mode .tool-features li {
       color: #bdc1c6;
     }
-    .sidebar {
-      width: 200px;
-      background: #e8eaed;
-      color: #202124;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      padding-top: 4rem;
-      border-right: 1px solid #dadce0;
-      transition: background 0.3s, border-color 0.3s;
-    }
-    body.dark-mode .sidebar {
-      background: #303134;
-      border-right: 1px solid #5f6368;
-    }
-    .sidebar nav a {
-      display: block;
-      padding: 0.8rem 1rem;
-      margin: 0.5rem 0.5rem;
-      color: #202124;
-      text-decoration: none;
-      background: #ffffff;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: background 0.2s, transform 0.1s, color 0.3s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    body.dark-mode .sidebar nav a {
-      color: #e8eaed;
-      background: #424548;
-    }
-    .sidebar nav a:hover {
-      background: #f1f3f4;
-      transform: translateX(4px);
-    }
-    body.dark-mode .sidebar nav a:hover {
-      background: #5f6368;
-    }
     .container {
-      margin-left: 200px;
       padding: 1rem 2rem 2rem 2rem;
       flex: 1;
-      width: calc(100% - 200px);
       background: #fff;
       transition: background 0.3s;
     }
@@ -441,6 +548,9 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1.5rem;
+      width: calc(100% - 2rem);
+      max-width: 100%;
+      margin: 1rem auto;
     }
     .card {
       background: white;
@@ -494,8 +604,6 @@
       padding: 2rem;
       color: #5f6368;
       font-size: 0.8rem;
-      width: calc(100% - 200px);
-      margin-left: 200px;
       background: #fff;
       transition: background 0.3s, color 0.3s;
     }
@@ -506,52 +614,28 @@
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <nav>
-      <a href="#" data-lang-key="home">Home</a>
-      <a href="#" data-lang-key="aigc">AIGC Tools</a>
-      <a href="#" data-lang-key="technology">Technology</a>
-      <a href="#" data-lang-key="social">Social</a>
-      <a href="#" data-lang-key="music">Music</a>
-      <a href="#" data-lang-key="video">Video</a>
-      <a href="#" data-lang-key="finance">Finance</a>
-      <a href="#" data-lang-key="news">News</a>
-      <a href="#" data-lang-key="learning">Learning</a>
-      <a href="#" data-lang-key="lifestyle">Lifestyle</a>
-      <a href="#" data-lang-key="more">More</a>
-    </nav>
-  </div>
-
   <header>
-    <h1>Discovery Panel</h1>
-    <div class="header-buttons">
-      <button class="language-button" onclick="switchLanguage()">中文/English</button>
-      <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+    <div class="header-top">
+      <div class="header-logo">
+        <button class="menu-toggle" onclick="toggleMenu()"></button>
+      </div>
+      <div class="header-title">
+        <h1>Discovery Panel</h1>
+      </div>
+      <div class="header-buttons">
+        <button class="language-button" onclick="switchLanguage()">中文/English</button>
+        <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+      </div>
     </div>
+    <div class="top-menu" id="top-menu"></div>
   </header>
 
-  <div class="top-menu">
-    <a href="#" data-lang-key="home">Home</a>
-    <a href="#" data-lang-key="aigc">AIGC Tools</a>
-    <a href="#" data-lang-key="technology">Technology</a>
-    <a href="#" data-lang-key="social">Social</a>
-    <a href="#" data-lang-key="music">Music</a>
-    <a href="#" data-lang-key="video">Video</a>
-    <a href="#" data-lang-key="finance">Finance</a>
-    <a href="#" data-lang-key="news">News</a>
-    <a href="#" data-lang-key="learning">Learning</a>
-    <a href="#" data-lang-key="lifestyle">Lifestyle</a>
-    <a href="#" data-lang-key="more">More</a>
-  </div>
-
-  <div class="datetime-container">
-    <div class="new-datetime-display" id="newDatetimeDisplay">
-      <div id="chinese-zodiac" data-lang-key="chinese-zodiac-label"></div>
-      <div id="western-zodiac" data-lang-key="western-zodiac-label"></div>
-      <div id="current-date" data-lang-key="date-label"></div>
-      <div id="week-info" data-lang-key="week-info"></div>
-      <div id="current-time" data-lang-key="time-label"></div>
-    </div>
+  <div class="new-datetime-display" id="newDatetimeDisplay">
+    <div id="chinese-zodiac" data-lang-key="chinese-zodiac-label"></div>
+    <div id="western-zodiac" data-lang-key="western-zodiac-label"></div>
+    <div id="current-date" data-lang-key="date-label" class="datetime-highlight"></div>
+    <div id="week-info" data-lang-key="week-info"></div>
+    <div id="current-time" data-lang-key="time-label" class="datetime-highlight"></div>
   </div>
 
   <div class="search-bar">
@@ -568,13 +652,13 @@
 
   <div class="container">
     <section class="content-section">
-      <h2 data-lang-key="content-heading">A one-stop hub for AI, tech, social, music, finance, video, learning & more.</h2>
-      <p><span class="emoji">📍</span><span data-lang-key="content-bullet1">Connects you to global tools, platforms, and inspiration.</span></p>
-      <p><span class="emoji">🎯</span><span data-lang-key="content-bullet2">From inspiration to productivity, your personalized smart navigation hub.</span></p>
+      <h2 data-lang-key="content-heading" style="color: #1a73e8;">Limitless space, boundless possibilities, infinite knowledge—explore the infinite!</h2>
+      <p><span class="emoji"> </span><span data-lang-key="content-bullet1">Connects you to global tools, platforms, and inspiration.</span></p>
+      <p><span class="emoji"> </span><span data-lang-key="content-bullet2">From inspiration to productivity, your personalized smart navigation hub.</span></p>
 
       <div class="features-container">
         <h3 data-lang-key="features-title">Explore the Infinite Tools</h3>
-        <h4><span class="emoji">💼</span><span data-lang-key="features-subtitle">All you need. All in one place.</span></h4>
+        <h4><span class="emoji"> </span><span data-lang-key="features-subtitle">All you need. All in one place.</span></h4>
         <p data-lang-key="features-desc">Curated resources covering trending digital domains: AIGC, tech, social, music, video, finance, news, learning & growth, and more.</p>
       </div>
 
@@ -630,52 +714,6 @@
         </tbody>
       </table>
 
-      <h3>You Might Like These Top Picks</h3>
-      <div class="top-picks-grid">
-        <div class="top-picks-container">
-          <a href="blog-midjourney-prompt-tips.html">
-            <h3 class="top-picks-title"><span class="emoji">🎨</span>Midjourney Prompt Tips</h3>
-            <p class="top-picks-desc">Boost your AI art with these Midjourney tips!</p>
-          </a>
-        </div>
-        <div class="top-picks-container">
-          <a href="blog-royalty-free-image-libraries.html">
-            <h3 class="top-picks-title"><span class="emoji">🖼️</span>Royalty-Free Image Libraries</h3>
-            <p class="top-picks-desc">Find stunning visuals for your projects.</p>
-          </a>
-        </div>
-        <div class="top-picks-container">
-          <a href="blog-essential-toolbox-content-creators.html">
-            <h3 class="top-picks-title"><span class="emoji">🎥</span>Essential Toolbox for Content Creators</h3>
-            <p class="top-picks-desc">Top tools to elevate your content game.</p>
-          </a>
-        </div>
-        <div class="top-picks-container">
-          <a href="blog-essential-remote-work-tools.html">
-            <h3 class="top-picks-title"><span class="emoji">💼</span>Essential Remote Work Tools</h3>
-            <p class="top-picks-desc">Stay productive from anywhere.</p>
-          </a>
-        </div>
-        <div class="top-picks-container">
-          <a href="blog-must-have-apps-travel-bloggers.html">
-            <h3 class="top-picks-title"><span class="emoji">✈️</span>Must-Have Apps for Travel Bloggers</h3>
-            <p class="top-picks-desc">Simplify your travel blogging journey.</p>
-          </a>
-        </div>
-        <div class="top-picks-container">
-          <a href="blog-top-10-royalty-free-image-sites.html">
-            <h3 class="top-picks-title"><span class="emoji">📸</span>Top 10 Royalty-Free Image Sites</h3>
-            <p class="top-picks-desc">Best sites for high-quality images.</p>
-          </a>
-        </div>
-        <div class="top-picks-container">
-          <a href="blog-best-pkm-tools.html">
-            <h3 class="top-picks-title"><span class="emoji">🗂️</span>Best PKM Tools</h3>
-            <p class="top-picks-desc">Organize your knowledge efficiently.</p>
-          </a>
-        </div>
-      </div>
-
       <h3 data-lang-key="highlights-title">Highlights</h3>
       <div class="highlight-grid">
         <div class="highlight-container">
@@ -692,13 +730,13 @@
         </div>
         <div class="highlight-container">
           <a href="#">
-            <h3 class="highlight-title"><span class="emoji">🧩</span><span data-lang-key="highlight-update">Editorial team updates quality content daily</span></h3>
+            <h3 class="highlight-title"><span class="emoji">💌</span><span data-lang-key="highlight-update">Editorial team updates quality content daily</span></h3>
             <p class="highlight-desc">Fresh content curated every day.</p>
           </a>
         </div>
         <div class="highlight-container">
           <a href="#">
-            <h3 class="highlight-title"><span class="emoji">💌</span><span data-lang-key="highlight-contrib">Contribute your discoveries, build the smart info universe</span></h3>
+            <h3 class="highlight-title"><span class="emoji">🧩</span><span data-lang-key="highlight-contrib">Contribute your discoveries, build the smart info universe</span></h3>
             <p class="highlight-desc">Join our community and share insights.</p>
           </a>
         </div>
@@ -710,7 +748,6 @@
           <ul>
             <li><span class="emoji">✅</span><span data-lang-key="why-coverage">Covers work, entertainment, interests, and growth</span></li>
             <li><span class="emoji">✅</span><span data-lang-key="why-nav">Clear navigation, quick access to needs</span></li>
-            <li><span class="emoji">✅</span><span data-lang-key="why-update">Daily manual updates, fresh and reliable</span></li>
             <li><span class="emoji">✅</span><span data-lang-key="why-design">Responsive design for mobile and desktop</span></li>
             <li><span class="emoji">✅</span><span data-lang-key="why-community">Community-driven, grows with users</span></li>
           </ul>
@@ -761,7 +798,7 @@
       { sign: { en: "Sagittarius", zh: "射手座" }, start: "11-23", end: "12-21" }
     ];
 
-    // Website Data (Simulated "auto-pulled" from websites)
+    // Website Data
     const websites = [
       {
         name: { en: "GitHub", zh: "GitHub" },
@@ -813,6 +850,118 @@
       }
     ];
 
+    // Menu Structure
+    const menuStructure = [
+      {
+        name: { en: "AIGC Tools", zh: "AIGC工具" },
+        children: [
+          { name: { en: "Intelligent Dialogue", zh: "智能对话" } },
+          { name: { en: "Art Generation", zh: "绘画生成" } },
+          { name: { en: "Audio Creation", zh: "音频创作" } },
+          { name: { en: "Video Creation", zh: "视频创作" } },
+          { name: { en: "Smart Office", zh: "智能办公" } },
+          { name: { en: "Creative Design", zh: "创意设计" } },
+          { name: { en: "Learning Resources", zh: "学习资讯" } }
+        ]
+      },
+      {
+        name: { en: "Technology", zh: "科技" },
+        children: [
+          { name: { en: "Code Hosting & Collaboration", zh: "代码托管与协作" } },
+          { name: { en: "Cloud Deployment & Serverless", zh: "云部署与无服务器" } },
+          { name: { en: "Automation & Code Integration", zh: "自动化与代码集成" } },
+          { name: { en: "CI/CD Tools", zh: "持续集成与交付工具" } },
+          { name: { en: "Edge Computing & Network Optimization", zh: "边缘计算与网络优化" } },
+          { name: { en: "Containers & Cloud Native", zh: "容器与云原生" } },
+          { name: { en: "Other", zh: "其他实用" } }
+        ]
+      },
+      {
+        name: { en: "Social", zh: "社交" },
+        children: [
+          { name: { en: "Foreign Social", zh: "Foreign 社交" } },
+          { name: { en: "China Social", zh: "China 社交" } }
+        ]
+      },
+      {
+        name: { en: "Music", zh: "音乐" },
+        children: [
+          { name: { en: "Foreign Music", zh: "Foreign 音乐" } },
+          { name: { en: "China Music", zh: "China 音乐" } }
+        ]
+      },
+      {
+        name: { en: "Video", zh: "视频" },
+        children: [
+          { name: { en: "China Video", zh: "China 视频" } },
+          { name: { en: "Foreign Video", zh: "Foreign 视频" } }
+        ]
+      },
+      {
+        name: { en: "Finance", zh: "金融" },
+        children: [
+          { name: { en: "Foreign Finance & Trade", zh: "Foreign Finance & Trade" } },
+          { name: { en: "China Finance & Trade", zh: "China Finance & Trade" } },
+          {
+            name: { en: "Crypto Trade", zh: "Crypto Trade" },
+            children: [
+              { name: { en: "Blockchain", zh: "区块链" } },
+              { name: { en: "Wallets", zh: "钱包" } },
+              {
+                name: { en: "Memes & NFTs", zh: "Memes & NFTs" },
+                children: [
+                  { name: { en: "NFT Investment", zh: "NFT投资" } },
+                  { name: { en: "Meme Coins Investment", zh: "Meme Coins投资" } }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: { en: "News", zh: "新闻" },
+        children: [
+          {
+            name: { en: "General News", zh: "General News" },
+            children: [
+              { name: { en: "Foreign General News", zh: "Foreign General News" } },
+              { name: { en: "China General News", zh: "China General News" } }
+            ]
+          },
+          {
+            name: { en: "Technology News", zh: "Technology News" },
+            children: [
+              { name: { en: "Technology Products", zh: "Technology Products" } },
+              { name: { en: "AI News", zh: "AI News" } }
+            ]
+          },
+          {
+            name: { en: "Finance News", zh: "Finance News" },
+            children: [
+              { name: { en: "Global Official", zh: "Global Official" } },
+              { name: { en: "Crypto", zh: "Crypto" } },
+              { name: { en: "Foreign Finance News", zh: "Foreign Finance News" } },
+              { name: { en: "China Finance News", zh: "China Finance News" } }
+            ]
+          },
+          {
+            name: { en: "Travel News", zh: "Travel News" },
+            children: [
+              { name: { en: "Foreign Travel", zh: "Foreign Travel" } },
+              { name: { en: "China Travel", zh: "China Travel" } }
+            ]
+          },
+          {
+            name: { en: "Foods News", zh: "Foods News" },
+            children: [
+              { name: { en: "Foreign Foods", zh: "Foreign Foods" } },
+              { name: { en: "China Foods", zh: "China Foods" } }
+            ]
+          }
+        ]
+      }
+    ];
+
     let currentLang = 'en';
     let isNightMode = false;
 
@@ -837,8 +986,8 @@
       'week-info': { en: "Week ", zh: "第 " },
       'time-label': { en: "Current Time (Eastern): ", zh: "当前时间 (东部): " },
       'content-heading': {
-        en: "A one-stop hub for AI, tech, social, music, finance, video, learning & more.",
-        zh: "人工智能、科技、社交、音乐、金融、视频、学习等一站式中心"
+        en: "Limitless space, boundless possibilities, infinite knowledge—explore the infinite!",
+        zh: "无限空间，无尽可能，无穷知识——探索无限！"
       },
       'content-bullet1': {
         en: "Connects you to global tools, platforms, and inspiration.",
@@ -962,6 +1111,57 @@
       }
     };
 
+    function toggleMenu() {
+      const toggleButton = document.querySelector('.menu-toggle');
+      toggleButton.classList.toggle('active');
+    }
+
+    function renderTopMenu() {
+      const topMenu = document.getElementById('top-menu');
+      topMenu.innerHTML = '';
+      menuStructure.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'menu-item';
+        const button = document.createElement('button');
+        button.innerText = item.name[currentLang];
+        button.onclick = () => navigateTo(item.name[currentLang]);
+        if (item.children) {
+          const submenu = document.createElement('div');
+          submenu.className = 'submenu';
+          item.children.forEach(child => {
+            const childItem = document.createElement('div');
+            childItem.className = 'menu-item';
+            const childButton = document.createElement('button');
+            childButton.innerText = child.name[currentLang];
+            childButton.onclick = () => navigateTo(child.name[currentLang]);
+            if (child.children) {
+              const childSubmenu = document.createElement('div');
+              childSubmenu.className = 'submenu';
+              child.children.forEach(grandchild => {
+                const grandchildItem = document.createElement('div');
+                grandchildItem.className = 'menu-item';
+                const grandchildButton = document.createElement('button');
+                grandchildButton.innerText = grandchild.name[currentLang];
+                grandchildButton.onclick = () => navigateTo(grandchild.name[currentLang]);
+                grandchildItem.appendChild(grandchildButton);
+                childSubmenu.appendChild(grandchildItem);
+              });
+              childItem.appendChild(childSubmenu);
+            }
+            childItem.appendChild(childButton);
+            submenu.appendChild(childItem);
+          });
+          menuItem.appendChild(submenu);
+        }
+        menuItem.appendChild(button);
+        topMenu.appendChild(menuItem);
+      });
+    }
+
+    function navigateTo(page) {
+      console.log(`Navigate to: (${page})`);
+    }
+
     function getChineseZodiac() {
       const now = new Date();
       const today = now.toISOString().split('T')[0];
@@ -1012,9 +1212,10 @@
     }
 
     function switchLanguage() {
-      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
       updateLanguage();
       renderCategorySections();
+      renderTopMenu();
       updateDateTime();
     }
 
@@ -1023,7 +1224,7 @@
         const key = element.getAttribute('data-lang-key');
         if (translations[key]) {
           if (element.id === 'chinese-zodiac' || element.id === 'western-zodiac' || element.id === 'current-date' || element.id === 'week-info' || element.id === 'current-time') {
-            return; // Skip dynamic date/time elements
+            return;
           }
           element.innerText = translations[key][currentLang];
         }
@@ -1146,6 +1347,7 @@
       updateDateTime();
       setInterval(updateDateTime, 1000);
       renderCategorySections();
+      renderTopMenu();
       updateLanguage();
     });
   </script>
