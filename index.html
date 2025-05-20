@@ -110,7 +110,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #e8eaed;
+      background-color: #1a73e8;
       padding: 0.5rem 1rem;
       gap: 1rem;
       flex-wrap: wrap;
@@ -127,7 +127,7 @@
       position: relative;
     }
     .top-menu a, .top-menu .menu-item > button {
-      color: #202124;
+      color: white;
       text-decoration: none;
       padding: 0.4rem 0.8rem;
       font-size: 1rem;
@@ -140,8 +140,12 @@
       color: #e8eaed;
     }
     .top-menu a:hover, .top-menu .menu-item > button:hover {
-      background: #1a73e8;
+      background: #185abc;
       color: white;
+      border-radius: 8px;
+    }
+    .top-menu .menu-item a[data-lang-key="home"] {
+      background: #185abc;
       border-radius: 8px;
     }
     .top-menu .submenu {
@@ -165,7 +169,9 @@
       display: block;
     }
     .top-menu .submenu .menu-item > button {
-      display: block;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       width: 100%;
       padding: 0.6rem 1rem;
       text-align: left;
@@ -187,32 +193,27 @@
       left: 100%;
       min-width: 300px;
     }
+    .arrow {
+      margin-left: auto;
+      font-size: 0.8rem;
+    }
     .new-datetime-display {
       text-align: center;
       padding: 1rem;
       font-size: 1rem;
       color: #202124;
       margin-top: 120px;
-      background: #fff;
+      background: linear-gradient(135deg, #e0f7fa, #e6e6fa);
+      border: 1px solid #d3d3f3;
+      border-radius: 0;
       line-height: 1.6;
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
       position: relative;
     }
-    .new-datetime-display::after {
-      content: '';
-      display: block;
-      width: 50%;
-      height: 1px;
-      background: #dadce0;
-      margin: 1rem auto 0;
-      transition: background 0.3s;
-    }
     body.dark-mode .new-datetime-display {
-      background: #202124;
+      background: linear-gradient(135deg, #37474f, #40416b);
       color: #e8eaed;
-    }
-    body.dark-mode .new-datetime-display::after {
-      background: #5f6368;
+      border-color: #5f6368;
     }
     .datetime-highlight {
       background-color: #e6ffe6;
@@ -342,7 +343,7 @@
       font-size: 1.2rem;
       margin-right: 0.5rem;
     }
-    .content-section .features-container, .content-section .why-choose-container, .content-section .category-container {
+    .content-section .features-container, .content-section .category-container {
       margin: 1rem auto;
       padding: 1rem;
       border: 1px solid #dadce0;
@@ -353,7 +354,7 @@
       width: calc(100% - 2rem);
       max-width: 100%;
     }
-    body.dark-mode .content-section .features-container, body.dark-mode .content-section .why-choose-container, body.dark-mode .content-section .category-container {
+    body.dark-mode .content-section .features-container, body.dark-mode .content-section .category-container {
       background: #303134;
       border-color: #5f6368;
     }
@@ -435,17 +436,9 @@
       display: flex;
       align-items: flex-start;
     }
-    .highlight-grid {
+    .highlight-grid, .why-choose-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin: 1rem auto;
-      width: calc(100% - 2rem);
-      max-width: 100%;
-    }
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
       margin: 1rem auto;
       width: calc(100% - 2rem);
@@ -456,12 +449,14 @@
       border-radius: 8px;
       padding: 0.8rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #a1a1a1;
       transition: transform 0.2s, background 0.3s, color 0.3s;
-      text-align: left;
+      text-align: center;
     }
     body.dark-mode .highlight-container, body.dark-mode .tool-container {
       background: #303134;
       color: #e8eaed;
+      border-color: #a1a1a1;
     }
     .highlight-container:hover, .tool-container:hover {
       transform: translateY(-5px);
@@ -474,7 +469,7 @@
     .highlight-title {
       font-weight: 500;
       font-size: 1rem;
-      margin: 0;
+      margin: 0.5rem 0 0;
       color: #202124;
       line-height: 1.3;
       transition: color 0.3s;
@@ -483,8 +478,9 @@
       color: #e8eaed;
     }
     .highlight-title .emoji {
-      font-size: 1rem;
-      margin-right: 0.3rem;
+      display: block;
+      font-size: 1.5rem;
+      margin: 0 auto 0.5rem;
     }
     .highlight-desc {
       font-size: 0.85rem;
@@ -496,12 +492,23 @@
     body.dark-mode .highlight-desc {
       color: #bdc1c6;
     }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 1rem auto;
+      width: calc(100% - 2rem);
+      max-width: 100%;
+    }
     .tool-title {
       font-weight: 500;
       font-size: 1.1rem;
       margin: 0;
       color: #202124;
       transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     body.dark-mode .tool-title {
       color: #e8eaed;
@@ -518,7 +525,6 @@
     .tool-logo {
       width: 24px;
       height: 24px;
-      margin-right: 0.5rem;
       vertical-align: middle;
     }
     .tool-features {
@@ -627,15 +633,148 @@
         <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
       </div>
     </div>
-    <div class="top-menu" id="top-menu"></div>
+    <div class="top-menu" id="top-menu">
+      <div class="menu-item">
+        <a href="#" data-lang-key="home">Home</a>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="aigc">AIGC Tools</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="intelligent-dialogue">Intelligent Dialogue</button></div>
+          <div class="menu-item"><button data-lang-key="art-generation">Art Generation</button></div>
+          <div class="menu-item"><button data-lang-key="audio-creation">Audio Creation</button></div>
+          <div class="menu-item"><button data-lang-key="video-creation">Video Creation</button></div>
+          <div class="menu-item"><button data-lang-key="smart-office">Smart Office</button></div>
+          <div class="menu-item"><button data-lang-key="creative-design">Creative Design</button></div>
+          <div class="menu-item"><button data-lang-key="learning-resources">Learning Resources</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="technology">Technology</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="code-hosting-collaboration">Code Hosting & Collaboration</button></div>
+          <div class="menu-item"><button data-lang-key="cloud-deployment-serverless">Cloud Deployment & Serverless</button></div>
+          <div class="menu-item"><button data-lang-key="automation-code-integration">Automation & Code Integration</button></div>
+          <div class="menu-item"><button data-lang-key="ci-cd-tools">CI/CD Tools</button></div>
+          <div class="menu-item"><button data-lang-key="edge-computing-network-optimization">Edge Computing & Network Optimization</button></div>
+          <div class="menu-item"><button data-lang-key="containers-cloud-native">Containers & Cloud Native</button></div>
+          <div class="menu-item"><button data-lang-key="other">Other</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="social">Social</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="foreign-social">Foreign Social</button></div>
+          <div class="menu-item"><button data-lang-key="china-social">China Social</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="music">Music</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="foreign-music">Foreign Music</button></div>
+          <div class="menu-item"><button data-lang-key="china-music">China Music</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="video">Video</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="china-video">China Video</button></div>
+          <div class="menu-item"><button data-lang-key="foreign-video">Foreign Video</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="finance">Finance</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="foreign-finance-trade">Foreign Finance & Trade</button></div>
+          <div class="menu-item"><button data-lang-key="china-finance-trade">China Finance & Trade</button></div>
+          <div class="menu-item">
+            <button data-lang-key="crypto-trade">Crypto Trade <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="blockchain">Blockchain</button></div>
+              <div class="menu-item"><button data-lang-key="wallets">Wallets</button></div>
+              <div class="menu-item">
+                <button data-lang-key="memes-nfts">Memes & NFTs <span class="arrow">▶</span></button>
+                <div class="submenu">
+                  <div class="menu-item"><button data-lang-key="nft-investment">NFT Investment</button></div>
+                  <div class="menu-item"><button data-lang-key="meme-coins-investment">Meme Coins Investment</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="news">News</button>
+        <div class="submenu">
+          <div class="menu-item">
+            <button data-lang-key="general-news">General News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="foreign-general-news">Foreign General News</button></div>
+              <div class="menu-item"><button data-lang-key="china-general-news">China General News</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="technology-news">Technology News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="technology-products">Technology Products</button></div>
+              <div class="menu-item"><button data-lang-key="ai-news">AI News</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="finance-news">Finance News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="global-official">Global Official</button></div>
+              <div class="menu-item"><button data-lang-key="crypto">Crypto</button></div>
+              <div class="menu-item"><button data-lang-key="foreign-finance-news">Foreign Finance News</button></div>
+              <div class="menu-item"><button data-lang-key="china-finance-news">China Finance News</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="travel-news">Travel News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="foreign-travel">Foreign Travel</button></div>
+              <div class="menu-item"><button data-lang-key="china-travel">China Travel</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="foods-news">Foods News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="foreign-foods">Foreign Foods</button></div>
+              <div class="menu-item"><button data-lang-key="china-foods">China Foods</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="learning">Learning</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="creative-skills">Creative Skills</button></div>
+          <div class="menu-item"><button data-lang-key="professional-skills">Professional Skills</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="lifestyle">Lifestyle</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="lifestyle-home">Home Style</button></div>
+          <div class="menu-item"><button data-lang-key="wellness">Wellness</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <button data-lang-key="more">More</button>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="free-info">Free Info</button></div>
+          <div class="menu-item"><button data-lang-key="useful-tools">Useful Tools</button></div>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div class="new-datetime-display" id="newDatetimeDisplay">
     <div id="chinese-zodiac" data-lang-key="chinese-zodiac-label"></div>
     <div id="western-zodiac" data-lang-key="western-zodiac-label"></div>
-    <div id="current-date" data-lang-key="date-label" class="datetime-highlight"></div>
     <div id="week-info" data-lang-key="week-info"></div>
     <div id="current-time" data-lang-key="time-label" class="datetime-highlight"></div>
+    <div id="current-date" data-lang-key="date-label" class="datetime-highlight"></div>
   </div>
 
   <div class="search-bar">
@@ -652,13 +791,12 @@
 
   <div class="container">
     <section class="content-section">
-      <h2 data-lang-key="content-heading" style="color: #1a73e8;">Limitless space, boundless possibilities, infinite knowledge—explore the infinite!</h2>
+      <h2 data-lang-key="content-heading" style="color: #1a73e8;"></h2>
       <p><span class="emoji"> </span><span data-lang-key="content-bullet1">Connects you to global tools, platforms, and inspiration.</span></p>
       <p><span class="emoji"> </span><span data-lang-key="content-bullet2">From inspiration to productivity, your personalized smart navigation hub.</span></p>
 
       <div class="features-container">
-        <h3 data-lang-key="features-title">Explore the Infinite Tools</h3>
-        <h4><span class="emoji"> </span><span data-lang-key="features-subtitle">All you need. All in one place.</span></h4>
+        <h4><span class="emoji"> </span><span data-lang-key="features-subtitle" style="color: #1a73e8;">All you need. All in one place.</span></h4>
         <p data-lang-key="features-desc">Curated resources covering trending digital domains: AIGC, tech, social, music, video, finance, news, learning & growth, and more.</p>
       </div>
 
@@ -718,39 +856,47 @@
       <div class="highlight-grid">
         <div class="highlight-container">
           <a href="#">
-            <h3 class="highlight-title"><span class="emoji">🚀</span><span data-lang-key="highlight-speed">Instant access, maximum efficiency</span></h3>
-            <p class="highlight-desc">Get to your tools quickly and seamlessly.</p>
+            <h3 class="highlight-title"><span class="emoji">🚀</span><span data-lang-key="highlight-speed"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-speed-desc"></p>
           </a>
         </div>
         <div class="highlight-container">
           <a href="#">
-            <h3 class="highlight-title"><span class="emoji">🌍</span><span data-lang-key="highlight-lang">Serves global users, language barrier-free</span></h3>
-            <p class="highlight-desc">Accessible in multiple languages.</p>
+            <h3 class="highlight-title"><span class="emoji">🌍</span><span data-lang-key="highlight-lang"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-lang-desc"></p>
           </a>
         </div>
         <div class="highlight-container">
           <a href="#">
-            <h3 class="highlight-title"><span class="emoji">💌</span><span data-lang-key="highlight-update">Editorial team updates quality content daily</span></h3>
-            <p class="highlight-desc">Fresh content curated every day.</p>
+            <h3 class="highlight-title"><span class="emoji">💌</span><span data-lang-key="highlight-update"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-update-desc"></p>
           </a>
         </div>
         <div class="highlight-container">
           <a href="#">
-            <h3 class="highlight-title"><span class="emoji">🧩</span><span data-lang-key="highlight-contrib">Contribute your discoveries, build the smart info universe</span></h3>
-            <p class="highlight-desc">Join our community and share insights.</p>
+            <h3 class="highlight-title"><span class="emoji">🧩</span><span data-lang-key="highlight-contrib"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-contrib-desc"></p>
           </a>
         </div>
       </div>
 
-      <div class="why-choose-container">
-        <h3 data-lang-key="why-title">Why Choose Us?</h3>
-        <div class="list-container">
-          <ul>
-            <li><span class="emoji">✅</span><span data-lang-key="why-coverage">Covers work, entertainment, interests, and growth</span></li>
-            <li><span class="emoji">✅</span><span data-lang-key="why-nav">Clear navigation, quick access to needs</span></li>
-            <li><span class="emoji">✅</span><span data-lang-key="why-design">Responsive design for mobile and desktop</span></li>
-            <li><span class="emoji">✅</span><span data-lang-key="why-community">Community-driven, grows with users</span></li>
-          </ul>
+      <h3 data-lang-key="why-title">Why Choose Us?</h3>
+      <div class="why-choose-grid">
+        <div class="highlight-container">
+          <h3 class="highlight-title"><span class="emoji">✅</span><span data-lang-key="why-coverage"></span></h3>
+          <p class="highlight-desc" data-lang-key="why-coverage"></p>
+        </div>
+        <div class="highlight-container">
+          <h3 class="highlight-title"><span class="emoji">✅</span><span data-lang-key="why-nav"></span></h3>
+          <p class="highlight-desc" data-lang-key="why-nav"></p>
+        </div>
+        <div class="highlight-container">
+          <h3 class="highlight-title"><span class="emoji">✅</span><span data-lang-key="why-design"></span></h3>
+          <p class="highlight-desc" data-lang-key="why-design"></p>
+        </div>
+        <div class="highlight-container">
+          <h3 class="highlight-title"><span class="emoji">✅</span><span data-lang-key="why-community"></span></h3>
+          <p class="highlight-desc" data-lang-key="why-community"></p>
         </div>
       </div>
 
@@ -850,118 +996,6 @@
       }
     ];
 
-    // Menu Structure
-    const menuStructure = [
-      {
-        name: { en: "AIGC Tools", zh: "AIGC工具" },
-        children: [
-          { name: { en: "Intelligent Dialogue", zh: "智能对话" } },
-          { name: { en: "Art Generation", zh: "绘画生成" } },
-          { name: { en: "Audio Creation", zh: "音频创作" } },
-          { name: { en: "Video Creation", zh: "视频创作" } },
-          { name: { en: "Smart Office", zh: "智能办公" } },
-          { name: { en: "Creative Design", zh: "创意设计" } },
-          { name: { en: "Learning Resources", zh: "学习资讯" } }
-        ]
-      },
-      {
-        name: { en: "Technology", zh: "科技" },
-        children: [
-          { name: { en: "Code Hosting & Collaboration", zh: "代码托管与协作" } },
-          { name: { en: "Cloud Deployment & Serverless", zh: "云部署与无服务器" } },
-          { name: { en: "Automation & Code Integration", zh: "自动化与代码集成" } },
-          { name: { en: "CI/CD Tools", zh: "持续集成与交付工具" } },
-          { name: { en: "Edge Computing & Network Optimization", zh: "边缘计算与网络优化" } },
-          { name: { en: "Containers & Cloud Native", zh: "容器与云原生" } },
-          { name: { en: "Other", zh: "其他实用" } }
-        ]
-      },
-      {
-        name: { en: "Social", zh: "社交" },
-        children: [
-          { name: { en: "Foreign Social", zh: "Foreign 社交" } },
-          { name: { en: "China Social", zh: "China 社交" } }
-        ]
-      },
-      {
-        name: { en: "Music", zh: "音乐" },
-        children: [
-          { name: { en: "Foreign Music", zh: "Foreign 音乐" } },
-          { name: { en: "China Music", zh: "China 音乐" } }
-        ]
-      },
-      {
-        name: { en: "Video", zh: "视频" },
-        children: [
-          { name: { en: "China Video", zh: "China 视频" } },
-          { name: { en: "Foreign Video", zh: "Foreign 视频" } }
-        ]
-      },
-      {
-        name: { en: "Finance", zh: "金融" },
-        children: [
-          { name: { en: "Foreign Finance & Trade", zh: "Foreign Finance & Trade" } },
-          { name: { en: "China Finance & Trade", zh: "China Finance & Trade" } },
-          {
-            name: { en: "Crypto Trade", zh: "Crypto Trade" },
-            children: [
-              { name: { en: "Blockchain", zh: "区块链" } },
-              { name: { en: "Wallets", zh: "钱包" } },
-              {
-                name: { en: "Memes & NFTs", zh: "Memes & NFTs" },
-                children: [
-                  { name: { en: "NFT Investment", zh: "NFT投资" } },
-                  { name: { en: "Meme Coins Investment", zh: "Meme Coins投资" } }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        name: { en: "News", zh: "新闻" },
-        children: [
-          {
-            name: { en: "General News", zh: "General News" },
-            children: [
-              { name: { en: "Foreign General News", zh: "Foreign General News" } },
-              { name: { en: "China General News", zh: "China General News" } }
-            ]
-          },
-          {
-            name: { en: "Technology News", zh: "Technology News" },
-            children: [
-              { name: { en: "Technology Products", zh: "Technology Products" } },
-              { name: { en: "AI News", zh: "AI News" } }
-            ]
-          },
-          {
-            name: { en: "Finance News", zh: "Finance News" },
-            children: [
-              { name: { en: "Global Official", zh: "Global Official" } },
-              { name: { en: "Crypto", zh: "Crypto" } },
-              { name: { en: "Foreign Finance News", zh: "Foreign Finance News" } },
-              { name: { en: "China Finance News", zh: "China Finance News" } }
-            ]
-          },
-          {
-            name: { en: "Travel News", zh: "Travel News" },
-            children: [
-              { name: { en: "Foreign Travel", zh: "Foreign Travel" } },
-              { name: { en: "China Travel", zh: "China Travel" } }
-            ]
-          },
-          {
-            name: { en: "Foods News", zh: "Foods News" },
-            children: [
-              { name: { en: "Foreign Foods", zh: "Foreign Foods" } },
-              { name: { en: "China Foods", zh: "China Foods" } }
-            ]
-          }
-        ]
-      }
-    ];
-
     let currentLang = 'en';
     let isNightMode = false;
 
@@ -981,13 +1015,13 @@
       searchButton: { en: "Search", zh: "搜索" },
       internal: { en: "Internal Search", zh: "内部搜索" },
       'chinese-zodiac-label': { en: "Chinese Zodiac: ", zh: "生肖: " },
-      'western-zodiac-label': { en: "Today's Zodiac Sign: ", zh: "今日星座: " },
+      'western-zodiac-label': { en: "Today's Horoscope Sign: ", zh: "今日星座: " },
       'date-label': { en: "Today's Date: ", zh: "今日日期: " },
-      'week-info': { en: "Week ", zh: "第 " },
-      'time-label': { en: "Current Time (Eastern): ", zh: "当前时间 (东部): " },
+      'week-info': { en: "", zh: "" },
+      'time-label': { en: "Current Time (US EST): ", zh: "当前时间 (美国东部时间): " },
       'content-heading': {
-        en: "Limitless space, boundless possibilities, infinite knowledge—explore the infinite!",
-        zh: "无限空间，无尽可能，无穷知识——探索无限！"
+        en: "Limitless space, Boundless possibilities, Infinite knowledge, Explore the Unbounded!",
+        zh: "无限空间，无尽可能，无穷知识，探索无界！"
       },
       'content-bullet1': {
         en: "Connects you to global tools, platforms, and inspiration.",
@@ -996,10 +1030,6 @@
       'content-bullet2': {
         en: "From inspiration to productivity, your personalized smart navigation hub.",
         zh: "从灵感到生产力，您的个性化智能导航中心"
-      },
-      'features-title': {
-        en: "Explore the Infinite Tools",
-        zh: "探索无限工具"
       },
       'features-subtitle': {
         en: "All you need. All in one place.",
@@ -1073,17 +1103,33 @@
         en: "Instant access, maximum efficiency",
         zh: "即时访问，最高效率"
       },
+      'highlight-speed-desc': {
+        en: "Get to your tools quickly and seamlessly.",
+        zh: "快速无缝地访问您的工具"
+      },
       'highlight-lang': {
         en: "Serves global users, language barrier-free",
         zh: "服务全球用户，无语言障碍"
+      },
+      'highlight-lang-desc': {
+        en: "Accessible in multiple languages.",
+        zh: "支持多种语言访问"
       },
       'highlight-update': {
         en: "Editorial team updates quality content daily",
         zh: "编辑团队每日更新优质内容"
       },
+      'highlight-update-desc': {
+        en: "Fresh content curated every day.",
+        zh: "每日精选新鲜内容"
+      },
       'highlight-contrib': {
         en: "Contribute your discoveries, build the smart info universe",
         zh: "贡献您的发现，构建智能信息宇宙"
+      },
+      'highlight-contrib-desc': {
+        en: "Join our community and share insights.",
+        zh: "加入我们的社区，分享见解"
       },
       'why-title': {
         en: "Why Choose Us?",
@@ -1097,10 +1143,6 @@
         en: "Clear navigation, quick access to needs",
         zh: "清晰导航，快速访问需求"
       },
-      'why-update': {
-        en: "Daily manual updates, fresh and reliable",
-        zh: "每日人工更新，新鲜可靠"
-      },
       'why-design': {
         en: "Responsive design for mobile and desktop",
         zh: "响应式设计，适配移动和桌面"
@@ -1108,54 +1150,63 @@
       'why-community': {
         en: "Community-driven, grows with users",
         zh: "社区驱动，与用户共同成长"
-      }
+      },
+      'foreign-social': { en: "Foreign Social", zh: "海外社交" },
+      'china-social': { en: "China Social", zh: "国内社交" },
+      'foreign-music': { en: "Foreign Music", zh: "海外音乐" },
+      'china-music': { en: "China Music", zh: "国内音乐" },
+      'china-video': { en: "China Video", zh: "国内视频" },
+      'foreign-video': { en: "Foreign Video", zh: "海外视频" },
+      'foreign-finance-trade': { en: "Foreign Finance & Trade", zh: "海外金融与贸易" },
+      'china-finance-trade': { en: "China Finance & Trade", zh: "国内金融与贸易" },
+      'crypto-trade': { en: "Crypto Trade", zh: "加密交易" },
+      'blockchain': { en: "Blockchain", zh: "区块链" },
+      'wallets': { en: "Wallets", zh: "钱包" },
+      'memes-nfts': { en: "Memes & NFTs", zh: "迷因与NFT" },
+      'nft-investment': { en: "NFT Investment", zh: "NFT投资" },
+      'meme-coins-investment': { en: "Meme Coins Investment", zh: "迷因币投资" },
+      'general-news': { en: "General News", zh: "综合新闻" },
+      'foreign-general-news': { en: "Foreign General News", zh: "海外综合新闻" },
+      'china-general-news': { en: "China General News", zh: "国内综合新闻" },
+      'technology-news': { en: "Technology News", zh: "科技新闻" },
+      'technology-products': { en: "Technology Products", zh: "科技产品" },
+      'ai-news': { en: "AI News", zh: "人工智能新闻" },
+      'finance-news': { en: "Finance News", zh: "金融新闻" },
+      'global-official': { en: "Global Official", zh: "全球官方" },
+      'crypto': { en: "Crypto", zh: "加密货币" },
+      'foreign-finance-news': { en: "Foreign Finance News", zh: "海外金融新闻" },
+      'china-finance-news': { en: "China Finance News", zh: "国内金融新闻" },
+      'travel-news': { en: "Travel News", zh: "旅游新闻" },
+      'foreign-travel': { en: "Foreign Travel", zh: "海外旅游" },
+      'china-travel': { en: "China Travel", zh: "国内旅游" },
+      'foods-news': { en: "Foods News", zh: "美食新闻" },
+      'foreign-foods': { en: "Foreign Foods", zh: "海外美食" },
+      'china-foods': { en: "China Foods", zh: "国内美食" },
+      'intelligent-dialogue': { en: "Intelligent Dialogue", zh: "智能对话" },
+      'art-generation': { en: "Art Generation", zh: "绘画生成" },
+      'audio-creation': { en: "Audio Creation", zh: "音频创作" },
+      'video-creation': { en: "Video Creation", zh: "视频创作" },
+      'smart-office': { en: "Smart Office", zh: "智能办公" },
+      'creative-design': { en: "Creative Design", zh: "创意设计" },
+      'learning-resources': { en: "Learning Resources", zh: "学习资讯" },
+      'code-hosting-collaboration': { en: "Code Hosting & Collaboration", zh: "代码托管与协作" },
+      'cloud-deployment-serverless': { en: "Cloud Deployment & Serverless", zh: "云部署与无服务器" },
+      'automation-code-integration': { en: "Automation & Code Integration", zh: "自动化与代码集成" },
+      'ci-cd-tools': { en: "CI/CD Tools", zh: "持续集成与交付工具" },
+      'edge-computing-network-optimization': { en: "Edge Computing & Network Optimization", zh: "边缘计算与网络优化" },
+      'containers-cloud-native': { en: "Containers & Cloud Native", zh: "容器与云原生" },
+      'other': { en: "Other", zh: "其他实用" },
+      'lifestyle-home': { en: "Home Style", zh: "家居风格" },
+      'wellness': { en: "Wellness", zh: "健康" },
+      'creative-skills': { en: "Creative Skills", zh: "创意技能" },
+      'professional-skills': { en: "Professional Skills", zh: "专业技能" },
+      'free-info': { en: "Free Info", zh: "免费信息" },
+      'useful-tools': { en: "Useful Tools", zh: "实用工具" }
     };
 
     function toggleMenu() {
       const toggleButton = document.querySelector('.menu-toggle');
       toggleButton.classList.toggle('active');
-    }
-
-    function renderTopMenu() {
-      const topMenu = document.getElementById('top-menu');
-      topMenu.innerHTML = '';
-      menuStructure.forEach(item => {
-        const menuItem = document.createElement('div');
-        menuItem.className = 'menu-item';
-        const button = document.createElement('button');
-        button.innerText = item.name[currentLang];
-        button.onclick = () => navigateTo(item.name[currentLang]);
-        if (item.children) {
-          const submenu = document.createElement('div');
-          submenu.className = 'submenu';
-          item.children.forEach(child => {
-            const childItem = document.createElement('div');
-            childItem.className = 'menu-item';
-            const childButton = document.createElement('button');
-            childButton.innerText = child.name[currentLang];
-            childButton.onclick = () => navigateTo(child.name[currentLang]);
-            if (child.children) {
-              const childSubmenu = document.createElement('div');
-              childSubmenu.className = 'submenu';
-              child.children.forEach(grandchild => {
-                const grandchildItem = document.createElement('div');
-                grandchildItem.className = 'menu-item';
-                const grandchildButton = document.createElement('button');
-                grandchildButton.innerText = grandchild.name[currentLang];
-                grandchildButton.onclick = () => navigateTo(grandchild.name[currentLang]);
-                grandchildItem.appendChild(grandchildButton);
-                childSubmenu.appendChild(grandchildItem);
-              });
-              childItem.appendChild(childSubmenu);
-            }
-            childItem.appendChild(childButton);
-            submenu.appendChild(childItem);
-          });
-          menuItem.appendChild(submenu);
-        }
-        menuItem.appendChild(button);
-        topMenu.appendChild(menuItem);
-      });
     }
 
     function navigateTo(page) {
@@ -1206,16 +1257,15 @@
 
       document.getElementById('chinese-zodiac').textContent = getChineseZodiac();
       document.getElementById('western-zodiac').textContent = getWesternZodiac();
-      document.getElementById('current-date').textContent = `${translations['date-label'][currentLang]}${date} (${fullDate}) ${weekday}`;
-      document.getElementById('week-info').textContent = `${translations['week-info'][currentLang]}${weekNumber} of 52, Day ${diffInDays} of 365`;
+      document.getElementById('week-info').textContent = `${weekNumber} of 52 weeks, ${diffInDays} of 365 days`;
       document.getElementById('current-time').textContent = `${translations['time-label'][currentLang]}${time}`;
+      document.getElementById('current-date').textContent = `${translations['date-label'][currentLang]}${date} (${fullDate}) ${weekday}`;
     }
 
     function switchLanguage() {
       currentLang = currentLang === 'zh' ? 'en' : 'zh';
       updateLanguage();
       renderCategorySections();
-      renderTopMenu();
       updateDateTime();
     }
 
@@ -1226,7 +1276,18 @@
           if (element.id === 'chinese-zodiac' || element.id === 'western-zodiac' || element.id === 'current-date' || element.id === 'week-info' || element.id === 'current-time') {
             return;
           }
-          element.innerText = translations[key][currentLang];
+          // Handle submenu buttons with conditional arrows
+          const isSubmenuItem = element.closest('.submenu');
+          if (isSubmenuItem && element.tagName === 'BUTTON') {
+            const hasNestedSubmenu = element.closest('.menu-item').querySelector('.submenu');
+            if (hasNestedSubmenu) {
+              element.innerHTML = `${translations[key][currentLang]} <span class="arrow">▶</span>`;
+            } else {
+              element.innerHTML = translations[key][currentLang];
+            }
+          } else {
+            element.innerText = translations[key][currentLang];
+          }
         }
       });
 
@@ -1280,12 +1341,19 @@
         const categoryContainer = document.createElement('div');
         categoryContainer.className = 'category-container';
         const langKey = category === 'technology' ? 'cat-tech' : category === 'social' ? 'cat-social' : category === 'lifestyle' ? 'cat-lifestyle' : 'cat-more';
+        const isTargetCategory = ['technology', 'social', 'lifestyle'].includes(category);
+        
         categoryContainer.innerHTML = `
           <h3 data-lang-key="${langKey}">${translations[langKey][currentLang]}</h3>
           <div class="tool-grid">
             ${categoryWebsites.map(website => `
               <div class="tool-container">
-                <h5 class="tool-title"><a href="${website.url}" target="_blank"><img src="${website.logo}" class="tool-logo" alt="${website.name[currentLang]} logo"></a> ${website.name[currentLang]}</h5>
+                <h5 class="tool-title">
+                  <a href="${website.url}" target="_blank">
+                    <img src="${website.logo}" class="tool-logo" alt="${website.name[currentLang]} logo">
+                    ${isTargetCategory ? website.name[currentLang] : ''}
+                  </a>
+                </h5>
                 <p class="tool-desc">${website.purpose[currentLang]}</p>
                 <ul class="tool-features">
                   ${website.features[currentLang].map(feature => `<li>${feature}</li>`).join('')}
@@ -1347,9 +1415,18 @@
       updateDateTime();
       setInterval(updateDateTime, 1000);
       renderCategorySections();
-      renderTopMenu();
       updateLanguage();
     });
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
