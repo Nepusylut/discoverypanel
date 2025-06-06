@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Discovery Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for body and overall layout */
+        * {
+            box-sizing: border-box; /* Changed from 'border' to 'border-box' for correct box model */
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Inter', sans-serif;
+        }
+        body {
+            background: #f0f2f5; /* Light gray background */
+            color: #202124;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            overflow-x: hidden; /* Added to prevent horizontal scrollbar */
+        }
+        body.dark-mode {
+            background: #202124;
+            color: #e8eaed;
+        }
+
+        /* Fixed Header Styles */
+        header {
+            background: #e8eaed;
+            color: #202124;
+            position: fixed; /* Keep header fixed at the top */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 998; /* Ensure it's above other content */
+            border-bottom: 1px solid #dadce0;
+            transition: background 0.3s, border-color 0.3s;
+            padding: 0;
+        }
+        body.dark-mode header {
+            background: #303134;
+            border-bottom: 1px solid #5f6368;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            width: 100%;
+            position: relative; /* Needed for absolute positioning of child elements */
+        }
+
+        /* New container for logo and title to treat them as a single centered unit */
+        .header-brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Space between logo image and title text */
+            /* Position absolutely to center it regardless of other content on desktop */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center; /* Align image vertically within its own container */
+        }
+        /* Styling for the new logo image */
+        .header-logo img {
+            height: 30px; /* Adjust size as needed */
+            width: auto;
+        }
+        /* Header title styling */
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: red; /* Changed to red as requested */
+            -webkit-background-clip: unset; /* Remove webkit clip if not using gradient */
+            background-clip: unset; /* Remove background gradient */
+            background: none; /* Remove background gradient */
+        }
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto; /* Pushes buttons to the far right */
+        }
+        .language-button, .night-mode-button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            border: none;
+            background: #1a73e8;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .language-button:hover, .night-mode-button:hover {
+            background: #185abc;
+        }
+
+        /* Top Menu Styles (part of fixed header) */
+        .top-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a73e8;
+            padding: 0.5rem 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #dadce0;
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%;
+            z-index: 998;
+        }
+        /* Adjusted dark mode background for top menu to make active state visible */
+        body.dark-mode .top-menu {
+            background: #185abc; /* Darker blue for background */
+            border-top: 1px solid #5f6368;
+        }
+        .top-menu .menu-item {
+            position: relative;
+        }
+        .top-menu a, .top-menu .menu-item > button {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            font-size: 1rem;
+            transition: background 0.2s, color 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        body.dark-mode .top-menu a, body.dark-mode .top-menu .menu-item > button {
+            color: #e8eaed;
+        }
+        .top-menu a:hover, .top-menu .menu-item > button:hover {
+            background: #185abc;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+        /* Style for active main menu item link - generic for all active links */
+        .top-menu .menu-item.active > a {
+            background: #185abc; /* Active color remains consistent */
+            color: white; /* Ensure white text for active link */
+            border-radius: 8px;
+        }
+
+        /* Dark mode specific style for active main menu item link - now stands out */
+        body.dark-mode .top-menu .menu-item.active > a {
+            background: #185abc; /* Keep the same blue background */
+            color: white; /* Explicitly set text to white in dark mode */
+        }
+
+        .top-menu .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 200px;
+            width: 300px; /* Fixed width to ensure consistency and fit all words */
+            padding: 0.5rem 0;
+            z-index: 1001; /* Higher z-index for submenus */
+        }
+        body.dark-mode .top-menu .submenu {
+            background: #303134;
+            border: 1px solid #5f6368;
+        }
+        .top-menu .menu-item:hover > .submenu {
+            display: block;
+        }
+        .top-menu .submenu .menu-item > button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #000000; /* Changed to black for contrast on white background */
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        body.dark-mode .top-menu .submenu .menu-item > button {
+            color: #e8eaed;
+        }
+        .top-menu .submenu .menu-item > button:hover {
+            background: #1a73e8;
+            color: white;
+        }
+        /* Style for active submenu item button */
+        .top-menu .submenu .menu-item > button.active {
+            background: #1a73e8; /* Blue color for active submenu button */
+            color: white;
+            border-radius: 8px; /* Apply rounded corners */
+        }
+        .top-menu .submenu .submenu {
+            top: 0;
+            left: 100%;
+            min-width: 200px;
+            width: 300px;
+        }
+        .arrow {
+            margin-left: auto;
+            font-size: 0.8rem;
+        }
+
+        /* Mobile-specific styles */
+        .hamburger-menu {
+            display: none; /* Hidden by default, shown on mobile */
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: #202124; /* Default color */
+            transition: color 0.3s;
+            margin-left: 1rem;
+        }
+
+        body.dark-mode .hamburger-menu {
+            color: #e8eaed; /* Dark mode color */
+        }
+
+        .mobile-side-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px; /* Width of the side menu */
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+            transform: translateX(100%); /* Off-screen by default */
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            padding-top: 60px; /* Space for close button */
+            overflow-y: auto; /* Enable scrolling for long menus */
+        }
+
+        body.dark-mode .mobile-side-menu {
+            background: #303134;
+        }
+
+        .mobile-side-menu.active {
+            transform: translateX(0); /* Slide into view */
+        }
+
+        .mobile-side-menu .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #202124;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        body.dark-mode .mobile-side-menu .close-btn {
+            color: #e8eaed;
+        }
+
+        .mobile-side-menu .menu-item {
+            position: relative; /* For nested submenus */
+        }
+
+        .mobile-side-menu .menu-item > a,
+        .mobile-side-menu .menu-item > button {
+            display: block; /* Make links/buttons take full width */
+            padding: 0.8rem 1.5rem;
+            color: #202124;
+            text-decoration: none;
+            font-size: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s, color 0.2s;
+            background: none;
+            border-left: none; /* Remove border-left for mobile menu buttons */
+            border-right: none; /* Remove border-right for mobile menu buttons */
+            width: 100%; /* Ensure buttons take full width */
+            text-align: left; /* Align text to the left */
+        }
+
+        body.dark-mode .mobile-side-menu .menu-item > a,
+        body.dark-mode .mobile-side-menu .menu-item > button {
+            color: #e8eaed;
+            border-bottom: 1px solid #5f6368;
+        }
+
+        .mobile-side-menu .menu-item > a:hover,
+        body.dark-mode .mobile-side-menu .menu-item > button:hover {
+            background: #4a4e53;
+            color: #8ab4f8;
+        }
+
+        /* Nested submenu styling for mobile */
+        .mobile-side-menu .submenu {
+            display: block; /* Always display submenus in mobile side menu */
+            position: static; /* Remove absolute positioning */
+            background: #f8f9fa; /* Lighter background for nested menus */
+            border: none; /* Remove borders */
+            box-shadow: none; /* Remove shadow */
+            min-width: unset;
+            padding: 0;
+            margin-left: 1rem; /* Indent nested submenus */
+        }
+
+        body.dark-mode .mobile-side-menu .submenu {
+            background: #3c4043;
+        }
+
+        .mobile-side-menu .submenu .menu-item > button {
+            padding-left: 2rem; /* Further indent nested items */
+        }
+
+        .mobile-side-menu .submenu .submenu .menu-item > button {
+            padding-left: 3rem; /* Even further indent for deeper nesting */
+        }
+
+        /* Overlay for when mobile menu is active */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Main Content Area */
+        .main-content-wrapper {
+            /* Adjusted margin-top to clear the fixed header height */
+            margin-top: 100px; /* Sufficient height for fixed header from learning.html */
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1rem;
+        }
+
+        /* Overview Section (not a card) */
+        .overview-section {
+            text-align: center;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+        .overview-section h1 {
+            font-size: 2.5rem; /* text-4xl */
+            font-weight: 800; /* font-extrabold */
+            color: #1f2937; /* gray-900 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        body.dark-mode .overview-section h1 {
+            color: #e8eaed;
+        }
+        .overview-section p {
+            font-size: 1.125rem; /* text-lg */
+            color: #374151; /* gray-700 */
+            max-width: 42rem; /* max-w-2xl */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        body.dark-mode .overview-section p {
+            color: #bdc1c6;
+        }
+
+        /* Section Header Container */
+        .section-header-container {
+            width: 100%;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            background: linear-gradient(to right, #93c5fd, #d8b4fe);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .section-title {
+            color: #333;
+            font-size: 2.25rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Card Styles (Unified Design) */
+        .grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr)); /* Default 4 columns */
+            gap: 1.5rem; /* gap-6 (24px) */
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally within the card */
+            justify-content: flex-start;
+            min-height: 280px; /* Consistent height for all cards */
+            padding: 1.5rem; /* Padding applied directly to card */
+            min-width: 250px; /* Ensure cards don't get too narrow */
+        }
+        body.dark-mode .card {
+            background-color: #303134;
+            color: #e8eaed;
+            border-color: #5f6368;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        .card > a { /* The link inside the card */
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center children horizontally */
+            width: 100%;
+            height: 100%;
+        }
+        .card-header-content { /* Container for icon and title */
+            display: flex;
+            flex-direction: column; /* Stack icon and title vertically */
+            align-items: center; /* Center icon horizontally */
+            width: 100%;
+            margin-bottom: 0.75rem; /* Space below header content */
+            flex-shrink: 0;
+        }
+        /* Style for image icons */
+        .card-icon {
+            width: 40px; /* Larger icon size for better visibility */
+            height: 40px;
+            margin-bottom: 0.5rem; /* Space between icon and title */
+            flex-shrink: 0;
+            border-radius: 5px; /* Slightly rounded for icons */
+            object-fit: contain; /* Ensure image fits without distortion */
+        }
+        /* Fallback for text initials */
+        .card-icon-initial {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+            border-radius: 5px;
+            background-color: #cccccc;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        body.dark-mode .card-icon-initial {
+            background-color: #5f6368;
+            color: #e8eaed;
+        }
+
+        .card-title {
+            font-size: 1rem; /* Slightly smaller font to help fit long names */
+            font-weight: 600;
+            color: #202124;
+            text-align: center; /* Centered as requested */
+            width: 100%;
+            word-wrap: break-word; /* Break long words */
+            white-space: normal; /* Allow text to wrap */
+        }
+        body.dark-mode .card-title {
+            color: #e8eaed;
+        }
+        .card-divider {
+            width: calc(100% + 3rem); /* Extends across full card width including padding */
+            margin-left: -1.5rem; /* Compensate for card's left padding */
+            margin-right: -1.5rem; /* Compensate for card's right padding */
+            border-bottom: 1px solid #e0e0e0;
+            margin-top: 0.75rem;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+        body.dark-mode .card-divider {
+            border-color: #5f6368;
+        }
+        .card-content {
+            text-align: left;
+            width: 100%;
+            flex-grow: 1; /* Allow content to fill remaining space */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-description {
+            font-size: 0.875rem;
+            color: #555;
+            margin-bottom: 0.75rem;
+            flex-grow: 1; /* Allow description to take available space */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit description to 3 lines */
+            -webkit-box-orient: vertical;
+        }
+        body.dark-mode .card-description {
+            color: #bdc1c6;
+        }
+        .card-features {
+            list-style: disc;
+            padding-left: 1.25rem;
+            font-size: 0.875rem;
+            color: #444;
+            margin-top: auto; /* Push features to bottom */
+            flex-shrink: 0;
+        }
+        body.dark-mode .card-features {
+            color: #bdc1c6;
+        }
+        .card-features li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Footer styles */
+        .main-footer {
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+            width: 100%;
+        }
+        body.dark-mode .main-footer {
+            background: #202124;
+            color: #bdc1c6;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 0.75rem;
+            transition: transform 0.2s ease-in-out;
+        }
+        .social-links a:hover {
+            transform: translateY(-3px);
+        }
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        .footer-note {
+            font-size: 0.875rem;
+            color: #555;
+        }
+        body.dark-mode .footer-note {
+            color: #bdc1c6;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .top-menu {
+                gap: 0.5rem; /* Reduce gap for slightly smaller screens */
+                padding: 0.5rem 0.5rem;
+            }
+            .top-menu a, .top-menu .menu-item > button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.9rem;
+            }
+            .header-top {
+                padding: 0.8rem 1rem;
+            }
+            header h1 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns on medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                padding: 0.6rem 1rem;
+                flex-direction: column; /* Stack items vertically */
+                align-items: center; /* Center items horizontally */
+                height: auto; /* Allow header to expand */
+            }
+            /* Reset positioning for mobile */
+            .header-brand-container {
+                position: static; /* Override absolute positioning for mobile */
+                left: auto;
+                transform: none;
+                width: 100%;
+                justify-content: center; /* Center content within it */
+                margin-bottom: 0.5rem; /* Space below brand group */
+                order: -2; /* Place brand group at the top */
+            }
+            .header-logo {
+                /* No specific changes needed here */
+            }
+            header h1 {
+                font-size: 1.2rem;
+            }
+            .header-buttons {
+                width: 100%;
+                justify-content: center; /* Center buttons horizontally */
+                margin-left: 0; /* Reset auto margin from desktop */
+                flex-grow: 0; /* No need to grow on mobile when stacked */
+                margin-top: 0.5rem; /* Space above buttons */
+                order: -1; /* Place buttons after brand group */
+            }
+            .hamburger-menu {
+                display: block;
+                order: 1; /* Keep hamburger last within buttons */
+                margin-left: auto; /* Push to right in its flex context */
+                margin-right: 0; /* Remove specific margin on mobile */
+            }
+            .language-button, .night-mode-button {
+                display: none;
+            }
+            .main-content-wrapper {
+                margin-top: 180px; /* Adjust for taller header on mobile */
+                padding: 0 0.5rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr; /* 1 column on small screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-top {
+                padding: 0.5rem 0.8rem;
+            }
+            header h1 {
+                font-size: 1rem;
+            }
+            .header-logo img {
+                height: 25px;
+            }
+            .main-content-wrapper {
+                margin-top: 250px; /* Further adjust for very tall header on small mobile */
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex flex-col items-center min-h-screen">
+    <!-- Header from 1learning.html -->
+    <header>
+        <div class="header-top">
+            <!-- Removed header-left-spacer for new centering method -->
+            <div class="header-brand-container">
+                <div class="header-logo">
+                    <img src="images/metapanel-t.png" onerror="this.src='https://placehold.co/30x30/cccccc/333333?text=Logo'" alt="Discovery Panel Logo">
+                </div>
+                <div class="header-title">
+                    <h1>Discovery Panel</h1>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <!-- Hamburger menu icon for mobile -->
+                <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
+                <button class="language-button" onclick="switchLanguage()">中文/English</button>
+                <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+            </div>
+        </div>
+        <div class="top-menu" id="top-menu">
+            <div class="menu-item">
+                <a href="index.html" data-lang-key="home">Home</a>
+            </div>
+            <div class="menu-item">
+                <a href="aigc.html" data-lang-key="aigc">AIGC</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="intelligent-dialogue">Intelligent Dialogue</button></div>
+                    <div class="menu-item"><button data-lang-key="art-generation">Art Generation</button></div>
+                    <div class="menu-item"><button data-lang-key="audio-creation">Audio Creation</button></div>
+                    <div class="menu-item"><button data-lang-key="video-creation">Video Creation</button></div>
+                    <div class="menu-item"><button data-lang-key="smart-office">Smart Office</button></div>
+                    <div class="menu-item"><button data-lang-key="creative-design">Creative Design</button></div>
+                    <div class="menu-item"><button data-lang-key="learning-resources">Learning Resources</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="tech.html" data-lang-key="technology">Technology</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="code-hosting-collaboration">Code Hosting & Collaboration</button></div>
+                    <div class="menu-item"><button data-lang-key="cloud-deployment-serverless">Cloud Deployment & Serverless</button></div>
+                    <div class="menu-item"><button data-lang-key="automation-code-integration">Automation & Code Integration</button></div>
+                    <div class="menu-item"><button data-lang-key="ci-cd-tools">CI/CD Tools</button></div>
+                    <div class="menu-item"><button data-lang-key="edge-computing-network-optimization">Edge Computing & Network Optimization</button></div>
+                    <div class="menu-item"><button data-lang-key="containers-cloud-native">Containers & Cloud Native</button></div>
+                    <div class="menu-item"><button data-lang-key="other">Other</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="social.html" data-lang-key="social">Social</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-social">Foreign Social</button></div>
+                    <div class="menu-item"><button data-lang-key="china-social">China Social</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="finance.html" data-lang-key="finance">Finance</a>
+                <div class="submenu">
+                    <div class="menu-item">
+                        <button data-lang-key="foreign-finance-trade">Foreign Finance & Trade <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="finance-trade-sub">Finance & Trade</button></div>
+                            <div class="menu-item"><button data-lang-key="retail-banks">Retail Banks</button></div>
+                            <div class="menu-item"><button data-lang-key="digital-banks">Digital Banks</button></div>
+                            <div class="menu-item"><button data-lang-key="p2p-payments">P2P Payments</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="china-finance-trade">China Finance & Trade</button>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="crypto-trade">Crypto Trade <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="crypto-investment">Crypto Investment</button></div>
+                            <div class="menu-item"><button data-lang-key="blockchains">Blockchains</button></div>
+                            <div class="menu-item"><button data-lang-key="swap">Swap</button></div>
+                            <div class="menu-item"><button data-lang-key="defi">DeFi</button></div>
+                            <div class="menu-item"><button data-lang-key="hot-cold-wallets">Hot & Cold Wallets</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="memes-nfts">Memes & NFTs <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="nft-investment">NFT Investment</button></div>
+                            <div class="menu-item"><button data-lang-key="meme-coins-investment">Meme Coins Investment</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="music.html" data-lang-key="music">Music</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-music">Foreign Music</button></div>
+                    <div class="menu-item"><button data-lang-key="china-music">China Music</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="video.html" data-lang-key="video">Video</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-video">Foreign Video</button></div>
+                    <div class="menu-item"><button data-lang-key="china-video">China Video</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="news.html" data-lang-key="news">News</a>
+                <div class="submenu">
+                    <div class="menu-item">
+                        <button data-lang-key="general-news">General News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-general-news">Foreign General News</button></div>
+                            <div class="menu-item"><button data-lang-key="china-general-news">China General News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="technology-news">Technology News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="technology-products">Technology Products</button></div>
+                            <div class="menu-item"><button data-lang-key="ai-news">AI News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="finance-news">Finance News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="global-official">Global Official</button></div>
+                            <div class="menu-item"><button data-lang-key="crypto">Crypto</button></div>
+                            <div class="menu-item"><button data-lang-key="foreign-finance-news">Foreign Finance News</button></div>
+                            <div class="menu-item"><button data-lang-key="china-finance-news">China Finance News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="travel-news">Travel News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-travel">Foreign Travel</button></div>
+                            <div class="menu-item"><button data-lang-key="china-travel">China Travel</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="foods-news">Foods News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-foods">Foreign Foods</button></div>
+                            <div class="menu-item"><button data-lang-key="china-foods">China Foods</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="learning.html" data-lang-key="learning">Learning</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="creative-skills">Creative Skills</button></div>
+                    <div class="menu-item"><button data-lang-key="professional-skills">Professional Skills</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="lifestyle.html" data-lang-key="lifestyle">Lifestyle</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="lifestyle-home">Home Style</button></div>
+                    <div class="menu-item"><button data-lang-key="wellness">Wellness</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="shops.html" data-lang-key="shopping">Shopping</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="usa-shops">USA Shops</button></div>
+                    <div class="menu-item"><button data-lang-key="china-shops">China Shops</button></div>
+                    <div class="menu-item"><button data-lang-key="europe-shops">Europe Shops</button></div>
+                </div>
+            </div>
+            <!-- Updated 'More' menu item to 'Tools' and 'Resources' -->
+            <div class="menu-item">
+                <a href="tools.html" data-lang-key="tools">Tools</a>
+            </div>
+            <div class="menu-item">
+                <a href="resources.html" data-lang-key="resources">Resources</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Side Menu from 1learning.html -->
+    <div class="mobile-side-menu" id="mobileSideMenu">
+        <button class="close-btn" onclick="toggleMobileMenu()">✖</button>
+        <div class="menu-items-wrapper">
+            <!-- Language and Night Mode buttons for mobile -->
+            <div class="menu-item">
+                <button class="language-button" onclick="switchLanguage()">中文/English</button>
+            </div>
+            <div class="menu-item">
+                <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+            </div>
+            <!-- Existing top menu items will be cloned here by JavaScript -->
+        </div>
+    </div>
+    <!-- Overlay for mobile menu from 1learning.html -->
+    <div class="overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
+    <div class="main-content-wrapper">
+        <!-- Re-added the overview-section as requested, but removed the h1 title -->
+        <section class="overview-section">
+            <p data-lang-key="resources-page-description">
+                Explore a curated selection of online resources offering free information to enhance your knowledge and learning.
+            </p>
+        </section>
+
+        <section class="mb-12" id="resources-section">
+            <div class="section-header-container">
+                <h2 class="section-title" data-lang-key="free-info-section-title">Resources</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="card">
+                    <a href="https://www.ted.com/talks" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="TED Talks Icon">
+                            <p class="card-title" data-lang-key="tedtalks-title">TED Talks</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="tedtalks-desc">A global set of conferences run by the private non-profit organization Sapling Foundation, under the slogan "Ideas Worth Spreading".</p>
+                            <ul class="card-features">
+                                <li data-lang-key="tedtalks-feature1">Inspiring speeches</li>
+                                <li data-lang-key="tedtalks-feature2">Wide range of topics</li>
+                                <li data-lang-key="tedtalks-feature3">Free access to talks</li>
+                                <li data-lang-key="tedtalks-feature4">Global community</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://www.wikihow.com/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="WikiHow Icon">
+                            <p class="card-title" data-lang-key="wikihow-title">WikiHow</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="wikihow-desc">An online wiki-style community-edited encyclopedia of how-to guides.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="wikihow-feature1">Step-by-step guides</li>
+                                <li data-lang-key="wikihow-feature2">Practical advice</li>
+                                <li data-lang-key="wikihow-feature3">Diverse topics</li>
+                                <li data-lang-key="wikihow-feature4">Community contributions</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://www.wikipedia.org/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="Wikipedia Icon">
+                            <p class="card-title" data-lang-key="wikipedia-title">Wikipedia</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="wikipedia-desc">A free, open-source online encyclopedia created and maintained by a community of volunteers worldwide.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="wikipedia-feature1">Millions of articles</li>
+                                <li data-lang-key="wikipedia-feature2">Multilingual content</li>
+                                <li data-lang-key="wikipedia-feature3">Community-edited</li>
+                                <li data-lang-key="wikipedia-feature4">Free knowledge resource</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://www.wiktionary.org/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="Wiktionary Icon">
+                            <p class="card-title" data-lang-key="wiktionary-title">Wiktionary</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="wiktionary-desc">A multilingual, web-based project to create a free content dictionary of terms in all natural languages and a few constructed languages.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="wiktionary-feature1">Multilingual dictionary</li>
+                                <li data-lang-key="wiktionary-feature2">Etymologies & pronunciations</li>
+                                <li data-lang-key="wiktionary-feature3">Thesaurus & translations</li>
+                                <li data-lang-key="wiktionary-feature4">Free and open content</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://wikitravel.org/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="Wikitravel Icon">
+                            <p class="card-title" data-lang-key="wikitravel-title">Wikitravel</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="wikitravel-desc">A free, open-source travel guide written by volunteers, covering destinations worldwide.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="wikitravel-feature1">Travel guides</li>
+                                <li data-lang-key="wikitravel-feature2">Destination information</li>
+                                <li data-lang-key="wikitravel-feature3">Phrasebooks & itineraries</li>
+                                <li data-lang-key="wikitravel-feature4">Community-driven content</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://www.fandom.com/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="Fandom Icon">
+                            <p class="card-title" data-lang-key="fandom-title">Fandom</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="fandom-desc">A wiki hosting service that hosts wikis on a wide variety of topics, primarily entertainment-related.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="fandom-feature1">Fan-made wikis</li>
+                                <li data-lang-key="fandom-feature2">Deep dives into pop culture</li>
+                                <li data-lang-key="fandom-feature3">Movies, games, TV shows</li>
+                                <li data-lang-key="fandom-feature4">Community discussions</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://www.thesprucecrafts.com/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="The Spruce Crafts Icon">
+                            <p class="card-title" data-lang-key="sprucecrafts-title">The Spruce Crafts</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="sprucecrafts-desc">Provides expert advice and inspiration for all types of crafts, from knitting to paper crafts and more.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="sprucecrafts-feature1">Crafting tutorials</li>
+                                <li data-lang-key="sprucecrafts-feature2">DIY project ideas</li>
+                                <li data-lang-key="sprucecrafts-feature3">Material guides</li>
+                                <li data-lang-key="sprucecrafts-feature4">Creative inspiration</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://www.howtogeek.com/" target="_blank" rel="noopener noreferrer">
+                        <div class="card-header-content">
+                            <img class="card-icon" alt="How-To Geek Icon">
+                            <p class="card-title" data-lang-key="howtogeek-title">How-To Geek</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-content">
+                            <p class="card-description" data-lang-key="howtogeek-desc">Offers easy-to-understand articles and guides on technology, software, and various how-to topics.</p>
+                            <ul class="card-features">
+                                <li data-lang-key="howtogeek-feature1">Tech tutorials</li>
+                                <li data-lang-key="howtogeek-feature2">Software guides</li>
+                                <li data-lang-key="howtogeek-feature3">Troubleshooting tips</li>
+                                <li data-lang-key="howtogeek-feature4">Consumer tech reviews</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=YOUR_PAGE_URL" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">
+                    <img src="https://www.google.com/s2/favicons?domain=facebook.com" onerror="this.src='https://placehold.co/32x32/3b5998/ffffff?text=FB'" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://twitter.com/intent/tweet?url=YOUR_PAGE_URL&text=Check%20out%20this%20More%20Platforms%20Overview!" target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter">
+                    <img src="https://www.google.com/s2/favicons?domain=twitter.com" onerror="this.src='https://placehold.co/32x32/1da1f2/ffffff?text=TW'" alt="Twitter" class="social-icon">
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=YOUR_PAGE_URL&title=More%20Platforms%20Overview&summary=Explore%20More%20platforms.&source=YOUR_PAGE_URL" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">
+                    <img src="https://www.google.com/s2/favicons?domain=linkedin.com" onerror="this.src='https://placehold.co/32x32/0077b5/ffffff?text=IN'" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://reddit.com/submit?url=YOUR_PAGE_URL&title=More%20Platforms%20Overview" target="_blank" rel="noopener noreferrer" aria-label="Share on Reddit">
+                    <img src="https://www.google.com/s2/favicons?domain=reddit.com" onerror="this.src='https://placehold.co/32x32/ff4500/ffffff?text=RD'" alt="Reddit" class="social-icon">
+                </a>
+            </div>
+            <p class="footer-note">© 2025 by Discovery Panel. Powered and secured by Discovery Panel. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'en'; // Default language set to English
+        let isNightMode = false;
+
+        // Translations object (merged and updated from 1index.html and more.html)
+        const translations = {
+            home: { en: "Home", zh: "首页" },
+            aigc: { en: "AIGC", zh: "AIGC" },
+            technology: { en: "Technology", zh: "科技" },
+            social: { en: "Social", zh: "社交" },
+            music: { en: "Music", zh: "音乐" },
+            video: { en: "Video", zh: "视频" },
+            finance: { en: "Finance", zh: "金融" },
+            news: { en: "News", zh: "新闻" },
+            learning: { en: "Learning", zh: "学习" },
+            lifestyle: { en: "Lifestyle", zh: "生活方式" },
+            shopping: { en: "Shopping", zh: "购物" },
+            tools: { en: "Tools", zh: "工具" }, /* Added new translation for Tools */
+            resources: { en: "Resources", zh: "资源" }, /* Added new translation for Resources */
+            search: { en: "Search websites...", zh: "搜索网站..." },
+            searchButton: { en: "Search", zh: "搜索" },
+            internal: { en: "Internal Search", zh: "内部搜索" },
+
+            // Submenu items from 1index.html
+            'intelligent-dialogue': { en: "Intelligent Dialogue", zh: "智能对话" },
+            'art-generation': { en: "Art Generation", zh: "绘画生成" },
+            'audio-creation': { en: "Audio Creation", zh: "音频创作" },
+            'video-creation': { en: "Video Creation", zh: "视频创作" },
+            'smart-office': { en: "Smart Office", zh: "智能办公" },
+            'creative-design': { en: "Creative Design", zh: "创意设计" },
+            'learning-resources': { en: "Learning Resources", zh: "学习资讯" },
+            'code-hosting-collaboration': { en: "Code Hosting & Collaboration", zh: "代码托管与协作" },
+            'cloud-deployment-serverless': { en: "Cloud Deployment & Serverless", zh: "云部署与无服务器" },
+            'automation-code-integration': { en: "Automation & Code Integration", zh: "自动化与代码集成" },
+            'ci-cd-tools': { en: "CI/CD Tools", zh: "持续集成与交付工具" },
+            'edge-computing-network-optimization': { en: "Edge Computing & Network Optimization", zh: "边缘计算与网络优化" },
+            'containers-cloud-native': { en: "Containers & Cloud Native", zh: "容器与云原生" },
+            'other': { en: "Other", zh: "其他实用" },
+            'foreign-social': { en: "Foreign Social", zh: "海外社交" },
+            'china-social': { en: "China Social", zh: "国内社交" },
+            'foreign-music': { en: "Foreign Music", zh: "海外音乐" },
+            'china-music': { en: "China Music", zh: "国内音乐" },
+            'china-video': { en: "China Video", zh: "国内视频" },
+            'foreign-video': { en: "Foreign Video", zh: "海外视频" },
+            'foreign-finance-trade': { en: "Foreign Finance & Trade", zh: "海外金融与贸易" },
+            'china-finance-trade': { en: "China Finance & Trade", zh: "国内金融与贸易" },
+            'crypto-trade': { en: "Crypto Trade", zh: "加密交易" },
+            'blockchain': { en: "Blockchain", zh: "区块链" },
+            'wallets': { en: "Wallets", zh: "钱包" },
+            'memes-nfts': { en: "Memes & NFTs", zh: "迷因与NFT" },
+            'nft-investment': { en: "NFT Investment", zh: "NFT投资" },
+            'meme-coins-investment': { en: "Meme Coins Investment", zh: "迷因币投资" },
+            'general-news': { en: "General News", zh: "综合新闻" },
+            'foreign-general-news': { en: "Foreign General News", zh: "海外综合新闻" },
+            'china-general-news': { en: "China General News", zh: "中国综合新闻" },
+            'technology-news': { en: "Technology News", zh: "科技新闻" },
+            'technology-products': { en: "Technology Products", zh: "科技产品" },
+            'ai-news': { en: "AI News", zh: "人工智能新闻" },
+            'finance-news': { en: "Finance News", zh: "金融新闻" },
+            'global-official': { en: "Global Official", zh: "全球官方" },
+            'crypto': { en: "Crypto", zh: "加密货币" },
+            'foreign-finance-news': { en: "Foreign Finance News", zh: "海外金融新闻" },
+            'china-finance-news': { en: "China Financial News", zh: "中国金融新闻" },
+            'travel-news': { en: "Travel News", zh: "旅游新闻" },
+            'foreign-travel': { en: "Foreign Travel", zh: "海外旅游" },
+            'china-travel': { en: "China Travel", zh: "国内旅游" },
+            'foods-news': { en: "Food News", zh: "美食新闻" },
+            'foreign-foods': { en: "Foreign Food", zh: "海外美食" },
+            'china-foods': { en: "China Food", zh: "国内美食" },
+            'lifestyle-home': { en: "Home Style", zh: "家居风格" },
+            'wellness': { en: "Wellness", zh: "健康" },
+            'creative-skills': { en: "Creative Skills", zh: "创意技能" },
+            'professional-skills': { en: "Professional Skills", zh: "专业技能" },
+            'usa-shops': { en: "USA Shops", zh: "美国商店" },
+            'china-shops': { en: "China Shops", zh: "中国商店" },
+            'europe-shops': { en: "Europe Shops", zh: "欧洲商店" },
+            'finance-trade-sub': { en: "Finance & Trade", zh: "金融与贸易" }, /* New translation for sub-level */
+            'retail-banks': { en: "Retail Banks", zh: "零售银行" },
+            'digital-banks': { en: "Digital Banks", zh: "数字银行" },
+            'p2p-payments': { en: "P2p Payments", zh: "点对点支付" },
+            'crypto-investment': { en: "Crypto Investment", zh: "加密投资" },
+            'blockchains': { en: "Blockchains", zh: "区块链" },
+            'swap': { en: "Swap", zh: "兑换" },
+            'defi': { en: "DeFi", zh: "DeFi" },
+            'hot-cold-wallets': { en: "Hot & Cold Wallets", zh: "冷热钱包" },
+
+            // Resources Page Specific Translations (from original more.html) - UPDATED
+            'resources-page-title': { en: "Resources", zh: "资源" },
+            'resources-page-description': { en: "Explore a curated selection of online resources offering free information to enhance your knowledge and learning.", zh: "探索精选的在线资源，提供免费信息以提升您的知识和学习。" },
+            'free-info-section-title': { en: "Resources", zh: "资源" }, /* Changed '资讯' back to '资源' for consistency */
+
+            // Webcard Translations (Added Chinese translations)
+            'tedtalks-title': { en: "TED Talks", zh: "TED演讲" },
+            'tedtalks-desc': { en: "A global set of conferences run by the private non-profit organization Sapling Foundation, under the slogan \"Ideas Worth Spreading\".", zh: "由私人非营利组织Sapling Foundation运营的全球系列会议，口号是“值得传播的思想”。" },
+            'tedtalks-feature1': { en: "Inspiring speeches", zh: "鼓舞人心的演讲" },
+            'tedtalks-feature2': { en: "Wide range of topics", zh: "广泛的主题" },
+            'tedtalks-feature3': { en: "Free access to talks", zh: "免费观看演讲" },
+            'tedtalks-feature4': { en: "Global community", zh: "全球社区" },
+
+            'wikihow-title': { en: "WikiHow", zh: "维基百科" },
+            'wikihow-desc': { en: "An online wiki-style community-edited encyclopedia of how-to guides.", zh: "一个在线维基风格的社区编辑的实用指南百科全书。" },
+            'wikihow-feature1': { en: "Step-by-step guides", zh: "分步指南" },
+            'wikihow-feature2': { en: "Practical advice", zh: "实用建议" },
+            'wikihow-feature3': { en: "Diverse topics", zh: "主题多样" },
+            'wikihow-feature4': { en: "Community contributions", zh: "社区贡献" },
+
+            'wikipedia-title': { en: "Wikipedia", zh: "维基百科" },
+            'wikipedia-desc': { en: "A free, open-source online encyclopedia created and maintained by a community of volunteers worldwide.", zh: "一个由全球志愿者社区创建和维护的免费、开源在线百科全书。" },
+            'wikipedia-feature1': { en: "Millions of articles", zh: "数百万篇文章" },
+            'wikipedia-feature2': { en: "Multilingual content", zh: "多语言内容" },
+            'wikipedia-feature3': { en: "Community-edited", zh: "社区编辑" },
+            'wikipedia-feature4': { en: "Free knowledge resource", zh: "免费知识资源" },
+
+            'wiktionary-title': { en: "Wiktionary", zh: "维基词典" },
+            'wiktionary-desc': { en: "A multilingual, web-based project to create a free content dictionary of terms in all natural languages and a few constructed languages.", zh: "一个多语言、基于网络的项目，旨在创建所有自然语言和少数人造语言的免费内容词典。" },
+            'wiktionary-feature1': { en: "Multilingual dictionary", zh: "多语言词典" },
+            'wiktionary-feature2': { en: "Etymologies & pronunciations", zh: "词源和发音" },
+            'wiktionary-feature3': { en: "Thesaurus & translations", zh: "同义词库和翻译" },
+            'wiktionary-feature4': { en: "Free and open content", zh: "免费开放内容" },
+
+            'wikitravel-title': { en: "Wikitravel", zh: "维基导游" },
+            'wikitravel-desc': { en: "A free, open-source travel guide written by volunteers, covering destinations worldwide.", zh: "一本由志愿者编写的免费、开源旅行指南，涵盖全球目的地。" },
+            'wikitravel-feature1': { en: "Travel guides", zh: "旅行指南" },
+            'wikitravel-feature2': { en: "Destination information", zh: "目的地信息" },
+            'wikitravel-feature3': { en: "Phrasebooks & itineraries", zh: "常用语手册和行程" },
+            'wikitravel-feature4': { en: "Community-driven content", zh: "社区驱动内容" },
+
+            'fandom-title': { en: "Fandom", zh: "Fandom百科" },
+            'fandom-desc': { en: "A wiki hosting service that hosts wikis on a wide variety of topics, primarily entertainment-related.", zh: "一个维基托管服务，主要托管各种娱乐相关主题的维基。" },
+            'fandom-feature1': { en: "Fan-made wikis", zh: "粉丝制作的维基" },
+            'fandom-feature2': { en: "Deep dives into pop culture", zh: "深入流行文化" },
+            'fandom-feature3': { en: "Movies, games, TV shows", zh: "电影、游戏、电视节目" },
+            'fandom-feature4': { en: "Community discussions", zh: "社区讨论" },
+
+            'sprucecrafts-title': { en: "The Spruce Crafts", zh: "云杉手工" },
+            'sprucecrafts-desc': { en: "Provides expert advice and inspiration for all types of crafts, from knitting to paper crafts and more.", zh: "为各种手工艺品提供专家建议和灵感，从编织到纸艺等等。" },
+            'sprucecrafts-feature1': { en: "Crafting tutorials", zh: "手工艺教程" },
+            'sprucecrafts-feature2': { en: "DIY project ideas", zh: "DIY项目创意" },
+            'sprucecrafts-feature3': { en: "Material guides", zh: "材料指南" },
+            'sprucecrafts-feature4': { en: "Creative inspiration", zh: "创意灵感" },
+
+            'howtogeek-title': { en: "How-To Geek", zh: "How-To Geek" },
+            'howtogeek-desc': { en: "Offers easy-to-understand articles and guides on technology, software, and various how-to topics.", zh: "提供易于理解的技术、软件和各种操作指南文章。" },
+            'howtogeek-feature1': { en: "Tech tutorials", zh: "科技教程" },
+            'howtogeek-feature2': { en: "Software guides", zh: "软件指南" },
+            'howtogeek-feature3': { en: "Troubleshooting tips", zh: "故障排除技巧" },
+            'howtogeek-feature4': { en: "Consumer tech reviews", zh: "消费科技评论" },
+        };
+
+        // Function to extract domain from URL for Clearbit Logo API
+        function getDomainFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                let hostname = urlObj.hostname;
+                hostname = hostname.replace(/^www\./, '');
+                return hostname;
+            } catch (e) {
+                console.error(`Invalid URL: ${url}`);
+                return '';
+            }
+        }
+
+        // Function to set logos dynamically from Clearbit or fallback to initial letter
+        function setWebcardLogos() {
+            document.querySelectorAll('.card > a').forEach(link => {
+                const url = link.href;
+                const domain = getDomainFromUrl(url);
+                const logoImg = link.querySelector('.card-icon');
+                const cardTitleElement = link.querySelector('.card-title');
+                const cardTitle = cardTitleElement ? cardTitleElement.innerText.trim() : '';
+                // Get initial letter (supports both English and Chinese characters) or 'N' as fallback
+                const initialLetter = cardTitle ? cardTitle.charAt(0).toUpperCase() : 'N';
+
+                if (logoImg) { // Ensure logoImg exists before trying to set its properties
+                    if (domain) {
+                        const logoUrl = `https://logo.clearbit.com/${domain}`;
+                        logoImg.src = logoUrl;
+                        logoImg.onerror = () => {
+                            // Fallback to initial letter if Clearbit fails
+                            logoImg.src = `https://placehold.co/40x40/cccccc/333333?text=${initialLetter}`;
+                            logoImg.classList.add('card-icon-initial'); // Add class for styling initial letter
+                            logoImg.classList.remove('card-icon'); // Remove default image styling
+                        };
+                        logoImg.classList.remove('card-icon-initial'); // Remove fallback styling if it was applied
+                        logoImg.classList.add('card-icon'); // Add default image styling
+                    } else {
+                        // Fallback to initial letter for invalid URLs
+                        logoImg.src = `https://placehold.co/40x40/cccccc/333333?text=${initialLetter}`;
+                        logoImg.classList.add('card-icon-initial'); // Add class for styling initial letter
+                        logoImg.classList.remove('card-icon'); // Remove default image styling
+                    }
+                }
+            });
+        }
+
+        // Function to apply translations
+        function applyTranslations() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[key] && translations[key][currentLang]) {
+                    if (element.tagName === 'INPUT' && element.hasAttribute('data-lang-placeholder')) {
+                        element.placeholder = translations[key][currentLang];
+                    } else {
+                        // Handle submenu buttons with conditional arrows
+                        const isSubmenuItem = element.closest('.submenu');
+                        if (isSubmenuItem && element.tagName === 'BUTTON') {
+                            const hasNestedSubmenu = element.closest('.menu-item').querySelector('.submenu');
+                            if (hasNestedSubmenu) {
+                                element.innerHTML = `${translations[key][currentLang]} <span class="arrow">▶</span>`;
+                            } else {
+                                element.innerHTML = translations[key][currentLang];
+                            }
+                        } else {
+                            element.innerText = translations[key][currentLang];
+                        }
+                    }
+                }
+            });
+            // Re-apply logos after translations, in case titles change and affect initial letter fallback
+            setWebcardLogos();
+
+            // Update language for both desktop and mobile language buttons
+            document.querySelectorAll('.language-button').forEach(button => {
+                if (button) {
+                    button.innerText = currentLang === 'en' ? '中文/English' : 'English/中文';
+                }
+            });
+        }
+
+        // Function to switch language
+        function switchLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            applyTranslations();
+        }
+
+        // Function to toggle night mode
+        function toggleNightMode() {
+            isNightMode = !isNightMode;
+            document.body.classList.toggle('dark-mode');
+            // Update button text for both desktop and mobile buttons
+            document.querySelectorAll('.night-mode-button').forEach(button => {
+                if (button) {
+                    button.innerText = isNightMode ? 'Light Mode' : 'Dark Mode';
+                }
+            });
+        }
+
+        // Function to scroll to a specific section and highlight the button (not used on this page, but kept for consistency)
+        function scrollToSection(id, button) {
+            const element = document.getElementById(id);
+            if (element) {
+                // Remove active class from all main navigation buttons
+                document.querySelectorAll('.main-nav-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Add active class to the clicked button
+                button.classList.add('active');
+
+                // Calculate scroll position to account for fixed header
+                const headerOffset = document.querySelector('header').offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerOffset - 20; // Added extra 20px padding
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        // Function to toggle mobile side menu
+        function toggleMobileMenu() {
+            const mobileSideMenu = document.getElementById('mobileSideMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            mobileSideMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = mobileSideMenu.classList.contains('active') ? 'hidden' : ''; // Prevent scrolling when menu is open
+        }
+
+        // Function to clone and populate mobile menu
+        function populateMobileMenu() {
+            const topMenu = document.getElementById('top-menu');
+            const mobileSideMenuWrapper = document.querySelector('#mobileSideMenu .menu-items-wrapper');
+
+            // Clear existing cloned items (except language/night mode buttons, which are already in HTML)
+            // Assuming the first two children are the static language/night mode buttons
+            Array.from(mobileSideMenuWrapper.children).forEach((child, index) => {
+                if (index >= 2) {
+                    child.remove();
+                }
+            });
+
+            // Clone menu items from desktop menu
+            const menuItemsToClone = topMenu.querySelectorAll('.menu-item');
+            menuItemsToClone.forEach(item => {
+                const clonedItem = item.cloneNode(true); // Deep clone to get submenus
+                // If it's a top-level link that also has a submenu, ensure submenu is always visible in mobile
+                const submenuElement = clonedItem.querySelector('.submenu');
+                if (submenuElement && clonedItem.querySelector('a')) {
+                    submenuElement.style.display = 'block';
+                    submenuElement.style.position = 'static';
+                    submenuElement.style.boxShadow = 'none';
+                    submenuElement.style.border = 'none';
+                    submenuElement.style.padding = '0';
+                }
+                mobileSideMenuWrapper.appendChild(clonedItem);
+            });
+        }
+
+        // Initial setup on page load
+        window.onload = () => {
+            setWebcardLogos(); // Set the logos initially
+            applyTranslations(); // Apply initial translations (this also calls setWebcardLogos)
+            populateMobileMenu(); // Populate the mobile side menu
+
+            // Handle active state for top menu main items (links)
+            document.querySelectorAll('.top-menu > .menu-item > a').forEach(link => {
+                link.addEventListener('click', function() {
+                    // Remove active from all main menu items
+                    document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Add active to the parent menu-item of the clicked link
+                    this.closest('.menu-item').classList.add('active');
+
+                    // Also clear any active state from submenu items when a main menu item is clicked
+                    document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(subButton => {
+                        subButton.classList.remove('active');
+                    });
+                });
+            });
+
+            // Handle active state for top menu submenu items
+            document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active from all submenu items
+                    document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(subButton => {
+                        subButton.classList.remove('active');
+                    });
+                    // Add active to the clicked submenu button
+                    this.classList.add('active');
+
+                    // Ensure the parent main menu item is also active
+                    const parentMenuItem = this.closest('.top-menu > .menu-item');
+                    if (parentMenuItem) {
+                        document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        parentMenuItem.classList.add('active');
+                    }
+                });
+            });
+
+            // Set 'Resources' as active in the top menu on load for this page
+            const resourcesMenuItem = document.querySelector('.top-menu .menu-item a[data-lang-key="resources"]');
+            if (resourcesMenuItem) {
+                document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                resourcesMenuItem.closest('.menu-item').classList.add('active');
+            }
+
+            // Ensure no main-nav-button is active on initial load (resources.html does not have these, but keeping the check for robustness)
+            document.querySelectorAll('.main-nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        };
+    </script>
+</body>
+</html>
