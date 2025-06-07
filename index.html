@@ -552,8 +552,8 @@
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Ensures 4 cards per row on larger screens */
       gap: 1.5rem; /* Increased gap for better spacing */
       margin: 1rem auto;
-      width: calc(100% - 4rem); /* Match padding of gemini section */
-      max-width: 1150px; /* Aligned with gemini-assistant-section and card-grid */
+      width: calc(100% - 4rem); /* Match padding of chatgpt section */
+      max-width: 1150px; /* Aligned with chatgpt-assistant-section and card-grid */
     }
     /* Highlight and tool container styling */
     .highlight-container, .tool-container {
@@ -686,8 +686,8 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Ensures 4 cards per row on larger screens */
       gap: 1.5rem; /* Increased gap for better spacing */
-      width: calc(100% - 4rem); /* Match padding of gemini section */
-      max-width: 1150px; /* Aligned with gemini-assistant-section and highlight-grid */
+      width: calc(100% - 4rem); /* Match padding of chatgpt section */
+      max-width: 1150px; /* Aligned with chatgpt-assistant-section and highlight-grid */
       margin: 1rem auto;
     }
     /* Card styling */
@@ -830,8 +830,8 @@
       border: none;
     }
 
-    /* Styling for Gemini Assistant Section */
-    .gemini-assistant-section {
+    /* Styling for ChatGPT Assistant Section */
+    .chatgpt-assistant-section {
       text-align: center;
       padding: 2rem;
       background: #f5fcf5; /* Updated background color */
@@ -843,12 +843,12 @@
       transition: background 0.3s, color 0.3s;
     }
 
-    body.dark-mode .gemini-assistant-section {
+    body.dark-mode .chatgpt-assistant-section {
       background: #282a2e;
       color: #e8eaed;
     }
 
-    .gemini-assistant-section h3 {
+    .chatgpt-assistant-section h3 {
       font-size: 1.6rem;
       font-weight: 600;
       margin-bottom: 0.5rem; /* Adjusted margin for description */
@@ -856,33 +856,33 @@
       transition: color 0.3s;
     }
 
-    body.dark-mode .gemini-assistant-section h3 {
+    body.dark-mode .chatgpt-assistant-section h3 {
       color: #8ab4f8;
     }
 
-    .gemini-assistant-section .description {
+    .chatgpt-assistant-section .description {
       font-size: 0.95rem;
       color: #5f6368;
       margin-bottom: 0.5rem; /* Reduced margin to fit tips */
       transition: color 0.3s;
     }
 
-    body.dark-mode .gemini-assistant-section .description {
+    body.dark-mode .chatgpt-assistant-section .description {
       color: #bdc1c6;
     }
 
-    .gemini-assistant-section .tips {
+    .chatgpt-assistant-section .tips {
       font-size: 0.85rem;
       color: #70757a; /* Slightly darker grey for tips */
       margin-bottom: 1.5rem; /* Space between tips and textarea */
       transition: color 0.3s;
     }
 
-    body.dark-mode .gemini-assistant-section .tips {
+    body.dark-mode .chatgpt-assistant-section .tips {
       color: #aab0b6; /* Slightly lighter for dark mode tips */
     }
 
-    .gemini-assistant-section textarea {
+    .chatgpt-assistant-section textarea {
       width: 100%;
       padding: 1rem;
       font-size: 1rem;
@@ -896,18 +896,18 @@
       transition: border-color 0.2s, background 0.3s, color 0.3s;
     }
 
-    body.dark-mode .gemini-assistant-section textarea {
+    body.dark-mode .chatgpt-assistant-section textarea {
       background: #3c4043;
       color: #e8eaed;
       border-color: #5f6368;
     }
 
-    .gemini-assistant-section textarea:focus {
+    .chatgpt-assistant-section textarea:focus {
       border-color: #1a73e8;
       outline: none;
     }
 
-    .gemini-assistant-section button {
+    .chatgpt-assistant-section button {
       padding: 0.8rem 1.5rem;
       font-size: 1.1rem;
       border-radius: 8px;
@@ -923,17 +923,17 @@
       margin: 0 auto 1.5rem auto; /* Center the button */
     }
 
-    .gemini-assistant-section button:hover {
+    .chatgpt-assistant-section button:hover {
       background: #185abc;
       transform: translateY(-2px);
     }
 
-    .gemini-assistant-section button:disabled {
+    .chatgpt-assistant-section button:disabled {
       background: #aab0b6;
       cursor: not-allowed;
     }
 
-    .gemini-response {
+    .chatgpt-response {
       margin-top: 1.5rem;
       padding: 1rem;
       background: #ffffff; /* Changed to white */
@@ -948,13 +948,13 @@
       transition: background 0.3s, color 0.3s, border-color 0.3s;
     }
 
-    body.dark-mode .gemini-response {
+    body.dark-mode .chatgpt-response {
       background: #303134; /* Adjusted for dark mode consistency */
       color: #e8eaed;
       border-color: #5f6368;
     }
 
-    .gemini-loading {
+    .chatgpt-loading {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -1182,8 +1182,8 @@
       header h1 {
         font-size: 1.3rem;
       }
-      /* Adjust Gemini section and grids for smaller desktops */
-      .gemini-assistant-section,
+      /* Adjust ChatGPT section and grids for smaller desktops */
+      .chatgpt-assistant-section,
       .card-grid,
       .highlight-grid,
       .donation-section { /* Added donation-section to media query */
@@ -1299,28 +1299,28 @@
         margin-right: 0.5rem;
       }
 
-      .gemini-assistant-section,
+      .chatgpt-assistant-section,
       .donation-section { /* Added donation-section to media query */
         padding: 1.5rem;
         margin: 1.5rem auto;
         width: calc(100% - 2rem);
         max-width: 90%; /* Adjust for mobile, perhaps 2 card widths */
       }
-      .gemini-assistant-section h3, .donation-section h3 { /* Added donation-section h3 */
+      .chatgpt-assistant-section h3, .donation-section h3 { /* Added donation-section h3 */
         font-size: 1.4rem;
       }
-      .gemini-assistant-section .description, .donation-section .description { /* Added donation-section description */
+      .chatgpt-assistant-section .description, .donation-section .description { /* Added donation-section description */
         font-size: 0.9rem;
       }
-      .gemini-assistant-section textarea {
+      .chatgpt-assistant-section textarea {
         font-size: 0.9rem;
         min-height: 80px;
       }
-      .gemini-assistant-section button {
+      .chatgpt-assistant-section button {
         font-size: 1rem;
         padding: 0.6rem 1.2rem;
       }
-      .gemini-response {
+      .chatgpt-response {
         font-size: 0.85rem;
       }
 
@@ -1365,8 +1365,8 @@
         grid-template-columns: 1fr; /* Single column on very small screens */
         gap: 0.6rem;
       }
-      /* Adjust Gemini section for very small mobile */
-      .gemini-assistant-section,
+      /* Adjust ChatGPT section for very small mobile */
+      .chatgpt-assistant-section,
       .donation-section { /* Added donation-section to media query */
         max-width: 95%; /* Full width on smallest screens */
       }
@@ -1437,7 +1437,7 @@
               <div class="menu-item"><button data-lang-key="finance-trade-sub">Finance & Trade</button></div>
               <div class="menu-item"><button data-lang-key="retail-banks">Retail Banks</button></div>
               <div class="menu-item"><button data-lang-key="digital-banks">Digital Banks</button></div>
-              <div class="menu-item"><button data-lang-key="p2p-payments">P2P Payments</button></div>
+              <div class="menu-item"><button data-lang-key="p2p-payments">P2p Payments</button></div>
             </div>
           </div>
           <div class="menu-item">
@@ -1652,16 +1652,16 @@
     <a href="YOUR_PAYPAL_ME_LINK" target="_blank" class="paypal-button" data-lang-key="paypal-button-text"></a>
   </div>
 
-  <div class="gemini-assistant-section">
-    <h3 data-lang-key="gemini-assistant-title"></h3>
-    <p class="description" data-lang-key="gemini-assistant-description"></p>
-    <p class="tips" data-lang-key="gemini-tips"></p>
-    <textarea id="geminiPrompt" data-lang-placeholder="gemini-prompt-placeholder" rows="4"></textarea>
-    <button id="askGeminiButton" data-lang-key="ask-gemini-button"></button>
-    <div id="geminiLoading" class="gemini-loading" style="display: none;">
+  <div class="chatgpt-assistant-section">
+    <h3 data-lang-key="chatgpt-assistant-title"></h3>
+    <p class="description" data-lang-key="chatgpt-assistant-description"></p>
+    <p class="tips" data-lang-key="chatgpt-tips"></p>
+    <textarea id="chatgptPrompt" data-lang-placeholder="chatgpt-prompt-placeholder" rows="4"></textarea>
+    <button id="askChatGptButton" data-lang-key="ask-chatgpt-button"></button>
+    <div id="chatgptLoading" class="chatgpt-loading" style="display: none;">
       <div class="spinner"></div>
     </div>
-    <div id="geminiResponse" class="gemini-response"></div>
+    <div id="chatgptResponse" class="chatgpt-response"></div>
   </div>
 
   <footer class="main-footer">
@@ -1967,7 +1967,18 @@
       'blockchains': { en: "Blockchains", zh: "区块链" },
       'swap': { en: "Swap", zh: "兑换" },
       'defi': { en: "DeFi", zh: "DeFi" },
-      'hot-cold-wallets': { en: "Hot & Cold Wallets", zh: "冷热钱包" }
+      'hot-cold-wallets': { en: "Hot & Cold Wallets", zh: "冷热钱包" },
+      // Updated translations for ChatGPT feature
+      'chatgpt-assistant-title': { en: "AI Assistant", zh: "AI 助手" },
+      'chatgpt-assistant-description': { en: "Ask AI Assistant any question and get intelligent responses.", zh: "向 AI Assistant 提出任何问题，获取智能回复。" },
+      'chatgpt-tips': { en: "Double check the information accuracy.", zh: "请仔细检查信息的准确性。" },
+      'chatgpt-prompt-placeholder': { en: "Type your question here... / 在此输入您的问题...", zh: "在此输入您的问题..." },
+      'ask-chatgpt-button': { en: "Ask AI Assistant", zh: "问 AI Assistant" },  
+      'chatgpt-error': { en: "Error: Could not get a response from AI. Please try again.", zh: "错误：无法从AI获取响应。请重试。" },  
+      // New translations for donation feature
+      'donation-title': { en: "Support Discovery Panel", zh: "支持探索面板" }, // Updated to "Support Discovery Panel"
+      'donation-description': { en: "If you find this website helpful, consider buying me a drink to support its continuous development and improvement. Your generosity keeps the lights on!", zh: "如果您觉得这个网页很有用，请考虑给我买一杯饮料，支持它的持续开发和改进。您的慷慨让它保持运转！" },
+      'paypal-button-text': { en: "Buy me a drink ☕", zh: "给我买杯饮料 ☕" }
     };
 
     // Array of image paths for the carousel
@@ -2116,7 +2127,11 @@
       });
 
       const searchInput = document.getElementById('searchInput');
-      searchInput.placeholder = translations.search[currentLang];
+      // Special handling for placeholder as it's an attribute
+      const placeholderKey = searchInput.getAttribute('data-lang-placeholder');
+      if (placeholderKey && translations[placeholderKey]) {
+        searchInput.placeholder = translations[placeholderKey][currentLang];
+      }
 
       const searchButton = document.querySelector('.search-bar button');
       searchButton.innerText = translations.searchButton[currentLang];
@@ -2159,11 +2174,11 @@
       // Define category data with icons and descriptions
       const categoriesData = [
         { key: 'cat-aigc', emoji: '🧠', link: 'aigctools.html' },
-        { key: 'cat-tech', emoji: '💻', link: 'tech.html' }, /* Updated technology icon */
+        { key: 'cat-tech', emoji: '💻', link: 'tech.html' },
         { key: 'cat-social', emoji: '🌐', link: 'social.html' },
-        { key: 'cat-finance', emoji: ' ', link: 'finance.html' }, /* Moved finance next to social */
-        { key: 'cat-music', emoji: '🎵', link: 'music.html' },
-        { key: 'cat-video', emoji: '🎥', link: 'video.html' }, /* Added video icon */
+        { key: 'cat-finance', emoji: '💰', link: 'finance.html' },
+        { key: 'cat-music', emoji: ' ', link: 'music.html' },
+        { key: 'cat-video', emoji: '🎥', link: 'video.html' },
         { key: 'cat-news', emoji: '📰', link: 'news.html' },
         { key: 'learning', emoji: '📘', link: 'learning.html' },
         { key: 'cat-lifestyle', emoji: '🛍️', link: 'lifestyle.html' },
@@ -2302,26 +2317,29 @@
       }
     }
 
-    // Function to call OpenRouter AI LLM API
-    async function askGemini() {
-      const prompt = document.getElementById('geminiPrompt').value.trim();
-      const geminiResponseDiv = document.getElementById('geminiResponse');
-      const geminiLoadingDiv = document.getElementById('geminiLoading');
-      const askGeminiButton = document.getElementById('askGeminiButton');
+    // Function to call OpenRouter AI LLM API (renamed from askGemini to askChatGpt)
+    async function askChatGpt() {
+      const prompt = document.getElementById('chatgptPrompt').value.trim();
+      const chatgptResponseDiv = document.getElementById('chatgptResponse');
+      const chatgptLoadingDiv = document.getElementById('chatgptLoading');
+      const askChatGptButton = document.getElementById('askChatGptButton');
 
       if (!prompt) {
-        geminiResponseDiv.style.display = 'block';
-        geminiResponseDiv.textContent = currentLang === 'en' ? "Please enter a question." : "请输入一个问题。";
+        chatgptResponseDiv.style.display = 'block';
+        chatgptResponseDiv.textContent = currentLang === 'en' ? "Please enter a question." : "请输入一个问题。";
         return;
       }
 
-      geminiResponseDiv.style.display = 'none';
-      geminiLoadingDiv.style.display = 'flex';
-      askGeminiButton.disabled = true;
+      chatgptResponseDiv.style.display = 'none';
+      chatgptLoadingDiv.style.display = 'flex';
+      askChatGptButton.disabled = true;
 
       try {
-        // OpenRouter API key provided by the user
-        const apiKey = "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";
+        // IMPORTANT: You are getting "401 Unauthorized" because you need to
+        // replace 'YOUR_OPENROUTER_API_KEY' with your actual, valid API key from OpenRouter.
+        // Go to https://openrouter.ai/ and generate your API key if you haven't already.
+        // Ensure your key has the necessary permissions.
+        const apiKey = "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"; 
         const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
         const model = "openai/gpt-3.5-turbo"; // Using a common OpenRouter model
 
@@ -2346,23 +2364,31 @@
           body: JSON.stringify(payload)
         });
 
+        // Check if the HTTP response was successful (status code 2xx)
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`LLM API error: Status ${response.status} - ${response.statusText}`, errorData);
+          chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang] + ` (Status: ${response.status})`;
+          return; // Exit the function if the response was not OK
+        }
+
         const result = await response.json();
 
         if (result.choices && result.choices.length > 0 &&
             result.choices[0].message && result.choices[0].message.content) {
           const text = result.choices[0].message.content;
-          geminiResponseDiv.textContent = text;
+          chatgptResponseDiv.textContent = text;
         } else {
-          geminiResponseDiv.textContent = translations['gemini-error'][currentLang];
+          chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang];
           console.error("LLM API response structure unexpected:", result);
         }
       } catch (error) {
         console.error("Error calling LLM API:", error);
-        geminiResponseDiv.textContent = translations['gemini-error'][currentLang];
+        chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang];
       } finally {
-        geminiLoadingDiv.style.display = 'none';
-        geminiResponseDiv.style.display = 'block';
-        askGeminiButton.disabled = false;
+        chatgptLoadingDiv.style.display = 'none';
+        chatgptResponseDiv.style.display = 'block';
+        askChatGptButton.disabled = false;
       }
     }
 
@@ -2438,20 +2464,8 @@
       renderCategorySections(); // Render initial category sections
       populateMobileMenu(); // Populate the mobile side menu
       updateLanguage(); // Update language for all elements
-      document.getElementById('askGeminiButton').addEventListener('click', askGemini); // Add event listener for Gemini button
+      document.getElementById('askChatGptButton').addEventListener('click', askChatGpt); // Add event listener for ChatGpt button
     });
-
-    // Add new translations for Gemini feature
-    translations['gemini-assistant-title'] = { en: "AI Chat Assistant", zh: "AI 聊天助手" };
-    translations['gemini-assistant-description'] = { en: "Ask ChatGPT 3.5 any question and get intelligent responses.", zh: "向 ChatGPT 3.5 提出任何问题，获取智能回复。" };
-    translations['gemini-tips'] = { en: "Double check the information accuracy.", zh: "请仔细检查信息的准确性。" };
-    translations['gemini-prompt-placeholder'] = { en: "Type your question here...", zh: "在此输入您的问题..." };
-    translations['ask-gemini-button'] = { en: "Ask ChatGPT", zh: "问 ChatGPT" };  
-    translations['gemini-error'] = { en: "Error: Could not get a response from AI. Please try again.", zh: "错误：无法从AI获取响应。请重试。" };  
-    // New translations for donation feature
-    translations['donation-title'] = { en: "Support Discovery Panel", zh: "支持探索面板" }; // Updated to "Support Discovery Panel"
-    translations['donation-description'] = { en: "If you find this website helpful, consider buying me a drink to support its continuous development and improvement. Your generosity keeps the lights on!", zh: "如果您觉得这个网页很有用，请考虑给我买一杯饮料，支持它的持续开发和改进。您的慷慨让它保持运转！" };
-    translations['paypal-button-text'] = { en: "Buy me a drink ☕", zh: "给我买杯饮料 ☕" };
   </script>
 </body>
 </html>
