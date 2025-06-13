@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifestyle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Social Icons and other general icons like arrows -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Base styles for body and overall layout */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Inter', sans-serif;
+        }
+        body {
+            background: #f0f2f5; /* Light gray background */
+            color: #000000; /* Changed to black for light mode */
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            overflow-x: hidden; /* Added to prevent horizontal scrollbar */
+            padding: 0; /* Removed padding from body to allow main content to span full width */
+        }
+        body.dark-mode {
+            background: #202124;
+            color: #ffffff; /* Changed to white for general dark mode text */
+        }
+
+        /* Fixed Header Styles */
+        header {
+            background: #e8eaed;
+            color: #202124;
+            position: fixed; /* Keep header fixed at the top */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 998; /* Ensure it's above other content */
+            border-bottom: 1px solid #dadce0;
+            transition: background 0.3s, border-color 0.3s;
+            padding: 0;
+        }
+        body.dark-mode header {
+            background: #303134;
+            border-bottom: 1px solid #5f6368;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            width: 100%;
+            position: relative; /* Needed for absolute positioning of child elements */
+        }
+        
+        /* New container for logo and title to treat them as a single centered unit */
+        .header-brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Space between logo image and title text */
+            /* Position absolutely to center it regardless of other content on desktop */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center; /* Align image vertically within its own container */
+        }
+        /* Styling for the new logo image */
+        .header-logo img {
+            height: 30px; /* Adjust size as needed */
+            width: auto;
+        }
+        /* Header title styling */
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: red; /* Changed to red as requested */
+            -webkit-background-clip: unset; /* Remove webkit clip if not using gradient */
+            background-clip: unset; /* Remove background gradient */
+            background: none; /* Remove background gradient */
+        }
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto; /* Pushes buttons to the far right */
+        }
+        .language-button, .night-mode-button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            border: none;
+            background: #1a73e8;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .language-button:hover, .night-mode-button:hover {
+            background: #185abc;
+        }
+
+        /* Top Menu Styles (part of fixed header) */
+        .top-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a73e8;
+            padding: 0.5rem 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #dadce0;
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%;
+            z-index: 998;
+        }
+        /* Adjusted dark mode background for top menu to make active state visible */
+        body.dark-mode .top-menu {
+            background: #185abc; /* Darker blue for background */
+            border-top: 1px solid #5f6368;
+        }
+        .top-menu .menu-item {
+            position: relative;
+        }
+        .top-menu a, .top-menu .menu-item > button {
+            color: #ffffff; /* Always white for top menu text in light mode */
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            font-size: 1rem;
+            transition: background 0.2s, color 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        body.dark-mode .top-menu a, body.dark-mode .top-menu .menu-item > button {
+            color: #ffffff; /* Changed to white for top menu text in dark mode */
+        }
+        .top-menu a:hover, .top-menu .menu-item > button:hover {
+            background: #185abc;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+        /* Style for active main menu item link - generic for all active links */
+        .top-menu .menu-item.active > a {
+            background: #185abc; /* Active color remains consistent */
+            color: white; /* Ensure white text for active link */
+            border-radius: 8px;
+        }
+
+        /* Dark mode specific style for active main menu item link - now stands out */
+        body.dark-mode .top-menu .menu-item.active > a {
+            background: #1a73e8; /* Changed to a brighter blue for better contrast in dark mode */
+            color: white; /* Explicitly set text to white in dark mode */
+        }
+
+        .top-menu .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 200px;
+            width: 300px; /* Fixed width to ensure consistency and fit all words */
+            padding: 0.5rem 0;
+            z-index: 1001; /* Higher z-index for submenus */
+        }
+        body.dark-mode .top-menu .submenu {
+            background: #303134;
+            border: 1px solid #5f6368;
+        }
+        .top-menu .menu-item:hover > .submenu {
+            display: block;
+        }
+        .top-menu .submenu .menu-item > button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #000000; /* Changed to black for contrast on white background */
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        body.dark-mode .top-menu .submenu .menu-item > button {
+            color: #ffffff; /* Changed to white for submenu button text in dark mode */
+        }
+        .top-menu .submenu .menu-item > button:hover {
+            background: #1a73e8;
+            color: white;
+        }
+        /* Style for active submenu item button */
+        .top-menu .submenu .menu-item > button.active {
+            background: #1a73e8; /* Blue color for active submenu button */
+            color: white;
+            border-radius: 8px; /* Apply rounded corners */
+        }
+        .top-menu .submenu .submenu {
+            top: 0;
+            left: 100%;
+            min-width: 200px;
+            width: 300px;
+        }
+        .arrow {
+            margin-left: auto;
+            font-size: 0.8rem;
+        }
+
+        /* Mobile-specific styles */
+        .hamburger-menu {
+            display: none; /* Hidden by default, shown on mobile */
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: #202124; /* Default color */
+            transition: color 0.3s;
+            margin-left: 1rem;
+        }
+
+        body.dark-mode .hamburger-menu {
+            color: #e8eaed; /* Dark mode color */
+        }
+
+        .mobile-side-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px; /* Width of the side menu */
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+            transform: translateX(100%); /* Off-screen by default */
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            padding-top: 60px; /* Space for close button */
+            overflow-y: auto; /* Enable scrolling for long menus */
+        }
+
+        body.dark-mode .mobile-side-menu {
+            background: #303134;
+        }
+
+        .mobile-side-menu.active {
+            transform: translateX(0); /* Slide into view */
+        }
+
+        .mobile-side-menu .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #202124;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        body.dark-mode .mobile-side-menu .close-btn {
+            color: #e8eaed;
+        }
+
+        .mobile-side-menu .menu-item {
+            position: relative; /* For nested submenus */
+        }
+
+        .mobile-side-menu .menu-item > a,
+        .mobile-side-menu .menu-item > button {
+            display: block; /* Make links/buttons take full width */
+            padding: 0.8rem 1.5rem;
+            color: #202124;
+            text-decoration: none;
+            font-size: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s, color 0.2s;
+            background: none;
+            border-left: none; /* Remove border-left for mobile menu buttons */
+            border-right: none; /* Remove border-right for mobile menu buttons */
+            width: 100%; /* Ensure buttons take full width */
+            text-align: left; /* Align text to the left */
+        }
+
+        body.dark-mode .mobile-side-menu .menu-item > a,
+        body.dark-mode .mobile-side-menu .menu-item > button {
+            color: #ffffff; /* Changed to white for mobile menu items in dark mode */
+            border-bottom: 1px solid #5f6368;
+        }
+
+        .mobile-side-menu .menu-item > a:hover,
+        body.dark-mode .mobile-side-menu .menu-item > button:hover {
+            background: #4a4e53;
+            color: #8ab4f8;
+        }
+
+        /* Nested submenu styling for mobile */
+        .mobile-side-menu .submenu {
+            display: block; /* Always display submenus in mobile side menu */
+            position: static; /* Remove absolute positioning */
+            background: #f8f9fa; /* Lighter background for nested menus */
+            border: none; /* Remove borders */
+            box-shadow: none; /* Remove shadow */
+            min-width: unset;
+            padding: 0;
+            margin-left: 1rem; /* Indent nested submenus */
+        }
+
+        body.dark-mode .mobile-side-menu .submenu {
+            background: #3c4043;
+        }
+
+        .mobile-side-menu .submenu .menu-item > button {
+            padding-left: 2rem; /* Further indent nested items */
+        }
+
+        .mobile-side-menu .submenu .submenu .menu-item > button {
+            padding-left: 3rem; /* Even further indent for deeper nesting */
+        }
+
+        /* Overlay for when mobile menu is active */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Main Content Area - New layout with left nav and right content */
+        .main-content {
+            margin-top: 180px; /* Adjusted from 150px to 180px for more empty space */
+            flex-grow: 1;
+            padding: 0; /* Removed padding to allow content to span full width */
+            display: flex; /* Horizontal split */
+            gap: 2rem; /* Added gap to maintain spacing between left and right content */
+            width: 100%; /* Ensure it takes full width */
+        }
+
+        /* Left Navigation (Aside) */
+        .left-nav {
+            width: 250px;
+            flex-shrink: 0;
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 1rem;
+            transition: background 0.3s, color 0.3s;
+            height: fit-content; /* Ensure it doesn't take full height if content is short */
+            position: sticky; /* Make left nav sticky */
+            top: 140px; /* Adjust to be below the fixed header */
+            margin-left: 2rem; /* Added margin to push it from the left edge */
+        }
+        body.dark-mode .left-nav {
+            background: #2b2c2f;
+        }
+
+        .left-nav h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #202124;
+            margin-bottom: 1.5rem;
+            padding-left: 0.5rem;
+        }
+        body.dark-mode .left-nav h2 {
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+
+        .left-nav ul {
+            list-style: none;
+        }
+
+        .left-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Styles for main left nav buttons */
+        .left-nav .nav-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* To push arrow to the right */
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background-color: #e0e0e0; /* Light gray for buttons in light mode */
+            color: #333;
+            font-weight: 500;
+            text-align: left;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .left-nav .nav-button:hover {
+            background-color: #d1d1d1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode .left-nav .nav-button {
+            background-color: #3c4043; /* Darker gray for buttons in dark mode */
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+        body.dark-mode .left-nav .nav-button:hover {
+            background-color: #5f6368;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Right Content Area (Main) */
+        .right-content {
+            flex-grow: 1;
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            transition: background 0.3s, color 0.3s;
+            margin-right: 2rem; /* Added margin to push it from the right edge */
+        }
+        body.dark-mode .right-content {
+            background: #2b2c2f;
+        }
+
+        /* Updated the color for the introductory paragraph */
+        .right-content p.text-md, /* Removed .text-gray-700 to target by color directly */
+        .overview-section p { /* Apply to both overview and right-content p */
+            color: #000000; /* Set to black for light mode */
+        }
+        body.dark-mode .right-content p.text-md,
+        body.dark-mode .overview-section p {
+            color: #ffffff; /* Retain white for dark mode */
+        }
+
+        /* Section Header Container (for "Foreign Music Platforms", "China Music Platforms" etc.) */
+        .section-header-container {
+            width: 100%;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            background: linear-gradient(to right, #93c5fd, #d8b4fe);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .section-title {
+            color: #000000; /* Changed to black as requested */
+            font-size: 2.25rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        /* Ensure section title remains white in dark mode if needed, though background is already light */
+        body.dark-mode .section-title {
+            color: #ffffff;
+        }
+
+        /* Unified active state for main navigation buttons and sub-section buttons */
+        .nav-button-active {
+            background-color: #1a73e8 !important; /* Blue for active state, always */
+            color: white !important; /* White text for active state, always */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-color: #1a73e8 !important;
+        }
+        /* Specific style for left-nav buttons when active */
+        .left-nav .nav-button.nav-button-active {
+            background-color: #1a73e8 !important;
+            color: white !important;
+        }
+
+        /* Card Styles (Unified Design) */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Allow more cards on medium screens */
+            gap: 1.5rem; /* gap-6 (24px) */
+            margin-bottom: 2rem; /* Added for spacing between card grids and next sections */
+        }
+        /* Ensure 4 columns on large screens */
+        @media (min-width: 1280px) { /* xl breakpoint */
+            .grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        /* Ensure 3 columns on medium screens */
+        @media (min-width: 1024px) and (max-width: 1279px) { /* lg breakpoint */
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally within the card */
+            justify-content: flex-start;
+            min-height: 280px; /* Consistent height for all cards */
+            padding: 1.5rem; /* Padding applied directly to card */
+            min-width: 200px; /* Ensure cards don't get too narrow */
+            border: 1px solid #cccccc; /* Lighter border color for light mode */
+        }
+        body.dark-mode .card {
+            background-color: #303134;
+            color: #ffffff; /* Changed to white for general dark mode text in cards */
+            border-color: #5f6368;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        .card > a { /* The link inside the card */
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center children horizontally */
+            width: 100%;
+            height: 100%;
+        }
+        .card-header-content { /* Container for icon and title */
+            display: flex;
+            flex-direction: column; /* Stack icon and title vertically */
+            align-items: center; /* Center icon horizontally */
+            width: 100%;
+            margin-bottom: 0.75rem; /* Space below header content */
+            flex-shrink: 0;
+        }
+        /* Style for image icons */
+        .card-icon {
+            width: 40px; /* Larger icon size for better visibility */
+            height: 40px;
+            margin-bottom: 0.5rem; /* Space between icon and title */
+            flex-shrink: 0;
+            border-radius: 5px; /* Slightly rounded for icons */
+            object-fit: contain; /* Ensure image fits without distortion */
+        }
+        /* Fallback for text initials */
+        .card-icon-initial {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+            border-radius: 5px;
+            background-color: #cccccc;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        body.dark-mode .card-icon-initial {
+            background-color: #5f6368;
+            color: #e8eaed;
+        }
+
+        .card-title {
+            font-size: 1rem; /* Slightly smaller font to help fit long names */
+            font-weight: 600;
+            color: #000000; /* Changed to black for light mode */
+            text-align: center; /* Centered as requested */
+            width: 100%;
+            word-wrap: break-word; /* Break long words */
+            white-space: normal; /* Allow text to wrap */
+        }
+        body.dark-mode .card-title {
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+        .card-divider {
+            width: calc(100% + 3rem); /* Extends across full card width including padding */
+            margin-left: -1.5rem; /* Compensate for card's left padding */
+            margin-right: -1.5rem; /* Compensate for card's right padding */
+            border-bottom: 1px solid #e0e0e0;
+            margin-top: 0.75rem;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+        body.dark-mode .card-divider {
+            border-color: #5f6368;
+        }
+        .card-content {
+            text-align: left;
+            width: 100%;
+            flex-grow: 1; /* Allow content to fill remaining space */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-description {
+            font-size: 0.875rem;
+            color: #000000; /* Changed to black for light mode */
+            margin-bottom: 0.75rem;
+            flex-grow: 1; /* Allow description to take available space */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit description to 3 lines */
+            -webkit-box-orient: vertical;
+        }
+        body.dark-mode .card-description {
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+        .card-features {
+            list-style: disc;
+            padding-left: 1.25rem;
+            font-size: 0.875rem;
+            color: #000000; /* Changed to black for light mode */
+            margin-top: auto; /* Push features to bottom */
+            flex-shrink: 0;
+        }
+        body.dark-mode .card-features {
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+
+        /* Footer styles */
+        .main-footer {
+            background-color: #f0f2f5;
+            color: #000000; /* Changed to black for light mode */
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+            width: 100%;
+        }
+        body.dark-mode .main-footer {
+            background: #202124;
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        /* Adjusted for Font Awesome icons */
+        .social-links a {
+            display: inline-block;
+            margin: 0 0.75rem;
+            transition: transform 0.2s ease-in-out;
+            font-size: 2.25rem; /* Adjusted size for icons */
+        }
+        .social-links a:hover {
+            transform: translateY(-3px);
+        }
+        /* Added dark mode style for email icon */
+        body.dark-mode #share-email .fas {
+            color: white;
+        }
+        .footer-note {
+            font-size: 0.875rem;
+            color: #000000; /* Changed to black for light mode */
+        }
+        body.dark-mode .footer-note {
+            color: #ffffff; /* Changed to white for dark mode */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .top-menu {
+                gap: 0.5rem; /* Reduce gap for slightly smaller screens */
+                padding: 0.5rem 0.5rem;
+            }
+            .top-menu a, .top-menu .menu-item > button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.9rem;
+            }
+            .header-top {
+                padding: 0.8rem 1rem;
+            }
+            header h1 {
+                font-size: 1.3rem;
+            }
+            .main-content {
+                flex-direction: column; /* Stack left nav and right content vertically */
+                padding: 0; /* Ensures full width even when stacked */
+                gap: 1.5rem; /* Adjust gap for vertical stacking */
+            }
+            .left-nav {
+                width: calc(100% - 2rem); /* Full width minus side margins */
+                padding: 1rem;
+                position: static; /* Remove sticky positioning when stacked */
+                margin-left: 1rem; /* Adjust margin for mobile */
+                margin-right: 1rem; /* Adjust margin for mobile */
+            }
+            .right-content {
+                padding: 1.5rem;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Keep 2-3 columns on tablets */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns on medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                padding: 0.6rem 1rem;
+                flex-direction: column; /* Stack items vertically */
+                align-items: center; /* Center items horizontally */
+                height: auto; /* Allow header to expand */
+            }
+            /* Reset positioning for mobile */
+            .header-brand-container {
+                position: static; /* Override absolute positioning for mobile */
+                left: auto;
+                transform: none;
+                width: 100%;
+                justify-content: center; /* Center content within it */
+                margin-bottom: 0.5rem; /* Space below brand group */
+                order: -2; /* Place brand group at the top */
+            }
+            .header-logo {
+                /* No specific changes needed here */
+            }
+            header h1 {
+                font-size: 1.2rem;
+            }
+            .header-buttons {
+                width: 100%;
+                justify-content: center; /* Center buttons horizontally */
+                margin-left: 0; /* Reset auto margin from desktop */
+                flex-grow: 0; /* No need to grow on mobile when stacked */
+                margin-top: 0.5rem; /* Space above buttons */
+                order: -1; /* Place buttons after brand group */
+            }
+            .hamburger-menu {
+                display: block;
+                order: 1; /* Keep hamburger last within buttons */
+                margin-left: auto; /* Push to right in its flex context */
+                margin-right: 0; /* Remove specific margin on mobile */
+            }
+            .language-button, .night-mode-button {
+                display: none;
+            }
+            .main-content {
+                margin-top: 180px; /* Adjust for taller header on mobile */
+                padding: 0; /* Ensures full width on mobile */
+            }
+            .left-nav {
+                width: calc(100% - 2rem); /* Full width minus side margins */
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            .right-content {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr; /* 1 column on small screens */
+            }
+            .main-nav-button {
+                min-width: unset; /* Allow buttons to shrink on small screens */
+                width: 100%; /* Take full width */
+            }
+            .main-content {
+                padding: 0;
+            }
+            .left-nav, .right-content {
+                margin-left: 0.5rem; /* Further reduce margin for very small screens */
+                margin-right: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-top {
+                padding: 0.5rem 0.8rem;
+            }
+            header h1 {
+                font-size: 1rem;
+            }
+            .header-logo img {
+                height: 25px;
+            }
+            .main-content {
+                margin-top: 250px; /* Further adjust for very tall header on small mobile */
+            }
+            .language-button, .night-mode-button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            .top-menu a, .top-menu .menu-item > button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.9rem;
+            }
+            .right-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen">
+    <!-- Header from 1learning.html -->
+    <header>
+        <div class="header-top">
+            <!-- Removed header-left-spacer for new centering method -->
+            <div class="header-brand-container">
+                <div class="header-logo">
+                    <img src="images/metapanel-t.png" onerror="this.src='https://placehold.co/30x30/cccccc/333333?text=Logo'" alt="Discovery Panel Logo">
+                </div>
+                <div class="header-title">
+                    <h1>Discovery Panel</h1>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <!-- Hamburger menu icon for mobile -->
+                <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
+                <button class="language-button" onclick="switchLanguage()">中文/English</button>
+                <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+            </div>
+        </div>
+        <div class="top-menu" id="top-menu">
+            <div class="menu-item">
+                <a href="index.html" data-lang-key="home">Home</a>
+            </div>
+            <div class="menu-item">
+                <a href="aigc.html" data-lang-key="aigc">AIGC</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="intelligent-dialogue">Intelligent Dialogue</button></div>
+                    <div class="menu-item"><button data-lang-key="art-generation">Art Generation</button></div>
+                    <div class="menu-item"><button data-lang-key="audio-creation">Audio Creation</button></div>
+                    <div class="menu-item"><button data-lang-key="video-creation">Video Creation</button></div>
+                    <div class="menu-item"><button data-lang-key="smart-office">Smart Office</button></div>
+                    <div class="menu-item"><button data-lang-key="creative-design">Creative Design</button></div>
+                    <div class="menu-item"><button data-lang-key="learning-resources">Learning Resources</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="tech.html" data-lang-key="technology">Technology</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="code-hosting-collaboration">Code Hosting & Collaboration</button></div>
+                    <div class="menu-item"><button data-lang-key="cloud-deployment-serverless">Cloud Deployment & Serverless</button></div>
+                    <div class="menu-item"><button data-lang-key="automation-code-integration">Automation & Code Integration</button></div>
+                    <div class="menu-item"><button data-lang-key="ci-cd-tools">CI/CD Tools</button></div>
+                    <div class="menu-item"><button data-lang-key="edge-computing-network-optimization">Edge Computing & Network Optimization</button></div>
+                    <div class="menu-item"><button data-lang-key="containers-cloud-native">Containers & Cloud Native</button></div>
+                    <div class="menu-item"><button data-lang-key="other">Other</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="social.html" data-lang-key="social">Social</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-social">Foreign Social</button></div>
+                    <div class="menu-item"><button data-lang-key="china-social">China Social</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="finance.html" data-lang-key="finance">Finance</a>
+                <div class="submenu">
+                    <div class="menu-item">
+                        <button data-lang-key="foreign-finance-trade">Foreign Finance & Trade <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="finance-trade-sub">Finance & Trade</button></div>
+                            <div class="menu-item"><button data-lang-key="retail-banks">Retail Banks</button></div>
+                            <div class="menu-item"><button data-lang-key="digital-banks">Digital Banks</button></div>
+                            <div class="menu-item"><button data-lang-key="p2p-payments">P2p Payments</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="china-finance-trade">China Finance & Trade</button>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="crypto-trade">Crypto Trade <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="crypto-investment">Crypto Investment</button></div>
+                            <div class="menu-item"><button data-lang-key="blockchains">Blockchains</button></div>
+                            <div class="menu-item"><button data-lang-key="swap">Swap</button></div>
+                            <div class="menu-item"><button data-lang-key="defi">DeFi</button></div>
+                            <div class="menu-item"><button data-lang-key="hot-cold-wallets">Hot & Cold Wallets</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="memes-nfts">Memes & NFTs <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="nft-investment">NFT Investment</button></div>
+                            <div class="menu-item"><button data-lang-key="meme-coins-investment">Meme Coins Investment</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="music.html" data-lang-key="music">Music</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-music">Foreign Music</button></div>
+                    <div class="menu-item"><button data-lang-key="china-music">China Music</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="video.html" data-lang-key="video">Video</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-video">Foreign Video</button></div>
+                    <div class="menu-item"><button data-lang-key="china-video">China Video</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="news.html" data-lang-key="news">News</a>
+                <div class="submenu">
+                    <div class="menu-item">
+                        <button data-lang-key="general-news">General News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-general-news">Foreign General News</button></div>
+                            <div class="menu-item"><button data-lang-key="china-general-news">China General News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="technology-news">Technology News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="technology-products">Technology Products</button></div>
+                            <div class="menu-item"><button data-lang-key="ai-news">AI News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="finance-news">Finance News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="global-official">Global Official</button></div>
+                            <div class="menu-item"><button data-lang-key="crypto">Crypto</button></div>
+                            <div class="menu-item"><button data-lang-key="foreign-finance-news">Foreign Finance News</button></div>
+                            <div class="menu-item"><button data-lang-key="china-finance-news">China Finance News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="travel-news">Travel News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-travel">Foreign Travel</button></div>
+                            <div class="menu-item"><button data-lang-key="china-travel">China Travel</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="foods-news">Foods News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-foods">Foreign Foods</button></div>
+                            <div class="menu-item"><button data-lang-key="china-foods">China Foods</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="learning.html" data-lang-key="learning">Learning</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="creative-skills">Creative Skills</button></div>
+                    <div class="menu-item"><button data-lang-key="professional-skills">Professional Skills</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="lifestyle.html" data-lang-key="lifestyle">Lifestyle</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="lifestyle-home">Home Style</button></div>
+                    <div class="menu-item"><button data-lang-key="wellness">Wellness</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="shops.html" data-lang-key="shopping">Shopping</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="usa-shops">USA Shops</button></div>
+                    <div class="menu-item"><button data-lang-key="china-shops">China Shops</button></div>
+                    <div class="menu-item"><button data-lang-key="europe-shops">Europe Shops</button></div>
+                </div>
+            </div>
+            <!-- Updated 'More' menu item to 'Tools' and 'Resources' -->
+            <div class="menu-item">
+                <a href="tools.html" data-lang-key="tools">Tools</a>
+            </div>
+            <div class="menu-item">
+                <a href="resources.html" data-lang-key="resources">Resources</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Side Menu from 1learning.html -->
+    <div class="mobile-side-menu" id="mobileSideMenu">
+        <button class="close-btn" onclick="toggleMobileMenu()">✖</button>
+        <div class="menu-items-wrapper">
+            <!-- Language and Night Mode buttons for mobile -->
+            <div class="menu-item">
+                <button class="language-button" onclick="switchLanguage()">中文/English</button>
+            </div>
+            <div class="menu-item">
+                <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+            </div>
+            <!-- Existing top menu items will be cloned here by JavaScript -->
+        </div>
+    </div>
+    <!-- Overlay for mobile menu from 1learning.html -->
+    <div class="overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
+    <div class="main-content">
+        <aside class="left-nav">
+            <h2 data-lang-key="lifestyle-platforms-left-nav">Lifestyle Platforms</h2>
+            <ul>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-lang-key="home-style-platforms-title" data-section-id="home-style-section">Home Style</button>
+                </li>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-lang-key="wellness-platforms-title" data-section-id="wellness-section">Wellness</button>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="right-content">
+            <div id="overview-section" class="section">
+                <p class="text-md mb-4" data-lang-key="lifestyle-platforms-description">
+                    Explore a curated list of prominent online platforms focused on lifestyle, categorized by home style and wellness.
+                    Each card provides a direct link to the respective platform, along to its logo icon, a brief description of its purpose, and key features.
+                </p>
+            </div>
+
+            <section class="mb-12" id="home-style-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="home-style-platforms-title">Home Style</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="card">
+                        <a href="https://www.architecturaldigest.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Architectural Digest Icon">
+                                <p class="card-title" data-lang-key="ad-title">Architectural Digest</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="ad-desc">A premier publication for interior design, architecture, and luxury living, showcasing inspiring homes and design trends.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="ad-feature1">Luxury home tours and features</li>
+                                    <li data-lang-key="ad-feature2">Interior design inspiration</li>
+                                    <li data-lang-key="ad-feature3">Architectural trends and news</li>
+                                    <li data-lang-key="ad-feature4">Celebrity homes and decor</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.elledecor.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Elle Decor Icon">
+                                <p class="card-title" data-lang-key="elle-decor-title">Elle Decor</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="elle-decor-desc">A magazine and online platform focusing on interior design, home decorating ideas, and luxury lifestyle content.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="elle-decor-feature1">Decorating tips and ideas</li>
+                                    <li data-lang-key="elle-decor-feature2">Trend reports and product guides</li>
+                                    <li data-lang-key="elle-decor-feature3">Designer interviews and profiles</li>
+                                    <li data-lang-key="elle-decor-feature4">Room-by-room inspiration</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.houzz.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Houzz Icon">
+                                <p class="card-title" data-lang-key="houzz-title">Houzz</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="houzz-desc">An online platform for home remodeling and design, connecting homeowners with home professionals and providing design inspiration.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="houzz-feature1">Vast photo gallery for inspiration</li>
+                                    <li data-lang-key="houzz-feature2">Find and hire home professionals</li>
+                                    <li data-lang-key="houzz-feature3">Online store for home products</li>
+                                    <li data-lang-key="houzz-feature4">Design advice and articles</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.thespruce.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="The Spruce Icon">
+                                <p class="card-title" data-lang-key="spruce-title">The Spruce</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="spruce-desc">A comprehensive resource for home and garden advice, offering practical tips and inspiration for decorating, gardening, and home improvement.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="spruce-feature1">DIY projects and tutorials</li>
+                                    <li data-lang-key="spruce-feature2">Gardening guides and plant care</li>
+                                    <li data-lang-key="spruce-feature3">Cleaning and organizing tips</li>
+                                    <li data-lang-key="spruce-feature4">Home decor and renovation ideas</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.bhg.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Better Homes & Gardens Icon">
+                                <p class="card-title" data-lang-key="bhg-title">Better Homes & Gardens</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="bhg-desc">A long-standing magazine and online platform providing ideas and inspiration for home decorating, gardening, cooking, and crafts.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="bhg-feature1">Home decor and design ideas</li>
+                                    <li data-lang-key="bhg-feature2">Gardening and landscaping tips</li>
+                                    <li data-lang-key="bhg-feature3">Recipes and meal planning</li>
+                                    <li data-lang-key="bhg-feature4">DIY crafts and projects</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.dwell.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Dwell Icon">
+                                <p class="card-title" data-lang-key="dwell-title">Dwell</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="dwell-desc">A media company focused on modern architecture and design, showcasing innovative homes and design solutions.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="dwell-feature1">Modern architecture and design features</li>
+                                    <li data-lang-key="dwell-feature2">Sustainable living ideas</li>
+                                    <li data-lang-key="dwell-feature3">Small space solutions</li>
+                                    <li data-lang-key="dwell-feature4">Product and material reviews</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.hunker.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Hunker Icon">
+                                <p class="card-title" data-lang-key="hunker-title">Hunker</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="hunker-desc">An online platform providing practical advice and inspiration for home design, decor, and DIY projects, especially for small spaces and renters.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="hunker-feature1">DIY home projects</li>
+                                    <li data-lang-key="hunker-feature2">Small space decorating tips</li>
+                                    <li data-lang-key="hunker-feature3">Rental-friendly decor ideas</li>
+                                    <li data-lang-key="hunker-feature4">Sustainable living and design</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.crateandbarrel.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Crate & Barrel Icon">
+                                <p class="card-title" data-lang-key="crate-barrel-title">Crate & Barrel</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="crate-barrel-desc">A retail company offering modern home furnishings, decor, kitchenware, and entertaining essentials.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="crate-barrel-feature1">Contemporary furniture and decor</li>
+                                    <li data-lang-key="crate-barrel-feature2">Kitchen and dining essentials</li>
+                                    <li data-lang-key="crate-barrel-feature3">Wedding and gift registry</li>
+                                    <li data-lang-key="crate-barrel-feature4">Design services and inspiration</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="wellness-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="wellness-platforms-title">Wellness</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="card">
+                        <a href="https://www.mindbodygreen.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="MindBodyGreen Icon">
+                                <p class="card-title" data-lang-key="mbg-title">MindBodyGreen</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="mbg-desc">A wellness media brand offering content on health, nutrition, fitness, mindfulness, and sustainability.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="mbg-feature1">Articles on holistic health</li>
+                                    <li data-lang-key="mbg-feature2">Expert-led courses and classes</li>
+                                    <li data-lang-key="mbg-feature3">Recipes and nutrition advice</li>
+                                    <li data-lang-key="mbg-feature4">Mindfulness and meditation practices</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://thechalkboardmag.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="The Chalkboard Mag Icon">
+                                <p class="card-title" data-lang-key="chalkboard-title">The Chalkboard Mag</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="chalkboard-desc">A wellness and lifestyle blog from Pressed Juicery, featuring content on clean eating, beauty, fitness, and healthy living.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="chalkboard-feature1">Clean eating recipes and guides</li>
+                                    <li data-lang-key="chalkboard-feature2">Natural beauty tips</li>
+                                    <li data-lang-key="chalkboard-feature3">Fitness routines and wellness trends</li>
+                                    <li data-lang-key="chalkboard-feature4">Interviews with health experts</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.wellandgood.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Well+Good Icon">
+                                <p class="card-title" data-lang-key="wellgood-title">Well+Good</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="wellgood-desc">A leading digital publication for wellness news and trends, covering fitness, nutrition, beauty, and mental health.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="wellgood-feature1">Latest wellness news and trends</li>
+                                    <li data-lang-key="wellgood-feature2">Fitness and workout guides</li>
+                                    <li data-lang-key="wellgood-feature3">Healthy recipes and nutrition advice</li>
+                                    <li data-lang-key="wellgood-feature4">Mental well-being articles</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.eatingwell.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="EatingWell Icon">
+                                <p class="card-title" data-lang-key="eatingwell-title">EatingWell</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="eatingwell-desc">A resource for healthy recipes, meal plans, and nutrition advice, promoting a balanced and wholesome approach to eating.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="eatingwell-feature1">Healthy and delicious recipes</li>
+                                    <li data-lang-key="eatingwell-feature2">Meal planning and prep ideas</li>
+                                    <li data-lang-key="eatingwell-feature3">Nutrition facts and dietary advice</li>
+                                    <li data-lang-key="eatingwell-feature4">Weight management strategies</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://tinybuddha.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Tiny Buddha Icon">
+                                <p class="card-title" data-lang-key="tinybuddha-title">Tiny Buddha</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="tinybuddha-desc">A popular blog focused on mindfulness, happiness, and simple wisdom, offering tips and insights for a more peaceful life.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="tinybuddha-feature1">Mindfulness and meditation tips</li>
+                                    <li data-lang-key="tinybuddha-feature2">Articles on happiness and peace</li>
+                                    <li data-lang-key="tinybuddha-feature3">Personal growth and self-improvement</li>
+                                    <li data-lang-key="tinybuddha-feature4">Community for sharing wisdom</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.onepeloton.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Peloton Icon">
+                                <p class="card-title" data-lang-key="peloton-title">Peloton</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="peloton-desc">A leading interactive fitness platform offering live and on-demand classes, fitness equipment, and a global community.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="peloton-feature1">Live and on-demand fitness classes</li>
+                                    <li data-lang-key="peloton-feature2">Interactive bikes and treadmills</li>
+                                    <li data-lang-key="peloton-feature3">Strength, yoga, and meditation content</li>
+                                    <li data-lang-key="peloton-feature4">Community challenges and leaderboards</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.therealfooddietitians.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="The Real Food Dietitians Icon">
+                                <p class="card-title" data-lang-key="real-food-dietitians-title">The Real Food Dietitians</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="real-food-dietitians-desc">A blog by registered dietitians offering healthy, real food recipes and practical nutrition advice.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="real-food-dietitians-feature1">Wholesome and delicious recipes</li>
+                                    <li data-lang-key="real-food-dietitians-feature2">Evidence-based nutrition articles</li>
+                                    <li data-lang-key="real-food-dietitians-feature3">Meal prep tips and guides</li>
+                                    <li data-lang-key="real-food-dietitians-feature4">Healthy lifestyle inspiration</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="https://www.prevention.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="card-header-content">
+                                <img class="card-icon" alt="Prevention Icon">
+                                <p class="card-title" data-lang-key="prevention-title">Prevention</p>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-content">
+                                <p class="card-description" data-lang-key="prevention-desc">A health and wellness magazine and website providing trusted information on nutrition, fitness, weight loss, and healthy aging.</p>
+                                <ul class="card-features">
+                                    <li data-lang-key="prevention-feature1">Expert health advice and tips</li>
+                                    <li data-lang-key="prevention-feature2">Fitness plans and workout routines</li>
+                                    <li data-lang-key="prevention-feature3">Healthy recipes and diet guides</li>
+                                    <li data-lang-key="prevention-feature4">Weight management strategies</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <!-- Social Media Share Links - Now using Font Awesome icons for consistency with Pro-Style Blog -->
+                <a href="#" id="share-facebook" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800" title="Share on Facebook">
+                    <i class="fab fa-facebook-square"></i>
+                </a>
+                <a href="#" id="share-twitter" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-600" title="Share on Twitter">
+                    <i class="fab fa-twitter-square"></i>
+                </a>
+                <a href="#" id="share-linkedin" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:text-blue-900" title="Share on LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="#" id="share-reddit" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:text-orange-800" title="Share on Reddit">
+                    <i class="fab fa-reddit-square"></i>
+                </a>
+                <a href="#" id="share-email" class="text-gray-600 hover:text-gray-800" title="Share via Email">
+                    <i class="fas fa-envelope-square"></i>
+                </a>
+            </div>
+            <p class="footer-note">© 2025 by Discovery Panel. Powered and secured by Discovery Panel. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'en'; // Default language set to English
+        let isNightMode = false;
+
+        // Translations object (merged and updated from 1learning.html and lifestyle.html)
+        const translations = {
+            home: { en: "Home", zh: "首页" },
+            aigc: { en: "AIGC", zh: "AIGC" }, 
+            technology: { en: "Technology", zh: "科技" },
+            social: { en: "Social", zh: "社交" },
+            music: { en: "Music", zh: "音乐" },
+            video: { en: "Video", zh: "视频" },
+            finance: { en: "Finance", zh: "金融" },
+            news: { en: "News", zh: "新闻" },
+            learning: { en: "Learning", zh: "学习" },
+            lifestyle: { en: "Lifestyle", zh: "生活方式" },
+            shopping: { en: "Shopping", zh: "购物" },
+            tools: { en: "Tools", zh: "工具" },
+            resources: { en: "Resources", zh: "资源" },
+            search: { en: "Search websites...", zh: "搜索网站..." },
+            searchButton: { en: "Search", zh: "搜索" },
+            internal: { en: "Internal Search", zh: "内部搜索" },
+
+            // Submenu items from 1learning.html (with corrections where needed)
+            'intelligent-dialogue': { en: "Intelligent Dialogue", zh: "智能对话" },
+            'art-generation': { en: "Art Generation", zh: "绘画生成" },
+            'audio-creation': { en: "Audio Creation", zh: "音频创作" },
+            'video-creation': { en: "Video Creation", zh: "视频创作" },
+            'smart-office': { en: "Smart Office", zh: "智能办公" },
+            'creative-design': { en: "Creative Design", zh: "创意设计" },
+            'learning-resources': { en: "Learning Resources", zh: "学习资讯" },
+            'code-hosting-collaboration': { en: "Code Hosting & Collaboration", zh: "代码托管与协作" },
+            'cloud-deployment-serverless': { en: "Cloud Deployment & Serverless", zh: "云部署与无服务器" },
+            'automation-code-integration': { en: "Automation & Code Integration", zh: "自动化与代码集成" },
+            'ci-cd-tools': { en: "CI/CD Tools", zh: "持续集成与交付工具" },
+            'edge-computing-network-optimization': { en: "Edge Computing & Network Optimization", zh: "边缘计算与网络优化" },
+            'containers-cloud-native': { en: "Containers & Cloud Native", zh: "容器与云原生" },
+            'other': { en: "Other", zh: "其他实用" },
+            'foreign-social': { en: "Foreign Social", zh: "海外社交" },
+            'china-social': { en: "China Social", zh: "国内社交" },
+            'foreign-music': { en: "Foreign Music", zh: "海外音乐" },
+            'china-music': { en: "China Music", zh: "国内音乐" },
+            'china-video': { en: "China Video", zh: "国内视频" },
+            'foreign-video': { en: "Foreign Video", zh: "海外视频" },
+            'foreign-finance-trade': { en: "Foreign Finance & Trade", zh: "海外金融与贸易" },
+            'china-finance-trade': { en: "China Finance & Trade", zh: "国内金融与贸易" },
+            'crypto-trade': { en: "Crypto Trade", zh: "加密交易" },
+            'finance-trade-sub': { en: "Finance & Trade", zh: "金融与贸易" },
+            'retail-banks': { en: "Retail Banks", zh: "零售银行" },
+            'digital-banks': { en: "Digital Banks", zh: "数字银行" },
+            'p2p-payments': { en: "P2p Payments", zh: "点对点支付" },
+            'crypto-investment': { en: "Crypto Investment", zh: "加密投资" },
+            'blockchains': { en: "Blockchains", zh: "区块链" },
+            'swap': { en: "Swap", zh: "兑换" },
+            'defi': { en: "DeFi", zh: "DeFi" },
+            'hot-cold-wallets': { en: "Hot & Cold Wallets", zh: "冷热钱包" },
+            'memes-nfts': { en: "Memes & NFTs", zh: "迷因与NFT" },
+            'nft-investment': { en: "NFT Investment", zh: "NFT投资" },
+            'meme-coins-investment': { en: "Meme Coins Investment", zh: "迷因币投资" },
+            'general-news': { en: "General News", zh: "综合新闻" },
+            'foreign-general-news': { en: "Foreign General News", zh: "海外综合新闻" },
+            'china-general-news': { en: "China General News", zh: "中国综合新闻" },
+            'technology-news': { en: "Technology News", zh: "科技新闻" },
+            'technology-products': { en: "Technology Products", zh: "科技产品" },
+            'ai-news': { en: "AI News", zh: "人工智能新闻" },
+            'finance-news': { en: "Finance News", zh: "金融新闻" },
+            'global-official': { en: "Global Official", zh: "全球官方" },
+            'crypto': { en: "Crypto", zh: "加密货币" },
+            'foreign-finance-news': { en: "Foreign Finance News", zh: "海外金融新闻" },
+            'china-finance-news': { en: "China Financial News", zh: "中国金融新闻" },
+            'travel-news': { en: "Travel News", zh: "旅游新闻" },
+            'foreign-travel': { en: "Foreign Travel", zh: "海外旅游" },
+            'china-travel': { en: "China Travel", zh: "国内旅游" },
+            'foods-news': { en: "Food News", zh: "美食新闻" },
+            'foreign-foods': { en: "Foreign Food", zh: "海外美食" },
+            'china-foods': { en: "China Food", zh: "国内美食" },
+            'lifestyle-home': { en: "Home Style", zh: "家居风格" },
+            'wellness': { en: "Wellness", zh: "健康" },
+            'creative-skills': { en: "Creative Skills", zh: "创意技能" },
+            'professional-skills': { en: "Professional Skills", zh: "专业技能" },
+            'usa-shops': { en: "USA Shops", zh: "美国商店" },
+            'china-shops': { en: "China Shops", zh: "中国商店" },
+            'europe-shops': { en : "Europe Shops", zh: "欧洲商店" },
+
+            // Lifestyle Page Specific Translations  
+            'lifestyle-platforms-description': { en: "Explore a curated list of prominent online platforms focused on lifestyle, categorized by home style and wellness. Each card provides a direct link to the respective platform, along to its logo icon, a brief description of its purpose, and key features.", zh: "探索精选的专注于生活方式的在线平台，按家居风格和健康分类。每张卡片都提供了直接链接到相应平台，以及其徽标图标、其目的的简要描述和主要功能。" },
+            'home-style-platforms': { en: "Home Style", zh: "家居风格" },
+            'wellness-platforms': { en: "Wellness", zh: "健康" },
+            'lifestyle-platforms-left-nav': { en: "Lifestyle Platforms", zh: "生活方式平台" }, /* New translation key */
+
+            // Section Titles
+            'home-style-platforms-title': { en: "Home Style", zh: "家居风格" },
+            'wellness-platforms-title': { en: "Wellness", zh: "健康" },
+
+            // Home Style Platforms
+            'ad-title': { en: "Architectural Digest", zh: "建筑文摘" },
+            'ad-desc': { en: "A premier publication for interior design, architecture, and luxury living, showcasing inspiring homes and design trends.", zh: "一份专注于室内设计、建筑和奢华生活的顶级刊物，展示鼓舞人心的住宅和设计趋势。" },
+            'ad-feature1': { en: "Luxury home tours and features", zh: "奢华家居参观和特色" },
+            'ad-feature2': { en: "Interior design inspiration", zh: "室内设计灵感" },
+            'ad-feature3': { en: "Architectural trends and news", zh: "建筑趋势和新闻" },
+            'ad-feature4': { en: "Celebrity homes and decor", zh: "名人住宅和装饰" },
+
+            'elle-decor-title': { en: "Elle Decor", zh: "Elle Decor" },
+            'elle-decor-desc': { en: "A magazine and online platform focusing on interior design, home decorating ideas, and luxury lifestyle content.", zh: "一本专注于室内设计、家居装饰理念和奢华生活内容的杂志和在线平台。" },
+            'elle-decor-feature1': { en: "Decorating tips and ideas", zh: "装饰技巧和创意" },
+            'elle-decor-feature2': { en: "Trend reports and product guides", zh: "趋势报告和产品指南" },
+            'elle-decor-feature3': { en: "Designer interviews and profiles", zh: "设计师访谈和简介" },
+            'elle-decor-feature4': { en: "Room-by-room inspiration", zh: "逐房灵感" },
+
+            'houzz-title': { en: "Houzz", zh: "Houzz" },
+            'houzz-desc': { en: "An online platform for home remodeling and design, connecting homeowners with home professionals and providing design inspiration.", zh: "一个用于家居改造和设计的在线平台，连接房主与家居专业人士，并提供设计灵感。" },
+            'houzz-feature1': { en: "Vast photo gallery for inspiration", zh: "海量图片库提供灵感" },
+            'houzz-feature2': { en: "Find and hire home professionals", zh: "查找并聘请家居专业人士" },
+            'houzz-feature3': { en: "Online store for home products", zh: "家居产品在线商店" },
+            'houzz-feature4': { en: "Design advice and articles", zh: "设计建议和文章" },
+
+            'spruce-title': { en: "The Spruce", zh: "The Spruce" },
+            'spruce-desc': { en: "A comprehensive resource for home and garden advice, offering practical tips and inspiration for decorating, gardening, and home improvement.", zh: "一个全面的家居和园艺建议资源，提供装饰、园艺和家居装修的实用技巧和灵感。" },
+            'spruce-feature1': { en: "DIY projects and tutorials", zh: "DIY项目和教程" },
+            'spruce-feature2': { en: "Gardening guides and plant care", zh: "园艺指南和植物护理" },
+            'spruce-feature3': { en: "Cleaning and organizing tips", zh: "清洁和整理技巧" },
+            'spruce-feature4': { en: "Home decor and renovation ideas", zh: "家居装饰和翻新创意" },
+
+            'bhg-title': { en: "Better Homes & Gardens", zh: "美好家园" },
+            'bhg-desc': { en: "A long-standing magazine and online platform providing ideas and inspiration for home decorating, gardening, cooking, and crafts.", zh: "一本历史悠久的杂志和在线平台，提供家居装饰、园艺、烹饪和手工艺的创意和灵感。" },
+            'bhg-feature1': { en: "Home decor and design ideas", zh: "家居装饰和设计理念" },
+            'bhg-feature2': { en: "Gardening and landscaping tips", zh: "园艺和景观美化技巧" },
+            'bhg-feature3': { en: "Recipes and meal planning", zh: "食谱和膳食计划" },
+            'bhg-feature4': { en: "DIY crafts and projects", zh: "DIY手工艺和项目" },
+
+            'dwell-title': { en: "Dwell", zh: "Dwell" },
+            'dwell-desc': { en: "A media company focused on modern architecture and design, showcasing innovative homes and design solutions.", zh: "一家专注于现代建筑和设计媒体公司，展示创新住宅和设计解决方案。" },
+            'dwell-feature1': { en: "Modern architecture and design features", zh: "现代建筑和设计特色" },
+            'dwell-feature2': { en: "Sustainable living ideas", zh: "可持续生活理念" },
+            'dwell-feature3': { en: "Small space solutions", zh: "小空间解决方案" },
+            'dwell-feature4': { en: "Product and material reviews", zh: "产品和材料评论" },
+
+            'hunker-title': { en: "Hunker", zh: "Hunker" },
+            'hunker-desc': { en: "An online platform providing practical advice and inspiration for home design, decor, and DIY projects, especially for small spaces and renters.", zh: "一个在线平台，提供家居设计、装饰和DIY项目的实用建议和灵感，特别是针对小空间和租房者。" },
+            'hunker-feature1': { en: "DIY home projects", zh: "DIY家居项目" },
+            'hunker-feature2': { en: "Small space decorating tips", zh: "小空间装饰技巧" },
+            'hunker-feature3': { en: "Rental-friendly decor ideas", zh: "租房友好装饰创意" },
+            'hunker-feature4': { en: "Sustainable living and design", zh: "可持续生活和设计" },
+
+            // New Home Style Platform
+            'crate-barrel-title': { en: "Crate & Barrel", zh: "Crate & Barrel" },
+            'crate-barrel-desc': { en: "A retail company offering modern home furnishings, decor, kitchenware, and entertaining essentials.", zh: "一家提供现代家居用品、装饰、厨具和娱乐必需品的零售公司。" },
+            'crate-barrel-feature1': { en: "Contemporary furniture and decor", zh: "现代家具和装饰" },
+            'crate-barrel-feature2': { en: "Kitchen and dining essentials", zh: "厨房和餐饮必需品" },
+            'crate-barrel-feature3': { en: "Wedding and gift registry", zh: "婚礼和礼品登记" },
+            'crate-barrel-feature4': { en: "Design services and inspiration", zh: "设计服务和灵感" },
+
+            // Wellness Platforms
+            'mbg-title': { en: "MindBodyGreen", zh: "MindBodyGreen" },
+            'mbg-desc': { en: "A wellness media brand offering content on health, nutrition, fitness, mindfulness, and sustainability.", zh: "一个健康媒体品牌，提供健康、营养、健身、正念和可持续发展方面的内容。" },
+            'mbg-feature1': { en: "Articles on holistic health", zh: "整体健康文章" },
+            'mbg-feature2': { en: "Expert-led courses and classes", zh: "专家指导课程" },
+            'mbg-feature3': { en: "Recipes and nutrition advice", zh: "食谱和营养建议" },
+            'mbg-feature4': { en: "Mindfulness and meditation practices", zh: "正念和冥想练习" },
+
+            'chalkboard-title': { en: "The Chalkboard Mag", zh: "The Chalkboard Mag" },
+            'chalkboard-desc': { en: "A wellness and lifestyle blog from Pressed Juicery, featuring content on clean eating, beauty, fitness, and healthy living.", zh: "一个来自Pressed Juicery的健康与生活方式博客，内容涵盖清洁饮食、美容、健身和健康生活。" },
+            'chalkboard-feature1': { en: "Clean eating recipes and guides", zh: "清洁饮食食谱和指南" },
+            'chalkboard-feature2': { en: "Natural beauty tips", zh: "天然美容秘诀" },
+            'chalkboard-feature3': { en: "Fitness routines and wellness trends", zh: "健身例程和健康趋势" },
+            'chalkboard-feature4': { en: "Interviews with health experts", zh: "健康专家访谈" },
+
+            'wellgood-title': { en: "Well+Good", zh: "Well+Good" },
+            'wellgood-desc': { en: "A leading digital publication for wellness news and trends, covering fitness, nutrition, beauty, and mental health.", zh: "一个领先的数字出版物，提供健康新闻和趋势，涵盖健身、营养、美容和心理健康。" },
+            'wellgood-feature1': { en: "Latest wellness news and trends", zh: "最新健康新闻和趋势" },
+            'wellgood-feature2': { en: "Fitness and workout guides", zh: "健身和锻炼指南" },
+            'wellgood-feature3': { en: "Healthy recipes and nutrition advice", zh: "健康食谱和营养建议" },
+            'wellgood-feature4': { en: "Mental well-being articles", zh: "心理健康文章" },
+
+            'eatingwell-title': { en: "EatingWell", zh: "EatingWell" },
+            'eatingwell-desc': { en: "A resource for healthy recipes, meal plans, and nutrition advice, promoting a balanced and wholesome approach to eating.", zh: "一个提供健康食谱、膳食计划和营养建议的资源，倡导均衡健康的饮食方式。" },
+            'eatingwell-feature1': { en: "Healthy and delicious recipes", zh: "健康美味食谱" },
+            'eatingwell-feature2': { en: "Meal planning and prep ideas", zh: "膳食计划和准备创意" },
+            'eatingwell-feature3': { en: "Nutrition facts and dietary advice", zh: "营养事实和饮食建议" },
+            'eatingwell-feature4': { en: "Weight management strategies", zh: "体重管理策略" },
+
+            'tinybuddha-title': { en: "Tiny Buddha", zh: "小佛" },
+            'tinybuddha-desc': { en: "A popular blog focused on mindfulness, happiness, and simple wisdom, offering tips and insights for a more peaceful life.", zh: "一个专注于正念、幸福和简单智慧的流行博客，提供实现更平静生活的技巧和见解。" },
+            'tinybuddha-feature1': { en: "Mindfulness and meditation tips", zh: "正念和冥想技巧" },
+            'tinybuddha-feature2': { en: "Articles on happiness and peace", zh: "关于幸福与平和的文章" },
+            'tinybuddha-feature3': { en: "Personal growth and self-improvement", zh: "个人成长和自我提升" },
+            'tinybuddha-feature4': { en: "Community for sharing wisdom", zh: "分享智慧的社区" },
+
+            // New Wellness Platforms
+            'peloton-title': { en: "Peloton", zh: "Peloton" },
+            'peloton-desc': { en: "A leading interactive fitness platform offering live and on-demand classes, fitness equipment, and a global community.", zh: "一个领先的互动健身平台，提供直播和点播课程、健身器材和全球社区。" },
+            'peloton-feature1': { en: "Live and on-demand fitness classes", zh: "直播和点播健身课程" },
+            'peloton-feature2': { en: "Interactive bikes and treadmills", zh: "互动自行车和跑步机" },
+            'peloton-feature3': { en: "Strength, yoga, and meditation content", zh: "力量、瑜伽和冥想内容" },
+            'peloton-feature4': { en: "Community challenges and leaderboards", zh: "社区挑战和排行榜" },
+
+            'real-food-dietitians-title': { en: "The Real Food Dietitians", zh: "真食营养师" },
+            'real-food-dietitians-desc': { en: "A blog by registered dietitians offering healthy, real food recipes and practical nutrition advice.", zh: "一个由注册营养师撰写的博客，提供健康、真实食物的食谱和实用的营养建议。" },
+            'real-food-dietitians-feature1': { en: "Wholesome and delicious recipes", zh: "健康美味食谱" },
+            'real-food-dietitians-feature2': { en: "Evidence-based nutrition articles", zh: "基于证据的营养文章" },
+            'real-food-dietitians-feature3': { en: "Meal prep tips and guides", zh: "膳食准备技巧和指南" },
+            'real-food-dietitians-feature4': { en: "Healthy lifestyle inspiration", zh: "健康生活方式灵感" },
+
+            'prevention-title': { en: "Prevention", zh: "预防" },
+            'prevention-desc': { en: "A health and wellness magazine and website providing trusted information on nutrition, fitness, weight loss, and healthy aging.", zh: "一本健康与保健杂志和网站，提供关于营养、健身、减肥和健康老龄化的可靠信息。" },
+            'prevention-feature1': { en: "Expert health advice and tips", zh: "专家健康建议和技巧" },
+            'prevention-feature2': { en: "Fitness plans and workout routines", zh: "健身计划和锻炼方案" },
+            'prevention-feature3': { en: "Healthy recipes and diet guides", zh: "健康食谱和饮食指南" },
+            'prevention-feature4': { en: "Weight management strategies", zh: "体重管理策略" }
+        };
+
+        // Function to extract domain from URL for Clearbit Logo API
+        function getDomainFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                let hostname = urlObj.hostname;
+                hostname = hostname.replace(/^www\./, '');
+                return hostname;
+            } catch (e) {
+                console.error(`Invalid URL: ${url}`);
+                return '';
+            }
+        }
+
+        // Function to set logos dynamically from Clearbit or fallback to initial letter
+        function setWebcardLogos() {
+            document.querySelectorAll('.card > a').forEach(link => {
+                const url = link.href;
+                const domain = getDomainFromUrl(url);
+                const logoImg = link.querySelector('.card-icon');
+                const cardTitleElement = link.querySelector('.card-title');
+                const cardTitle = cardTitleElement ? cardTitleElement.innerText.trim() : '';
+                // Get initial letter (supports both English and Chinese characters) or 'N' as fallback
+                const initialLetter = cardTitle ? cardTitle.charAt(0).toUpperCase() : 'N';
+
+                if (logoImg) { // Ensure logoImg exists before trying to set its properties
+                    if (domain) {
+                        const logoUrl = `https://logo.clearbit.com/${domain}`;
+                        logoImg.src = logoUrl;
+                        logoImg.onerror = () => {
+                            // Fallback to initial letter if Clearbit fails
+                            logoImg.src = `https://placehold.co/40x40/cccccc/333333?text=${initialLetter}`;
+                            logoImg.classList.add('card-icon-initial'); // Add class for styling initial letter
+                            logoImg.classList.remove('card-icon'); // Remove default image styling
+                        };
+                        logoImg.classList.remove('card-icon-initial'); // Remove fallback styling if it was applied
+                        logoImg.classList.add('card-icon'); // Add default image styling
+                    } else {
+                        // Fallback to initial letter for invalid URLs
+                        logoImg.src = `https://placehold.co/40x40/cccccc/333333?text=${initialLetter}`;
+                        logoImg.classList.add('card-icon-initial'); // Add class for styling initial letter
+                        logoImg.classList.remove('card-icon'); // Remove default image styling
+                    }
+                }
+            });
+        }
+
+        // Function to apply translations
+        function applyTranslations() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[key] && translations[key][currentLang]) {
+                    if (element.tagName === 'INPUT' && element.hasAttribute('data-lang-placeholder')) {
+                        element.placeholder = translations[key][currentLang];
+                    } else {
+                        // Handle submenu buttons with conditional arrows
+                        const isSubmenuItem = element.closest('.submenu');
+                        if (isSubmenuItem && element.tagName === 'BUTTON') {
+                            const hasNestedSubmenu = element.closest('.menu-item').querySelector('.submenu');
+                            if (hasNestedSubmenu) {
+                                element.innerHTML = `${translations[key][currentLang]} <span class="arrow">▶</span>`;
+                            } else {
+                                element.innerHTML = translations[key][currentLang];
+                            }
+                        } else {
+                            element.innerText = translations[key][currentLang];
+                        }
+                    }
+                }
+            });
+            // Re-apply logos after translations, in case titles change and affect initial letter fallback
+            setWebcardLogos();
+
+            // Update language for both desktop and mobile language buttons
+            document.querySelectorAll('.language-button').forEach(button => {
+                if (button) {
+                    button.innerText = currentLang === 'en' ? '中文/English' : 'English/中文';
+                }
+            });
+             // Update night mode button text for both desktop and mobile buttons
+            document.querySelectorAll('.night-mode-button').forEach(button => {
+                if (button) {
+                    button.innerText = isNightMode ? (currentLang === 'en' ? 'Light Mode' : '亮色模式') : (currentLang === 'en' ? 'Dark Mode' : '暗色模式');
+                }
+            });
+        }
+
+        // Function to switch language
+        function switchLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            applyTranslations();
+        }
+
+        // Function to toggle night mode
+        function toggleNightMode() {
+            isNightMode = !isNightMode;
+            document.body.classList.toggle('dark-mode');
+            // Update button text for both desktop and mobile buttons
+            document.querySelectorAll('.night-mode-button').forEach(button => {
+                if (button) {
+                    button.innerText = isNightMode ? (currentLang === 'en' ? 'Light Mode' : '亮色模式') : (currentLang === 'en' ? 'Dark Mode' : '暗色模式');
+                }
+            });
+             // Re-apply active state colors for left nav buttons on mode change
+            document.querySelectorAll('.left-nav .nav-button.nav-button-active').forEach(button => {
+                // Force re-evaluation of CSS for active state
+                button.classList.remove('nav-button-active');
+                void button.offsetWidth; // Trigger reflow
+                button.classList.add('nav-button-active');
+            });
+        }
+
+        // Function to hide all content sections except the overview
+        function hideAllSectionsExceptOverview() {
+            document.querySelectorAll('.right-content section').forEach(section => {
+                if (section.id !== 'overview-section') {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        // Function to show all content sections
+        function showAllSections() {
+            document.querySelectorAll('.right-content section').forEach(section => {
+                section.style.display = ''; // Revert to default display
+            });
+            // Ensure overview section is shown when all sections are shown
+            const overviewSection = document.getElementById('overview-section');
+            if (overviewSection) {
+                overviewSection.style.display = '';
+            }
+        }
+
+        // Function to scroll to a specific section and highlight the button
+        function scrollToSection(id, button) {
+            const element = document.getElementById(id);
+            if (element) {
+                // Hide all sections first
+                hideAllSectionsExceptOverview();
+                // Show only the selected section
+                element.style.display = '';
+
+                // Also hide the overview section if a specific section is selected
+                const overviewSection = document.getElementById('overview-section');
+                if (overviewSection) {
+                    overviewSection.style.display = 'none';
+                }
+
+                // Remove active class from all left nav buttons
+                document.querySelectorAll('.left-nav .nav-button').forEach(btn => {
+                    btn.classList.remove('nav-button-active');
+                });
+                // Add active class to the clicked button
+                if (button) { // Only add if button is provided (might be called from hash)
+                    button.classList.add('nav-button-active');
+                }
+
+                // Calculate scroll position to account for fixed header
+                const headerOffset = document.querySelector('header').offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerOffset - 20; // Added extra 20px padding
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        // Function to toggle mobile side menu
+        function toggleMobileMenu() {
+            const mobileSideMenu = document.getElementById('mobileSideMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            mobileSideMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = mobileSideMenu.classList.contains('active') ? 'hidden' : ''; // Prevent scrolling when menu is open
+        }
+
+        // Function to clone and populate mobile menu
+        function populateMobileMenu() {
+            const topMenu = document.getElementById('top-menu');
+            const mobileSideMenuWrapper = document.querySelector('#mobileSideMenu .menu-items-wrapper');
+
+            // Clear existing cloned items (except language/night mode buttons, which are already in HTML)
+            // Assuming the first two children are the static language/night mode buttons
+            Array.from(mobileSideMenuWrapper.children).forEach((child, index) => {
+                if (index >= 2) {
+                    child.remove();
+                }
+            });
+
+            // Clone menu items from desktop menu
+            const menuItemsToClone = topMenu.querySelectorAll('.menu-item');
+            menuItemsToClone.forEach(item => {
+                const clonedItem = item.cloneNode(true); // Deep clone to get submenus
+                // If it's a top-level link that also has a submenu, ensure submenu is always visible in mobile
+                const submenuElement = clonedItem.querySelector('.submenu');
+                if (submenuElement && clonedItem.querySelector('a')) {
+                    submenuElement.style.display = 'block';
+                    submenuElement.style.position = 'static';
+                    submenuElement.style.boxShadow = 'none';
+                    submenuElement.style.border = 'none';
+                    submenuElement.style.padding = '0';
+                }
+                mobileSideMenuWrapper.appendChild(clonedItem);
+            });
+        }
+
+        // Function to reset social media share links
+        function resetShareLinks() {
+            const pageUrl = encodeURIComponent(window.location.href);
+            const pageTitle = encodeURIComponent(document.title); // Or a specific title for sharing
+
+            document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=Check%20out%20this%20amazing%20page!`;
+            document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${pageTitle}&summary=Explore%20Discovery%20Panel%20Lifestyle.&source=${pageUrl}`; // Updated summary
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${pageUrl}&title=${pageTitle}`;
+            document.getElementById('share-email').href = `mailto:?subject=Check out this page&body=I found this amazing page: ${pageUrl}`;
+        }
+
+        // Initial setup on page load
+        window.onload = () => {
+            setWebcardLogos(); // Set the logos initially
+            applyTranslations(); // Apply initial translations (this also calls setWebcardLogos)
+            populateMobileMenu(); // Populate the mobile side menu
+            resetShareLinks(); // Set the social media share links
+
+            // Handle active state for top menu main items (links)
+            document.querySelectorAll('.top-menu > .menu-item > a').forEach(link => {
+                link.addEventListener('click', function() {
+                    // Remove active from all main menu items
+                    document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Add active to the parent menu-item of the clicked link
+                    this.closest('.menu-item').classList.add('active');
+
+                    // Also clear any active state from submenu items when a main menu item is clicked
+                    document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(subButton => {
+                        subButton.classList.remove('active');
+                    });
+                });
+            });
+
+            // Handle active state for top menu submenu items
+            document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active from all submenu items
+                    document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(subButton => {
+                        subButton.classList.remove('active');
+                    });
+                    // Add active to the clicked submenu button
+                    this.classList.add('active');
+
+                    // Ensure the parent main menu item is also active
+                    const parentMenuItem = this.closest('.top-menu > .menu-item');
+                    if (parentMenuItem) {
+                        document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        parentMenuItem.classList.add('active');
+                    }
+                });
+            });
+
+            // Set 'Lifestyle' as active in the top menu on load for this page
+            const lifestyleMenuItem = document.querySelector('.top-menu .menu-item a[data-lang-key="lifestyle"]');
+            if (lifestyleMenuItem) {
+                document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                lifestyleMenuItem.closest('.menu-item').classList.add('active');
+            }
+
+            // Add event listeners to left-nav buttons for showing/hiding content
+            document.querySelectorAll('.left-nav .nav-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section-id');
+                    scrollToSection(sectionId, this);
+                });
+            });
+
+            // Initial content display based on hash or showing all sections
+            const hash = window.location.hash;
+            if (hash) {
+                const targetSectionId = hash.substring(1); // Remove '#'
+                const targetButton = document.querySelector(`.left-nav .nav-button[data-section-id="${targetSectionId}"]`);
+                if (targetButton) {
+                    scrollToSection(targetSectionId, targetButton);
+                }
+            } else {
+                // If no hash is present, show all sections by default
+                showAllSections();
+                // Also ensure no left-nav button is active on initial load if no hash
+                document.querySelectorAll('.left-nav .nav-button').forEach(btn => {
+                    btn.classList.remove('nav-button-active');
+                });
+            }
+        };
+    </script>
+</body>
+</html>
