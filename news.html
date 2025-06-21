@@ -1,0 +1,2879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Platforms - Discovery Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Social Icons and other general icons like arrows -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Base styles for body and overall layout */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Inter', sans-serif;
+        }
+        body {
+            background: #f0f2f5; /* Light gray background */
+            color: #202124;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            overflow-x: hidden; /* Added to prevent horizontal scrollbar */
+        }
+        body.dark-mode {
+            background: #202124;
+            color: #e8eaed;
+        }
+
+        /* Fixed Header Styles */
+        header {
+            background: #e8eaed;
+            color: #202124;
+            position: fixed; /* Keep header fixed at the top */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 998; /* Ensure it's above other content */
+            border-bottom: 1px solid #dadce0;
+            transition: background 0.3s, border-color 0.3s;
+            padding: 0;
+        }
+        body.dark-mode header {
+            background: #303134;
+            border-bottom: 1px solid #5f6368;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            /* Changed to center the content horizontally */
+            justify-content: center;
+            padding: 1rem 2rem;
+            width: 100%;
+        }
+        /* Adjusted header-logo to display logo and title side-by-side and center them */
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            /* Removed flex: 1 and justify-content: flex-start to allow centering with title */
+        }
+        /* Styling for the new logo image */
+        .header-logo img {
+            height: 30px; /* Adjust size as needed */
+            width: auto;
+        }
+        /* Header title styling */
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: red; /* Changed to red as requested */
+            -webkit-background-clip: unset; /* Remove webkit clip if not using gradient */
+            background-clip: unset; /* Remove background gradient */
+            background: none; /* Remove background gradient */
+        }
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+            /* Removed flex: 1 and justify-content: flex-end to allow centering of header-top */
+            position: absolute; /* Position buttons absolutely */
+            right: 2rem; /* Align to the right */
+        }
+        .language-button, .night-mode-button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            border: none;
+            background: #1a73e8;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .language-button:hover, .night-mode-button:hover {
+            background: #185abc;
+        }
+
+        /* Top Menu Styles (part of fixed header) */
+        .top-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a73e8;
+            padding: 0.5rem 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #dadce0;
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%;
+            z-index: 998;
+        }
+        /* Adjusted dark mode background for top menu to make active state visible */
+        body.dark-mode .top-menu {
+            background: #104080; /* Darker blue for background */
+            border-top: 1px solid #5f6368;
+        }
+        .top-menu .menu-item {
+            position: relative;
+        }
+        .top-menu a, .top-menu .menu-item > button {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            font-size: 1rem;
+            transition: background 0.2s, color 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        /* FIX: Changed top menu button/link text color to white in dark mode */
+        body.dark-mode .top-menu a, body.dark-mode .top-menu .menu-item > button {
+            color: white; /* Explicitly set to white for dark mode */
+        }
+        .top-menu a:hover, .top-menu .menu-item > button:hover {
+            background: #185abc;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+        /* Style for active main menu item link */
+        .top-menu .menu-item.active > a {
+            background: #185abc; /* Active color remains consistent */
+            color: white; /* Ensure white text for active link */
+            border-radius: 8px;
+        }
+
+        /* Dark mode specific style for active main menu item link - now stands out */
+        body.dark-mode .top-menu .menu-item.active > a {
+            background: #185abc; /* Keep the same blue background */
+            color: white; /* Explicitly set text to white in dark mode */
+        }
+
+        .top-menu .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 200px;
+            padding: 0.5rem 0;
+            z-index: 1001; /* Higher z-index for submenus */
+        }
+        body.dark-mode .top-menu .submenu {
+            background: #303134;
+            border: 1px solid #5f6368;
+        }
+        .top-menu .menu-item:hover > .submenu {
+            display: block;
+        }
+        .top-menu .submenu .menu-item > button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #000000; /* Changed to black for contrast on white background */
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        body.dark-mode .top-menu .submenu .menu-item > button {
+            color: #e8eaed;
+        }
+        .top-menu .submenu .menu-item > button:hover {
+            background: #1a73e8;
+            color: white;
+        }
+        /* Style for active submenu item button */
+        .top-menu .submenu .menu-item > button.active {
+            background: #1a73e8; /* Blue color for active submenu button */
+            color: white;
+            border-radius: 8px; /* Apply rounded corners */
+        }
+        .top-menu .submenu .submenu {
+            top: 0;
+            left: 100%;
+            min-width: 200px;
+        }
+        .arrow {
+            margin-left: auto;
+            font-size: 0.8rem;
+        }
+
+        /* Main Content Area - New Flex Container */
+        .main-content {
+            margin-top: 120px; /* Sufficient height to clear fixed header */
+            flex-grow: 1;
+            padding: 2rem; /* Keep existing padding for internal content */
+            display: flex; /* Horizontal split */
+            gap: 2rem;
+            width: 100%;
+        }
+
+        /* Left Navigation (Aside) */
+        .left-nav {
+            width: 250px;
+            flex-shrink: 0;
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 1rem;
+            transition: background 0.3s, color 0.3s;
+            height: fit-content; /* Ensure it doesn't take full height if content is short */
+            position: sticky; /* Make left nav sticky */
+            top: 140px; /* Adjust to be below the fixed header */
+        }
+        body.dark-mode .left-nav {
+            background: #2b2c2f;
+        }
+
+        .left-nav h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #202124;
+            margin-bottom: 1.5rem;
+            padding-left: 0.5rem;
+        }
+        /* FIX: Changed left nav heading text color to white in dark mode */
+        body.dark-mode .left-nav h2 {
+            color: white;
+        }
+
+        .left-nav ul {
+            list-style: none;
+        }
+
+        .left-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Styles for main left nav buttons */
+        .left-nav .nav-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* To push arrow to the right */
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background-color: #e0e0e0; /* Light gray for buttons in light mode */
+            color: #333;
+            font-weight: 500;
+            text-align: left;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .left-nav .nav-button:hover {
+            background-color: #d1d1d1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode .left-nav .nav-button {
+            background-color: #3c4043; /* Darker gray for buttons in dark mode */
+            color: #e8eaed;
+        }
+        /* FIX: Changed left nav button text color to white in dark mode */
+        body.dark-mode .left-nav .nav-button {
+            color: white;
+        }
+        body.dark-mode .left-nav .nav-button:hover {
+            background-color: #404144;
+        }
+
+        /* Left Nav Submenu Styles */
+        .left-nav .left-nav-submenu {
+            display: none; /* Hidden by default */
+            padding-left: 1rem; /* Indent submenu items */
+            margin-top: 0.5rem;
+        }
+
+        .left-nav .left-nav-submenu .nav-button {
+            background-color: #f0f0f0; /* Lighter background for submenu buttons */
+            color: #444;
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+        body.dark-mode .left-nav .left-nav-submenu .nav-button {
+            background-color: #3a3b3d;
+            color: #e8eaed;
+        }
+        /* FIX: Changed left nav submenu button text color to white in dark mode */
+        body.dark-mode .left-nav .left-nav-submenu .nav-button {
+            color: white;
+        }
+        body.dark-mode .left-nav .left-nav-submenu .nav-button:hover {
+            background-color: #4a4b4d;
+        }
+        
+        /* Active button state for left nav */
+        .left-nav .nav-button.nav-button-active {
+             background-color: #1a73e8 !important;
+             color: white !important;
+        }
+
+
+        /* Right Content Area (Main) */
+        .right-content {
+            flex-grow: 1;
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            transition: background 0.3s, color 0.3s;
+            color: #000000; /* Set text color to black for light mode */
+        }
+        body.dark-mode .right-content {
+            background: #2b2c2f;
+            color: #e8eaed; /* Ensure text is light in dark mode */
+        }
+
+        .right-content h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000000; /* Set to black for light mode */
+            margin-bottom: 1.5rem;
+        }
+        /* FIX: Changed "News Platform Overview" text color to white for dark mode */
+        body.dark-mode .right-content h1 {
+            color: white;
+        }
+        /* FIX: Changed "Explore a curated list of prominent news xxxxx" text color to white for dark mode */
+        body.dark-mode .right-content p.text-md.text-gray-700 {
+            color: white;
+        }
+        /* Ensure all direct text content in right-content is black in light mode */
+        .right-content p {
+            color: #000000; /* Set all paragraph text to black in light mode */
+        }
+        body.dark-mode .right-content p {
+            color: #e8eaed; /* Ensure light text in dark mode */
+        }
+        .right-content h2 {
+            color: #000000; /* Set to black for light mode */
+        }
+        body.dark-mode .right-content h2 {
+            color: #e8eaed; /* Ensure light text in dark mode */
+        }
+
+
+        /* Section Header Container (for "General News", "Technology News" etc.) */
+        .section-header-container {
+            width: 100%;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            background: linear-gradient(to right, #93c5fd, #d8b4fe);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .section-title {
+            color: #333;
+            font-size: 2.25rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Subsection Navigation Buttons (e.g., "Foreign General News", "China General News") */
+        .nav-button {
+            padding: 0.75rem 1.5rem; /* Unified padding */
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            color: #202124; /* Dark blue/black text for inactive */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #e0e0e0; /* Light border */
+            min-width: 180px; /* Unified width */
+            height: 50px; /* Unified height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        body.dark-mode .nav-button {
+            background-color: #303134;
+            color: #e8eaed;
+            border-color: #5f6368;
+        }
+        .nav-button:hover {
+            background-color: #f0f0f0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        body.dark-mode .nav-button:hover {
+            background-color: #404144;
+        }
+        /* Unified active state for main navigation buttons and sub-section buttons */
+        .nav-button.nav-button-active,
+        .nav-button-active {
+            background-color: #1a73e8 !important; /* Blue for active state, always */
+            color: white !important; /* White text for active state, always */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-color: #1a73e8 !important;
+        }
+
+        /* Card Styles (Unified Design) */
+        .webcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Allow more cards on medium screens */
+            gap: 1.5rem; /* gap-6 (24px) */
+            margin-bottom: 2rem; /* Added for spacing between card grids and next sections */
+        }
+        /* Ensure 4 columns on large screens */
+        @media (min-width: 1280px) { /* xl breakpoint */
+            .webcard-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        /* Ensure 3 columns on medium screens */
+        @media (min-width: 1024px) and (max-width: 1279px) { /* lg breakpoint */
+            .webcard-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .webcard {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally within the card */
+            justify-content: flex-start;
+            min-height: 280px; /* Consistent height for all cards */
+            padding: 1.5rem; /* Padding applied directly to card */
+            min-width: 200px; /* Ensure cards don't get too narrow */
+            border: 1px solid #cccccc; /* Lighter border color for light mode */
+            color: #000000; /* Set text color to black for light mode */
+        }
+        body.dark-mode .webcard {
+            background-color: #303134;
+            color: #e8eaed;
+            border-color: #5f6368;
+        }
+        .webcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        .webcard > a { /* The link inside the card */
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center children horizontally */
+            width: 100%;
+            height: 100%;
+        }
+        .webcard-header-content { /* Container for icon and title */
+            display: flex;
+            flex-direction: column; /* Stack icon and title vertically */
+            align-items: center; /* Center icon horizontally */
+            width: 100%;
+            margin-bottom: 0.75rem; /* Space below header content */
+            flex-shrink: 0;
+        }
+        /* Style for image icons */
+        .webcard-icon {
+            width: 40px; /* Larger icon size for better visibility */
+            height: 40px;
+            margin-bottom: 0.5rem; /* Space between icon and title */
+            flex-shrink: 0;
+            border-radius: 5px; /* Slightly rounded for icons */
+            object-fit: contain; /* Ensure image fits without distortion */
+        }
+        /* Fallback for text initials */
+        .webcard-icon-initial {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+            border-radius: 5px;
+            background-color: #cccccc;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        body.dark-mode .webcard-icon-initial {
+            background-color: #5f6368;
+            color: #e8eaed;
+        }
+
+        .webcard-title {
+            font-size: 1rem; /* Slightly smaller font to help fit long names */
+            font-weight: 600;
+            color: #000000; /* Set to black for light mode */
+            text-align: center; /* Centered as requested */
+            width: 100%; /* Take full width to allow centering */
+            word-wrap: break-word; /* Break long words */
+            white-space: normal; /* Allow text to wrap */
+        }
+        /* FIX: Changed company webcard titles text color to white in dark mode */
+        body.dark-mode .webcard-title {
+            color: white;
+        }
+        .webcard-divider {
+            width: calc(100% + 3rem); /* Extends across full card width including padding */
+            margin-left: -1.5rem; /* Compensate for card's left padding */
+            margin-right: -1.5rem; /* Compensate for card's right padding */
+            border-bottom: 1px solid #e0e0e0;
+            margin-top: 0.75rem;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+        body.dark-mode .webcard-divider {
+            border-color: #5f6368;
+        }
+        .webcard-content {
+            text-align: left;
+            width: 100%;
+            flex-grow: 1; /* Allow content to fill remaining space */
+            display: flex;
+            flex-direction: column;
+        }
+        .webcard-description {
+            font-size: 0.875rem;
+            color: #000000; /* Set to black for light mode */
+            margin-bottom: 0.75rem;
+            flex-grow: 1; /* Allow description to take available space */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit description to 3 lines */
+            -webkit-box-orient: vertical;
+        }
+        /* FIX: Changed company webcard descriptions text color to white in dark mode */
+        body.dark-mode .webcard-description {
+            color: white;
+        }
+        .webcard-features {
+            list-style: disc;
+            padding-left: 1.25rem;
+            font-size: 0.875rem;
+            color: #000000; /* Set to black for light mode */
+            margin-top: auto; /* Push features to bottom */
+            flex-shrink: 0;
+        }
+        /* FIX: Changed company webcard features text color to white in dark mode */
+        body.dark-mode .webcard-features {
+            color: white;
+        }
+        .webcard-features li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Subtitle Header Card (e.g., "Foreign General News" subtitle) */
+        .subtitle-header-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem; /* Added for spacing */
+            border: 1px solid #909090; /* Darker border for light mode */
+        }
+        body.dark-mode .subtitle-header-card {
+            background-color: #303134;
+            border-color: #5f6368;
+        }
+        body.dark-mode .subtitle-header-card h3 {
+            color: #60a5fa; /* Blue color for subtitle in dark mode */
+        }
+        body.dark-mode .subtitle-header-card p {
+            color: #e8eaed; /* White color for description in dark mode */
+        }
+
+        .subtitle-header-card h3 {
+            color: #000000; /* Set to black for light mode */
+        }
+        .subtitle-header-card p {
+            color: #000000; /* Set to black for light mode */
+        }
+
+
+        /* Footer styles */
+        .main-footer {
+            background-color: #f0f2f5;
+            color: #000000; /* Set to black for light mode */
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+            width: 100%;
+        }
+        /* FIX: Changed footer text color to white in dark mode */
+        body.dark-mode .main-footer {
+            background: #202124;
+            color: white;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 0.75rem;
+            transition: transform 0.2s ease-in-out;
+            font-size: 2.25rem; /* Using text-4xl from tools.html for icon size */
+        }
+        .social-links a:hover {
+            transform: translateY(-3px);
+        }
+        /* FIX: Changed email share icon color to white in dark mode for news.html */
+        body.dark-mode #share-email .fas {
+            color: white;
+        }
+        .footer-note {
+            font-size: 0.875rem;
+            color: #000000; /* Set to black for light mode */
+        }
+        /* FIX: Changed footer note text color to white in dark mode */
+        body.dark-mode .footer-note {
+            color: white;
+        }
+        .main-footer p {
+            color: #000000; /* Ensure copyright text is black in light mode */
+        }
+        body.dark-mode .main-footer p {
+            color: #e8eaed; /* Ensure light text in dark mode */
+        }
+
+        /* Mobile Hamburger Menu Styles */
+        .mobile-menu-toggle {
+            display: none; /* Hidden by default on larger screens */
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #202124;
+            padding: 0.5rem;
+            z-index: 1000; /* Ensure it's above other elements */
+            position: absolute; /* Position hamburger absolutely */
+            left: 2rem; /* Align to the left */
+        }
+        body.dark-mode .mobile-menu-toggle {
+            color: #e8eaed;
+        }
+
+        .mobile-menu-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+            z-index: 1000;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -300px; /* Start off-screen */
+            width: 280px; /* Fixed width for the mobile menu */
+            height: 100%;
+            background: #fff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transition: left 0.3s ease-in-out; /* Smooth slide-in/out */
+            overflow-y: auto; /* Enable scrolling for long content */
+            padding-top: 1rem; /* Space from top */
+        }
+        body.dark-mode .mobile-menu {
+            background: #2b2c2f;
+        }
+
+        .mobile-menu.open {
+            left: 0; /* Slide into view */
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #202124;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+        }
+        body.dark-mode .mobile-menu-close {
+            color: #e8eaed;
+        }
+
+        .mobile-menu-content {
+            padding: 1rem;
+        }
+
+        /* Mobile menu specific styles for cloned elements */
+        .mobile-top-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: none; /* Remove background from cloned menu */
+            border-top: none;
+        }
+
+        .mobile-top-menu .menu-item {
+            width: 100%;
+        }
+
+        .mobile-top-menu .menu-item a,
+        .mobile-top-menu .menu-item button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            color: #202124;
+            border-radius: 0.5rem;
+        }
+        body.dark-mode .mobile-top-menu .menu-item a,
+        body.dark-mode .mobile-top-menu .menu-item button {
+            color: #e8eaed;
+        }
+
+        .mobile-top-menu .menu-item a:hover,
+        .mobile-top-menu .menu-item button:hover {
+            background-color: #e0e0e0;
+        }
+        body.dark-mode .mobile-top-menu .menu-item a:hover,
+        body.dark-mode .mobile-top-menu .menu-item button:hover {
+            background-color: #3c4043;
+        }
+
+        .mobile-top-menu .submenu {
+            position: static; /* Remove absolute positioning */
+            display: none; /* Hidden by default, toggled by JS */
+            width: 100%;
+            box-shadow: none;
+            border: none;
+            padding: 0.5rem 0 0.5rem 1rem; /* Indent submenu items */
+            background: none;
+        }
+
+        .mobile-top-menu .submenu.open {
+            display: block;
+        }
+
+        .mobile-top-menu .submenu .menu-item button {
+            padding-left: 1.5rem; /* Further indent for nested submenu items */
+        }
+
+        .mobile-top-menu .submenu .submenu { /* Deeper nesting */
+            padding-left: 1rem;
+        }
+
+        .mobile-top-menu .submenu .submenu .menu-item button {
+            padding-left: 2.5rem; /* Even further indent */
+        }
+
+
+        .mobile-left-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: none; /* Remove background from cloned nav */
+            box-shadow: none;
+            margin-top: 1rem;
+        }
+
+        .mobile-left-nav h2 {
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+        /* FIX: Changed mobile left nav heading text color to white in dark mode */
+        body.dark-mode .mobile-left-nav h2 {
+            color: white;
+        }
+        /* FIX: Changed mobile left nav button text color to white in dark mode */
+        body.dark-mode .mobile-left-nav .nav-button {
+            color: white;
+        }
+        /* FIX: Changed mobile left nav submenu button text color to white in dark mode */
+        body.dark-mode .mobile-left-nav .left-nav-submenu .nav-button {
+            color: white;
+        }
+
+
+        .mobile-left-nav .left-nav-submenu {
+            position: static;
+            display: none; /* Hidden by default, toggled by JS */
+            padding-left: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .mobile-left-nav .left-nav-submenu.open {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .header-top {
+                padding: 1rem; /* Adjust padding for smaller screens */
+            }
+            /* Re-add flex: none to mobile menu toggle to prevent it from pushing content */
+            .mobile-menu-toggle {
+                flex: none;
+            }
+            .header-logo {
+                flex: none; /* Remove flex-grow to prevent logo from pushing buttons */
+            }
+            .header-title {
+                flex-grow: 1; /* Allow title to take available space */
+                text-align: center;
+            }
+            .header-buttons {
+                flex: none; /* Remove flex-grow */
+            }
+
+            .top-menu {
+                display: none; /* Hide desktop top menu on smaller screens */
+            }
+            .left-nav {
+                display: none; /* Hide desktop left nav on smaller screens */
+            }
+            .mobile-menu-toggle {
+                display: block; /* Show hamburger icon */
+            }
+
+            .main-content {
+                flex-direction: column; /* Stack left nav and right content vertically */
+                padding: 1.5rem;
+                margin-top: 80px; /* Adjust margin-top for header height on mobile */
+            }
+            .left-nav {
+                width: 100%; /* Full width for left nav when stacked */
+                padding: 1rem;
+                position: static; /* Remove sticky positioning when stacked */
+            }
+            .right-content {
+                padding: 1.5rem;
+            }
+            .webcard-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Keep 2-3 columns on tablets */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: row; /* Keep header items in a row for better mobile layout */
+                justify-content: space-between; /* Distribute items */
+                align-items: center;
+            }
+            .header-title {
+                display: none; /* Hide title on very small screens to save space */
+            }
+            .header-buttons {
+                justify-content: flex-end; /* Align buttons to the right */
+                gap: 0.25rem; /* Reduce gap */
+            }
+            .language-button, .night-mode-button {
+                padding: 0.3rem 0.6rem; /* Smaller buttons */
+                font-size: 0.8rem;
+            }
+            /* Re-add position: static to mobile menu toggle for smaller screens to make it part of flex flow */
+            .mobile-menu-toggle {
+                position: static;
+            }
+
+
+            .section-title { /* Adjusted for smaller screens */
+                font-size: 1.75rem;
+            }
+            .nav-button { /* Allow buttons to shrink and take full width */
+                min-width: unset;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .webcard-grid {
+                grid-template-columns: 1fr; /* Single column for very small screens */
+            }
+            .webcard {
+                padding: 1rem;
+            }
+            .webcard-icon {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex flex-col items-center min-h-screen">
+    <header>
+        <div class="header-top">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+            <!-- Adjusted header-logo and header-title to be grouped and centered -->
+            <div class="flex items-center gap-2"> <!-- Flex container to hold logo and title -->
+                <div class="header-logo">
+                <img src="images/metapanel-t.png" onerror="this.src='https://placehold.co/30x30/cccccc/333333?text=Logo'" alt="Discovery Panel Logo">
+                </div>
+                <div class="header-title">
+                    <h1>Discovery Panel</h1>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <button class="language-button" onclick="switchLanguage()">中文/English</button>
+                <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+            </div>
+        </div>
+        <div class="top-menu" id="top-menu">
+            <div class="menu-item">
+                <a href="index.html" data-lang-key="home">Home</a>
+            </div>
+            <div class="menu-item">
+                <a href="aigc.html" data-lang-key="aigc">AIGC Tools</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="intelligent-dialogue">Intelligent Dialogue</button></div>
+                    <div class="menu-item"><button data-lang-key="art-generation">Art Generation</button></div>
+                    <div class="menu-item"><button data-lang-key="audio-creation">Audio Creation</button></div>
+                    <div class="menu-item"><button data-lang-key="video-creation">Video Creation</button></div>
+                    <div class="menu-item"><button data-lang-key="smart-office">Smart Office</button></div>
+                    <div class="menu-item"><button data-lang-key="creative-design">Creative Design</button></div>
+                    <div class="menu-item"><button data-lang-key="learning-resources">Learning Resources</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="tech.html" data-lang-key="technology">Technology</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="code-hosting-collaboration">Code Hosting & Collaboration</button></div>
+                    <div class="menu-item"><button data-lang-key="cloud-deployment-serverless">Cloud Deployment & Serverless</button></div>
+                    <div class="menu-item"><button data-lang-key="automation-code-integration">Automation & Code Integration</button></div>
+                    <div class="menu-item"><button data-lang-key="ci-cd-tools">CI/CD Tools</button></div>
+                    <div class="menu-item"><button data-lang-key="edge-computing-network-optimization">Edge Computing & Network Optimization</button></div>
+                    <div class="menu-item"><button data-lang-key="containers-cloud-native">Containers & Cloud Native</button></div>
+                    <div class="menu-item"><button data-lang-key="other">Other</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="social.html" data-lang-key="social">Social</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-social">Foreign Social</button></div>
+                    <div class="menu-item"><button data-lang-key="china-social">China Social</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="music.html" data-lang-key="music">Music</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-music">Foreign Music</button></div>
+                    <div class="menu-item"><button data-lang-key="china-music">China Music</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="video.html" data-lang-key="video">Video</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-video">Foreign Video</button></div>
+                    <div class="menu-item"><button data-lang-key="china-video">China Video</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="finance.html" data-lang-key="finance">Finance</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="foreign-finance-trade">Foreign Finance & Trade</button></div>
+                    <div class="menu-item"><button data-lang-key="china-finance-trade">China Finance & Trade</button></div>
+                    <div class="menu-item">
+                        <button data-lang-key="crypto-trade">Crypto Trade <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="blockchain">Blockchain</button></div>
+                            <div class="menu-item"><button data-lang-key="wallets">Wallets</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="memes-nfts">Memes & NFTs <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="nft-investment">NFT Investment</button></div>
+                            <div class="menu-item"><button data-lang-key="meme-coins-investment">Meme Coins Investment</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item active">
+                <a href="news.html" data-lang-key="news">News</a>
+                <div class="submenu">
+                    <div class="menu-item">
+                        <button data-lang-key="general-news">General News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-general-news">Foreign General News</button></div>
+                            <div class="menu-item"><button data-lang-key="china-general-news">China General News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="technology-news">Technology News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="technology-products">Technology Products</button></div>
+                            <div class="menu-item"><button data-lang-key="ai-news">AI News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="finance-news">Finance News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="global-official">Global Official</button></div>
+                            <div class="menu-item"><button data-lang-key="crypto">Crypto</button></div>
+                            <div class="menu-item"><button data-lang-key="foreign-finance-news">Foreign Finance News</button></div>
+                            <div class="menu-item"><button data-lang-key="china-finance-news">China Financial News</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="travel-news">Travel News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-travel">Foreign Travel</button></div>
+                            <div class="menu-item"><button data-lang-key="china-travel">China Travel</button></div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <button data-lang-key="foods-news">Foods News <span class="arrow">▶</span></button>
+                        <div class="submenu">
+                            <div class="menu-item"><button data-lang-key="foreign-foods">Foreign Food</button></div>
+                            <div class="menu-item"><button data-lang-key="china-foods">China Food</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="learning.html" data-lang-key="learning">Learning</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="creative-skills">Creative Skills</button></div>
+                    <div class="menu-item"><button data-lang-key="professional-skills">Professional Skills</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="lifestyle.html" data-lang-key="lifestyle">Lifestyle</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="lifestyle-home">Home Style</button></div>
+                    <div class="menu-item"><button data-lang-key="wellness">Wellness</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="shops.html" data-lang-key="shopping">Shopping</a>
+                <div class="submenu">
+                    <div class="menu-item"><button data-lang-key="usa-shops">USA Shops</button></div>
+                    <div class="menu-item"><button data-lang-key="china-shops">China Shops</button></div>
+                    <div class="menu-item"><button data-lang-key="europe-shops">Europe Shops</button></div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="tools.html" data-lang-key="tools">Tools</a>
+            </div>
+            <div class="menu-item">
+                <a href="resources.html" data-lang-key="resources">Resources</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" id="mobile-menu-close">✖</button>
+        <div class="mobile-menu-content">
+            </div>
+    </div>
+
+    <div class="main-content">
+        <aside class="left-nav" id="left-nav">
+            <h2 data-lang-key="newsPlatforms">News Platforms</h2>
+            <ul>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-controls-section="general-news-section" data-lang-key="general-news-section-title">General News <span class="arrow">▶</span></button>
+                    <ul class="left-nav-submenu">
+                        <li><button class="nav-button" data-section-id="foreign-general-news" data-lang-key="foreign-general-news">Foreign General News</button></li>
+                        <li><button class="nav-button" data-section-id="china-general-news" data-lang-key="china-general-news">China General News</button></li>
+                    </ul>
+                </li>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-controls-section="technology-news-section" data-lang-key="technology-news-section-title">Technology News <span class="arrow">▶</span></button>
+                    <ul class="left-nav-submenu">
+                        <li><button class="nav-button" data-section-id="technology-products" data-lang-key="technology-products">Technology Products</button></li>
+                        <li><button class="nav-button" data-section-id="ai-news" data-lang-key="ai-news">AI News</button></li>
+                    </ul>
+                </li>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-controls-section="finance-news-section" data-lang-key="finance-news-section-title">Finance News <span class="arrow">▶</span></button>
+                    <ul class="left-nav-submenu">
+                        <li><button class="nav-button" data-section-id="global-official-finance" data-lang-key="global-official">Global Official</button></li>
+                        <li><button class="nav-button" data-section-id="crypto-finance-news" data-lang-key="crypto">Crypto</button></li>
+                        <li><button class="nav-button" data-section-id="foreign-finance-news" data-lang-key="foreign-finance-news">Foreign Finance News</button></li>
+                        <li><button class="nav-button" data-section-id="china-finance-news" data-lang-key="china-finance-news">China Finance News</button></li>
+                    </ul>
+                </li>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-controls-section="travel-news-section" data-lang-key="travel-news-section-title">Travel News <span class="arrow">▶</span></button>
+                    <ul class="left-nav-submenu">
+                        <li><button class="nav-button" data-section-id="foreign-travel" data-lang-key="foreign-travel">Foreign Travel</button></li>
+                        <li><button class="nav-button" data-section-id="china-travel" data-lang-key="china-travel">China Travel</button></li>
+                    </ul>
+                </li>
+                <li class="left-nav-menu-item">
+                    <button class="nav-button" data-controls-section="foods-news-section" data-lang-key="foods-news-section-title">Food News <span class="arrow">▶</span></button>
+                    <ul class="left-nav-submenu">
+                        <li><button class="nav-button" data-section-id="foreign-foods" data-lang-key="foreign-foods">Foreign Food</button></li>
+                        <li><button class="nav-button" data-section-id="china-foods" data-lang-key="china-foods">China Food</button></li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+        <main class="right-content">
+            <div id="overview-section">
+                <h1 data-lang-key="news-platform-overview">News Platform Overview</h1>
+                <p class="text-md text-gray-700 mb-4" data-lang-key="news-platform-description"> Explore a curated list of prominent news platforms, covering general, technology, finance, travel, and food news. Each card provides a direct link to the respective platform, along with its logo icon, a brief description of its purpose, and key features. </p>
+            </div>
+            <div class="section" id="general-news-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="general-news-section-title">General News</h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-8 w-full max-w-6xl mx-auto">
+                    <button class="nav-button" data-section-id="foreign-general-news" data-lang-key="foreign-general-news-btn">Foreign General News</button>
+                    <button class="nav-button" data-section-id="china-general-news" data-lang-key="china-general-news-btn">China General News</button>
+                </div>
+                <div class="subtitle-header-card col-span-full text-center" id="foreign-general-news">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="foreign-general-news-subtitle">Foreign General News</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="foreign-general-news-desc">Leading international news agencies and publications providing comprehensive global news.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for Foreign General News -->
+                    <div class="webcard">
+                        <a href="https://www.afp.com/en" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="法新社图标">
+                                <p class="webcard-title" data-lang-key="afp-title">Agence France-Presse</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="afp-desc">AFP is a global news agency providing fast, comprehensive, and verified coverage of events worldwide.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="afp-feature1">Global news coverage</li>
+                                    <li data-lang-key="afp-feature2">Multimedia content</li>
+                                    <li data-lang-key="afp-feature3">Fact-checking services</li>
+                                    <li data-lang-key="afp-feature4">International correspondents</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.dw.com/en/top-stories/s-9097" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="德国之声新闻图标">
+                                <p class="webcard-title" data-lang-key="dw-title">Deutsche Welle News</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="dw-desc">Deutsche Welle provides international news and analysis with a focus on Germany and Europe, and a global perspective.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="dw-feature1">Germany and Europe focus</li>
+                                    <li data-lang-key="dw-feature2">In-depth analysis</li>
+                                    <li data-lang-key="dw-feature3">Multi-language content</li>
+                                    <li data-lang-key="dw-feature4">Global current affairs</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.theguardian.com/international" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="卫报图标">
+                                <p class="webcard-title" data-lang-key="guardian-title">The Guardian</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="guardian-desc">A leading British newspaper providing independent news coverage across a wide range of global news, politics, and culture.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="guardian-feature1">Independent news coverage</li>
+                                    <li data-lang-key="guardian-feature2">Global news and commentary</li>
+                                    <li data-lang-key="guardian-feature3">Investigative reporting</li>
+                                    <li data-lang-key="guardian-feature4">Arts and culture reporting</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.bbc.com/news" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="BBC新闻图标">
+                                <p class="webcard-title" data-lang-key="bbc-title">BBC News</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bbc-desc">The world's largest broadcaster, providing impartial news and current affairs from the UK and around the globe.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bbc-feature1">Impartial global news</li>
+                                    <li data-lang-key="bbc-feature2">Live reports and analysis</li>
+                                    <li data-lang-key="bbc-feature3">Video and audio content</li>
+                                    <li data-lang-key="bbc-feature4">Wide range of topics</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.nytimes.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="纽约时报图标">
+                                <p class="webcard-title" data-lang-key="nytimes-title">The New York Times</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="nytimes-desc">An American newspaper widely regarded as a national "newspaper of record," offering extensive coverage of news, business, and culture.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="nytimes-feature1">In-depth investigative journalism</li>
+                                    <li data-lang-key="nytimes-feature2">Comprehensive national and international news</li>
+                                    <li data-lang-key="nytimes-feature3">Opinion and analysis sections</li>
+                                    <li data-lang-key="nytimes-feature4">Culture and lifestyle content</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://edition.cnn.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="CNN图标">
+                                <p class="webcard-title" data-lang-key="cnn-title">CNN</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="cnn-desc">A global news leader, providing breaking news, live video, and in-depth coverage of current events worldwide.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="cnn-feature1">Breaking news alerts</li>
+                                    <li data-lang-key="cnn-feature2">Live news streaming</li>
+                                    <li data-lang-key="cnn-feature3">Global reporting network</li>
+                                    <li data-lang-key="cnn-feature4">Political and business news</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="china-general-news">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="china-general-news-subtitle">China General News</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="china-general-news-desc">Major Chinese news outlets providing comprehensive news and commentary from a Chinese perspective.</p>
+                </div>
+                <div class="webcard-grid" id="china-general-news-webcards">
+                     <!-- Cards for China General News -->
+                    <div class="webcard">
+                        <a href="http://www.people.com.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="人民网图标">
+                                <p class="webcard-title" data-lang-key="peoplesdaily-title">People's Daily Online</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="peoplesdaily-desc">The official newspaper of the Central Committee of the Communist Party of China, providing authoritative news and commentary.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="peoplesdaily-feature1">Official party newspaper</li>
+                                    <li data-lang-key="peoplesdaily-feature2">Authoritative news and commentary</li>
+                                    <li data-lang-key="peoplesdaily-feature3">Policy interpretations</li>
+                                    <li data-lang-key="peoplesdaily-feature4">Focus on national development</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.news.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="新华网图标">
+                                <p class="webcard-title" data-lang-key="xinhuanet-title">Xinhua News Agency</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="xinhuanet-desc">The official state news agency of the People's Republic of China and the largest media organization in China.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="xinhuanet-feature1">Official state news agency</li>
+                                    <li data-lang-key="xinhuanet-feature2">Extensive domestic and international network</li>
+                                    <li data-lang-key="xinhuanet-feature3">Text, photo, and video news</li>
+                                    <li data-lang-key="xinhuanet-feature4">Authoritative reporting</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.chinanews.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="中国新闻网图标">
+                                <p class="webcard-title" data-lang-key="chinanews-title">China News Service</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="chinanews-desc">China News Service is a state-level news agency providing news and information to overseas Chinese media and international audiences.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="chinanews-feature1">News for overseas Chinese</li>
+                                    <li data-lang-key="chinanews-feature2">International news coverage</li>
+                                    <li data-lang-key="chinanews-feature3">Focus on China affairs</li>
+                                    <li data-lang-key="chinanews-feature4">Multimedia content</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://cn.chinadaily.com.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="中国日报网图标">
+                                <p class="webcard-title" data-lang-key="chinadaily-title">China Daily</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="chinadaily-desc">China Daily is a national English-language newspaper in China, offering news, analysis, and commentary on China and global affairs.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="chinadaily-feature1">English-language news from China</li>
+                                    <li data-lang-key="chinadaily-feature2">Global affairs coverage</li>
+                                    <li data-lang-key="chinadaily-feature3">Business and culture sections</li>
+                                    <li data-lang-key="chinadaily-feature4">Official perspective</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.huanqiu.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="环球网图标">
+                                <p class="webcard-title" data-lang-key="huanqiu-title">Huanqiu.com</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="huanqiu-desc">Huanqiu.com (Global Times Online) is a Chinese news website focusing on international news and commentary from a Chinese perspective.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="huanqiu-feature1">International news focus</li>
+                                    <li data-lang-key="huanqiu-feature2">Chinese perspective on global events</li>
+                                    <li data-lang-key="huanqiu-feature3">Military and geopolitical analysis</li>
+                                    <li data-lang-key="huanqiu-feature4">Opinion pieces</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://news.cctv.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="央视新闻图标">
+                                <p class="webcard-title" data-lang-key="cctvnews-title">CCTV News</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="cctvnews-desc">The official news portal of China Central Television, providing comprehensive news coverage across various sectors.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="cctvnews-feature1">Comprehensive news coverage</li>
+                                    <li data-lang-key="cctvnews-feature2">Domestic and international news</li>
+                                    <li data-lang-key="cctvnews-feature3">Video news and documentaries</li>
+                                    <li data-lang-key="cctvnews-feature4">Official reports</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="technology-news-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="technology-news-section-title">Technology News</h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-8 w-full max-w-6xl mx-auto">
+                    <button class="nav-button" data-section-id="technology-products" data-lang-key="technology-products-btn">Technology Products</button>
+                    <button class="nav-button" data-section-id="ai-news" data-lang-key="ai-news-btn">AI News</button>
+                </div>
+                <div class="subtitle-header-card col-span-full text-center" id="technology-products">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="technology-products-subtitle">Technology Products</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="technology-products-desc">News and reviews on the latest consumer electronics, gadgets, and tech innovations.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for Technology Products -->
+                    <div class="webcard">
+                        <a href="https://www.digitaltrends.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="数字趋势图标">
+                                <p class="webcard-title" data-lang-key="digitaltrends-title">Digital Trends</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="digitaltrends-desc">Covers news and reviews on consumer electronics, computing, mobile tech, and other tech products.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="digitaltrends-feature1">Product reviews and guides</li>
+                                    <li data-lang-key="digitaltrends-feature2">Latest tech news</li>
+                                    <li data-lang-key="digitaltrends-feature3">How-to articles</li>
+                                    <li data-lang-key="digitaltrends-feature4">Emerging tech coverage</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://techcrunch.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="TechCrunch图标">
+                                <p class="webcard-title" data-lang-key="techcrunch-title">TechCrunch</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="techcrunch-desc">Focuses on tech startups, breaking tech news, and analysis of the tech industry.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="techcrunch-feature1">Startup news and funding</li>
+                                    <li data-lang-key="techcrunch-feature2">Tech industry analysis</li>
+                                    <li data-lang-key="techcrunch-feature3">Product launches</li>
+                                    <li data-lang-key="techcrunch-feature4">Venture capital insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.cnet.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="CNET图标">
+                                <p class="webcard-title" data-lang-key="cnet-title">CNET</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="cnet-desc">A comprehensive source for tech news, product reviews, and how-to guides for consumer electronics.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="cnet-feature1">Extensive product reviews</li>
+                                    <li data-lang-key="cnet-feature2">Tech news and features</li>
+                                    <li data-lang-key="cnet-feature3">Buying guides</li>
+                                    <li data-lang-key="cnet-feature4">Video content</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.engadget.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Engadget图标">
+                                <p class="webcard-title" data-lang-key="engadget-title">Engadget</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="engadget-desc">Offers daily coverage of gadgets, consumer electronics, and tech news, along with reviews and analysis.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="engadget-feature1">Gadget reviews</li>
+                                    <li data-lang-key="engadget-feature2">Consumer tech news</li>
+                                    <li data-lang-key="engadget-feature3">Industry analysis</li>
+                                    <li data-lang-key="engadget-feature4">Future tech insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="ai-news">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="ai-news-subtitle">AI News</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="ai-news-desc">Sources dedicated to the latest developments, research, and applications in Artificial Intelligence.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for AI News -->
+                    <div class="webcard">
+                        <a href="https://www.ainews.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="AI新闻图标">
+                                <p class="webcard-title" data-lang-key="ainews-title">AI News</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="ainews-desc">A platform dedicated to news and insights within the Artificial Intelligence industry, covering various applications and advancements.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="ainews-feature1">Latest AI developments</li>
+                                    <li data-lang-key="ainews-feature2">Industry insights</li>
+                                    <li data-lang-key="ainews-feature3">AI applications</li>
+                                    <li data-lang-key="ainews-feature4">Expert opinions</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://venturebeat.com/category/ai/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="VentureBeat AI图标">
+                                <p class="webcard-title" data-lang-key="venturebeat-title">VentureBeat AI</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="venturebeat-desc">VentureBeat's dedicated section for Artificial Intelligence, covering business applications, startups, and breakthroughs in AI.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="venturebeat-feature1">AI business news</li>
+                                    <li data-lang-key="venturebeat-feature2">AI startup funding</li>
+                                    <li data-lang-key="venturebeat-feature3">Breakthroughs and research</li>
+                                    <li data-lang-key="venturebeat-feature4">AI ethics discussions</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.wired.com/tag/artificial-intelligence/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="连线杂志图标">
+                                <p class="webcard-title" data-lang-key="wired-title">Wired</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="wired-desc">Wired's coverage of Artificial Intelligence, exploring its impact on culture, society, and technology.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="wired-feature1">In-depth AI impact explorations</li>
+                                    <li data-lang-key="wired-feature2">Future of AI</li>
+                                    <li data-lang-key="wired-feature3">Cultural implications of AI</li>
+                                    <li data-lang-key="wired-feature4">Interviews with AI leaders</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.theverge.com/ai" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="The Verge图标">
+                                <p class="webcard-title" data-lang-key="theverge-title">The Verge</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="theverge-desc">The Verge's dedicated section for AI news, reviews, and features, covering the latest in AI innovation.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="theverge-feature1">AI product reviews</li>
+                                    <li data-lang-key="theverge-feature2">AI news and analysis</li>
+                                    <li data-lang-key="theverge-feature3">Consumer perspective on AI</li>
+                                    <li data-lang-key="theverge-feature4">Future of AI technology</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="finance-news-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="finance-news-section-title">Finance News</h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-8 w-full max-w-6xl mx-auto">
+                    <button class="nav-button" data-section-id="global-official-finance" data-lang-key="global-official-finance-btn">Global Official</button>
+                    <button class="nav-button" data-section-id="crypto-finance-news" data-lang-key="crypto-finance-news-btn">Crypto</button>
+                    <button class="nav-button" data-section-id="foreign-finance-news" data-lang-key="foreign-finance-news-btn">Foreign Finance News</button>
+                    <button class="nav-button" data-section-id="china-finance-news" data-lang-key="china-finance-news-btn">China Finance News</button>
+                </div>
+                <div class="subtitle-header-card col-span-full text-center" id="global-official-finance">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="global-official-finance-subtitle">Global Official Finance</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="global-official-finance-desc">Official and regulated platforms for global financial services, including traditional and crypto banking.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for Global Official Finance -->
+                     <div class="webcard">
+                        <a href="https://www.seba.swiss/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Seba银行图标">
+                                <p class="webcard-title" data-lang-key="seba-title">Seba Bank</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="seba-desc">A FINMA licensed Swiss bank providing a seamless, secure, and easy-to-use bridge between digital and traditional assets.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="seba-feature1">Regulated crypto banking</li>
+                                    <li data-lang-key="seba-feature2">Digital asset services</li>
+                                    <li data-lang-key="seba-feature3">Traditional banking services</li>
+                                    <li data-lang-key="seba-feature4">Institutional focus</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.bitstamp.net/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Bitstamp图标">
+                                <p class="webcard-title" data-lang-key="bitstamp-title">Bitstamp</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bitstamp-desc">One of the oldest cryptocurrency exchanges, known for its reliability and focus on institutional and professional traders.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bitstamp-feature1">Long-standing and regulated exchange</li>
+                                    <li data-lang-key="bitstamp-feature2">Fiat-to-crypto gateway</li>
+                                    <li data-lang-key="bitstamp-feature3">Institutional-grade security</li>
+                                    <li data-lang-key="bitstamp-feature4">Staking services</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://bsdex.de/en/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="BSDEX图标">
+                                <p class="webcard-title" data-lang-key="bsdex-title">BSDEX</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bsdex-desc">The Stuttgart Digital Exchange (BSDEX) is a regulated trading venue for digital assets in Germany.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bsdex-feature1">Regulated German exchange</li>
+                                    <li data-lang-key="bsdex-feature2">Secure trading environment</li>
+                                    <li data-lang-key="bsdex-feature3">Fiat-to-crypto trading</li>
+                                    <li data-lang-key="bsdex-feature4">Focus on security and compliance</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.binance.com/en/country-region-selector/france" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="币安法国图标">
+                                <p class="webcard-title" data-lang-key="binance-france-title">Binance France</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="binance-france-desc">Binance's French entity, providing regulated crypto services compliant with local regulations.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="binance-france-feature1">Regulated in France</li>
+                                    <li data-lang-key="binance-france-feature2">Local compliance</li>
+                                    <li data-lang-key="binance-france-feature3">Access to Binance ecosystem</li>
+                                    <li data-lang-key="binance-france-feature4">Euro fiat support</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.kraken.com/en-gb/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Kraken英国图标">
+                                <p class="webcard-title" data-lang-key="kraken-uk-title">Kraken UK</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="kraken-uk-desc">Kraken's UK operation, offering secure and compliant cryptocurrency trading services for users in the United Kingdom.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="kraken-uk-feature1">UK-specific regulations</li>
+                                    <li data-lang-key="kraken-uk-feature2">Secure trading</li>
+                                    <li data-lang-key="kraken-uk-feature3">GBP fiat support</li>
+                                    <li data-lang-key="kraken-uk-feature4">Wide range of crypto assets</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://bitflyer.com/en-us/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Bitflyer图标">
+                                <p class="webcard-title" data-lang-key="bitflyer-title">Bitflyer</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bitflyer-desc">Japan's leading cryptocurrency exchange, providing a secure platform to buy, sell, and trade digital currencies.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bitflyer-feature1">Regulated Japanese exchange</li>
+                                    <li data-lang-key="bitflyer-feature2">High security standards</li>
+                                    <li data-lang-key="bitflyer-feature3">JPY fiat support</li>
+                                    <li data-lang-key="bitflyer-feature4">Wide range of trading pairs</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://upbit.com/home" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Upbit图标">
+                                <p class="webcard-title" data-lang-key="upbit-title">Upbit</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="upbit-desc">South Korea's major cryptocurrency exchange, known for its extensive altcoin listings and high trading volume.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="upbit-feature1">Leading Korean exchange</li>
+                                    <li data-lang-key="upbit-feature2">Extensive altcoin selection</li>
+                                    <li data-lang-key="upbit-feature3">High trading volume</li>
+                                    <li data-lang-key="upbit-feature4">Secure trading environment</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://osl.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="OSL图标">
+                                <p class="webcard-title" data-lang-key="osl-title">OSL</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="osl-desc">A leading digital asset platform providing brokerage, exchange, and custody services for professional investors and institutions.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="osl-feature1">Institutional digital asset services</li>
+                                    <li data-lang-key="osl-feature2">Regulated platform</li>
+                                    <li data-lang-key="osl-feature3">Brokerage and exchange</li>
+                                    <li data-lang-key="osl-feature4">Secure custody solutions</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="crypto-finance-news">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="crypto-finance-news-subtitle">Crypto Finance News</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="crypto-finance-news-desc">News sources dedicated to covering cryptocurrency markets, blockchain technology, and digital asset trends.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for Crypto Finance News -->
+                     <div class="webcard">
+                        <a href="https://www.jinse.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="金色财经图标">
+                                <p class="webcard-title" data-lang-key="jinse-title">Jinse Finance</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="jinse-desc">China's leading blockchain and cryptocurrency news platform, offering real-time market data, industry analysis, and news.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="jinse-feature1">Real-time crypto news</li>
+                                    <li data-lang-key="jinse-feature2">Market analysis</li>
+                                    <li data-lang-key="jinse-feature3">Blockchain industry insights</li>
+                                    <li data-lang-key="jinse-feature4">Chinese crypto community focus</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://forkast.news/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Forkast图标">
+                                <p class="webcard-title" data-lang-key="forkast-title">Forkast</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="forkast-desc">A digital media platform covering blockchain, cryptocurrency, and emerging tech news from Asia and beyond.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="forkast-feature1">Asian crypto news</li>
+                                    <li data-lang-key="forkast-feature2">Blockchain insights</li>
+                                    <li data-lang-key="forkast-feature3">Emerging tech trends</li>
+                                    <li data-lang-key="forkast-feature4">Video interviews</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.coingecko.com/learn" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="CoinGecko图标">
+                                <p class="webcard-title" data-lang-key="coingecko-title">CoinGecko</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="coingecko-desc">Provides comprehensive cryptocurrency market data, analysis, and news, along with educational resources.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="coingecko-feature1">Cryptocurrency market data</li>
+                                    <li data-lang-key="coingecko-feature2">Price tracking and analysis</li>
+                                    <li data-lang-key="coingecko-feature3">Educational content</li>
+                                    <li data-lang-key="coingecko-feature4">Industry news and updates</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://messari.io/news" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Messari图标">
+                                <p class="webcard-title" data-lang-key="messari-title">Messari</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="messari-desc">Offers in-depth research, data, and news for the crypto industry, serving institutional investors and crypto professionals.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="messari-feature1">Institutional-grade crypto research</li>
+                                    <li data-lang-key="messari-feature2">Market intelligence</li>
+                                    <li data-lang-key="messari-feature3">Regulatory insights</li>
+                                    <li data-lang-key="messari-feature4">Daily crypto news briefings</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://bitcoinmagazine.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="比特币杂志图标">
+                                <p class="webcard-title" data-lang-key="bitcoinmagazine-title">Bitcoin Magazine</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bitcoinmagazine-desc">The oldest and most established source of news, information, and expert commentary on Bitcoin and the broader crypto industry.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bitcoinmagazine-feature1">Bitcoin-focused news</li>
+                                    <li data-lang-key="bitcoinmagazine-feature2">Expert commentary</li>
+                                    <li data-lang-key="bitcoinmagazine-feature3">Industry analysis</li>
+                                    <li data-lang-key="bitcoinmagazine-feature4">Bitcoin historical insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://cryptoslate.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="CryptoSlate图标">
+                                <p class="webcard-title" data-lang-key="cryptoslate-title">CryptoSlate</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="cryptoslate-desc">Provides data, news, and analysis on the cryptocurrency and blockchain industry, including market data and project insights.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="cryptoslate-feature1">Cryptocurrency market data</li>
+                                    <li data-lang-key="cryptoslate-feature2">Blockchain news and analysis</li>
+                                    <li data-lang-key="cryptoslate-feature3">Project highlights</li>
+                                    <li data-lang-key="cryptoslate-feature4">Industry trends</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://decrypt.co/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Decrypt图标">
+                                <p class="webcard-title" data-lang-key="decrypt-title">Decrypt</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="decrypt-desc">A media company dedicated to demystifying the decentralized web, covering cryptocurrency, blockchain, and Web3 news.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="decrypt-feature1">Web3 and blockchain news</li>
+                                    <li data-lang-key="decrypt-feature2">NFT and DeFi coverage</li>
+                                    <li data-lang-key="decrypt-feature3">Educational content</li>
+                                    <li data-lang-key="decrypt-feature4">User-friendly explanations</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.theblockcrypto.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="The Block图标">
+                                <p class="webcard-title" data-lang-key="theblock-title">The Block</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="theblock-desc">Provides research, news, and analysis on the digital asset industry, serving professionals globally.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="theblock-feature1">Digital asset research</li>
+                                    <li data-lang-key="theblock-feature2">Market analysis</li>
+                                    <li data-lang-key="theblock-feature3">Industry news and insights</li>
+                                    <li data-lang-key="theblock-feature4">Institutional crypto focus</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://cointelegraph.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Cointelegraph图标">
+                                <p class="webcard-title" data-lang-key="cointelegraph-title">Cointelegraph</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="cointelegraph-desc">A leading independent publication covering the cryptocurrency, blockchain, decentralized applications, and fintech industries.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="cointelegraph-feature1">Independent crypto news</li>
+                                    <li data-lang-key="cointelegraph-feature2">Blockchain and DeFi coverage</li>
+                                    <li data-lang-key="cointelegraph-feature3">Market trends and analysis</li>
+                                    <li data-lang-key="cointelegraph-feature4">Global reach</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.coindesk.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="CoinDesk图标">
+                                <p class="webcard-title" data-lang-key="coindesk-title">CoinDesk</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="coindesk-desc">A global leader in crypto news, data, and events, providing insights and information for the digital asset economy.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="coindesk-feature1">Comprehensive crypto news</li>
+                                    <li data-lang-key="coindesk-feature2">Market data and indices</li>
+                                    <li data-lang-key="coindesk-feature3">Industry events and conferences</li>
+                                    <li data-lang-key="coindesk-feature4">Regulatory updates</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="foreign-finance-news">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="foreign-finance-news-subtitle">Foreign Finance News</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="foreign-finance-news-desc">Major international financial news outlets providing global market insights and economic analysis.</p>
+                </div>
+                <div class="webcard-grid">
+                   <!-- Cards for Foreign Finance News -->
+                   <div class="webcard">
+                        <a href="https://www.forbes.com/finance/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="福布斯图标">
+                                <p class="webcard-title" data-lang-key="forbes-title">Forbes</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="forbes-desc">A global media company, focusing on business, investing, technology, entrepreneurship, leadership, and lifestyle.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="forbes-feature1">Business and financial news</li>
+                                    <li data-lang-key="forbes-feature2">Investment insights</li>
+                                    <li data-lang-key="forbes-feature3">Entrepreneurship stories</li>
+                                    <li data-lang-key="forbes-feature4">Wealth and lifestyle coverage</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://finance.yahoo.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="雅虎财经图标">
+                                <p class="webcard-title" data-lang-key="yahoo-finance-title">Yahoo Finance</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="yahoo-finance-desc">A leading financial news and data website, providing stock quotes, breaking news, original content, and portfolio management tools.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="yahoo-finance-feature1">Real-time stock quotes</li>
+                                    <li data-lang-key="yahoo-finance-feature2">Breaking financial news</li>
+                                    <li data-lang-key="yahoo-finance-feature3">Portfolio management tools</li>
+                                    <li data-lang-key="yahoo-finance-feature4">Market analysis</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.marketwatch.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="MarketWatch图标">
+                                <p class="webcard-title" data-lang-key="marketwatch-title">MarketWatch</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="marketwatch-desc">Provides financial news, market data, and investment tools, with a focus on the stock market, personal finance, and business news.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="marketwatch-feature1">Stock market news</li>
+                                    <li data-lang-key="marketwatch-feature2">Personal finance advice</li>
+                                    <li data-lang-key="marketwatch-feature3">Investment strategies</li>
+                                    <li data-lang-key="marketwatch-feature4">Economic commentary</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.ft.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="金融时报图标">
+                                <p class="webcard-title" data-lang-key="ft-title">Financial Times</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="ft-desc">A leading international business newspaper, providing global financial, economic, and political news and analysis.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="ft-feature1">Global financial news</li>
+                                    <li data-lang-key="ft-feature2">Economic analysis</li>
+                                    <li data-lang-key="ft-feature3">Political commentary</li>
+                                    <li data-lang-key="ft-feature4">In-depth reporting</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.cnbc.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="CNBC图标">
+                                <p class="webcard-title" data-lang-key="cnbc-title">CNBC</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="cnbc-desc">A leader in global business news and financial market coverage, providing real-time information and analysis.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="cnbc-feature1">Real-time business news</li>
+                                    <li data-lang-key="cnbc-feature2">Financial market updates</li>
+                                    <li data-lang-key="cnbc-feature3">Investment insights</li>
+                                    <li data-lang-key="cnbc-feature4">Interviews with business leaders</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.bloomberg.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="彭博社图标">
+                                <p class="webcard-title" data-lang-key="bloomberg-title">Bloomberg</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bloomberg-desc">A global provider of business and financial information, news, and analytics to professionals worldwide.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bloomberg-feature1">Global financial data</li>
+                                    <li data-lang-key="bloomberg-feature2">Business news and analysis</li>
+                                    <li data-lang-key="bloomberg-feature3">Market insights</li>
+                                    <li data-lang-key="bloomberg-feature4">Terminal services for professionals</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.wsj.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="华尔街日报图标">
+                                <p class="webcard-title" data-lang-key="wsj-title">The Wall Street Journal</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="wsj-desc">A leading international daily newspaper focused on business and economic news and financial issues.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="wsj-feature1">Business and economic news</li>
+                                    <li data-lang-key="wsj-feature2">Financial market coverage</li>
+                                    <li data-lang-key="wsj-feature3">Political and policy analysis</li>
+                                    <li data-lang-key="wsj-feature4">Global business insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://wallstreetcn.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="华尔街见闻图标">
+                                <p class="webcard-title" data-lang-key="wallstreetcn-title">Wallstreetcn</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="wallstreetcn-desc">Wallstreetcn is a Chinese financial news and data platform, providing real-time global financial market information and analysis.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="wallstreetcn-feature1">Real-time financial news</li>
+                                    <li data-lang-key="wallstreetcn-feature2">Global market updates</li>
+                                    <li data-lang-key="wallstreetcn-feature3">Economic analysis</li>
+                                    <li data-lang-key="wallstreetcn-feature4">Investment insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="china-finance-news">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="china-finance-news-subtitle">China Finance News</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="china-finance-news-desc">Leading Chinese financial news sources covering domestic markets, economic policies, and business trends.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for China Finance News -->
+                    <div class="webcard">
+                        <a href="https://www.jiemian.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="界面新闻图标">
+                                <p class="webcard-title" data-lang-key="jiemian-title">Jiemian News</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="jiemian-desc">Jiemian News is a Chinese financial media outlet providing in-depth business news, economic analysis, and industry reports.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="jiemian-feature1">In-depth business news</li>
+                                    <li data-lang-key="jiemian-feature2">Economic analysis</li>
+                                    <li data-lang-key="jiemian-feature3">Industry reports</li>
+                                    <li data-lang-key="jiemian-feature4">Company profiles</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.nbd.com.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="每日经济新闻图标">
+                                <p class="webcard-title" data-lang-key="nbd-title">National Business Daily</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="nbd-desc">National Business Daily is a Chinese financial newspaper, providing daily news and analysis on business, finance, and economics.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="nbd-feature1">Daily business news</li>
+                                    <li data-lang-key="nbd-feature2">Financial market analysis</li>
+                                    <li data-lang-key="nbd-feature3">Economic commentary</li>
+                                    <li data-lang-key="nbd-feature4">Company news</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.stcn.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="证券时报网图标">
+                                <p class="webcard-title" data-lang-key="stcn-title">Securities Times</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="stcn-desc">Securities Times is a leading Chinese financial news portal, focusing on stock market, securities, and financial industry news.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="stcn-feature1">Stock market news</li>
+                                    <li data-lang-key="stcn-feature2">Securities industry updates</li>
+                                    <li data-lang-key="stcn-feature3">Financial product information</li>
+                                    <li data-lang-key="stcn-feature4">Investment analysis</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://news.sina.com.cn/finance/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="新浪新闻图标">
+                                <p class="webcard-title" data-lang-key="sina-finance-title">Sina Finance</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="sina-finance-desc">Sina Finance is a major Chinese financial news portal, providing comprehensive coverage of domestic and international financial markets.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="sina-finance-feature1">Comprehensive financial news</li>
+                                    <li data-lang-key="sina-finance-feature2">Stock market data</li>
+                                    <li data-lang-key="sina-finance-feature3">Industry analysis</li>
+                                    <li data-lang-key="sina-finance-feature4">Personal finance advice</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.hexun.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="和讯网图标">
+                                <p class="webcard-title" data-lang-key="hexun-title">Hexun</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="hexun-desc">Hexun is a well-known Chinese financial information website, offering real-time financial news, market data, and investment services.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="hexun-feature1">Real-time financial news</li>
+                                    <li data-lang-key="hexun-feature2">Market data and analysis</li>
+                                    <li data-lang-key="hexun-feature3">Investment tools</li>
+                                    <li data-lang-key="hexun-feature4">Financial community features</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.eeo.com.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="经济观察网图标">
+                                <p class="webcard-title" data-lang-key="eeo-title">Economic Observer</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="eeo-desc">Economic Observer is a Chinese financial news website known for its in-depth reporting and commentary on economic issues.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="eeo-feature1">In-depth economic reporting</li>
+                                    <li data-lang-key="eeo-feature2">Business news and analysis</li>
+                                    <li data-lang-key="eeo-feature3">Industry trends</li>
+                                    <li data-lang-key="eeo-feature4">Policy interpretations</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.21jingji.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="21世纪经济报道图标">
+                                <p class="webcard-title" data-lang-key="21jingji-title">21st Century Business Herald</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="21jingji-desc">21st Century Business Herald is a leading Chinese financial newspaper and news portal, providing comprehensive coverage of economic and business news.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="21jingji-feature1">Comprehensive economic news</li>
+                                    <li data-lang-key="21jingji-feature2">Business and financial reporting</li>
+                                    <li data-lang-key="21jingji-feature3">Industry analysis</li>
+                                    <li data-lang-key="21jingji-feature4">Market insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.yicai.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="第一财经图标">
+                                <p class="webcard-title" data-lang-key="yicai-title">Yicai Global</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="yicai-desc">Yicai Global is a major Chinese financial media group, providing business news, financial information, and television programs.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="yicai-feature1">Business news and analysis</li>
+                                    <li data-lang-key="yicai-feature2">Financial market coverage</li>
+                                    <li data-lang-key="yicai-feature3">TV and radio programs</li>
+                                    <li data-lang-key="yicai-feature4">Industry research</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="travel-news-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="travel-news-section-title">Travel News</h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-8 w-full max-w-6xl mx-auto">
+                    <button class="nav-button" data-section-id="foreign-travel" data-lang-key="foreign-travel-btn">Foreign Travel</button>
+                    <button class="nav-button" data-section-id="china-travel" data-lang-key="china-travel-btn">China Travel</button>
+                </div>
+                <div class="subtitle-header-card col-span-full text-center" id="foreign-travel">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="foreign-travel-subtitle">Foreign Travel</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="foreign-travel-desc">Discover international travel destinations, tips, and news from leading global travel publications.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for Foreign Travel -->
+                    <div class="webcard">
+                        <a href="https://www.nationalgeographic.com/travel/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="国家地理旅游图标">
+                                <p class="webcard-title" data-lang-key="natgeo-travel-title">National Geographic Travel</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="natgeo-travel-desc">Offers inspiring travel stories, stunning photography, and expert advice for exploring destinations worldwide.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="natgeo-travel-feature1">Inspiring travel stories</li>
+                                    <li data-lang-key="natgeo-travel-feature2">Stunning photography</li>
+                                    <li data-lang-key="natgeo-travel-feature3">Expert travel advice</li>
+                                    <li data-lang-key="natgeo-travel-feature4">Cultural insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.travelweekly.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="旅游周刊图标">
+                                <p class="webcard-title" data-lang-key="travelweekly-title">Travel Weekly</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="travelweekly-desc">A leading source of news for the travel industry, providing comprehensive travel news, trends, and analysis.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="travelweekly-feature1">Travel industry news</li>
+                                    <li data-lang-key="travelweekly-feature2">Market trends and analysis</li>
+                                    <li data-lang-key="travelweekly-feature3">Destination updates</li>
+                                    <li data-lang-key="travelweekly-feature4">Professional travel resources</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="china-travel">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="china-travel-subtitle">China Travel</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="china-travel-desc">Explore domestic travel news, guides, and popular destinations within China.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for China Travel -->
+                     <div class="webcard">
+                        <a href="https://www.trip.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="携程图标">
+                                <p class="webcard-title" data-lang-key="tripcom-title">Trip.com</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="tripcom-desc">A leading online travel agency offering comprehensive travel services, including flights, hotels, and tours, with a strong presence in China.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="tripcom-feature1">Flight and hotel bookings</li>
+                                    <li data-lang-key="tripcom-feature2">Tour packages</li>
+                                    <li data-lang-key="tripcom-feature3">Travel guides and tips</li>
+                                    <li data-lang-key="tripcom-feature4">Global and China travel focus</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.mafengwo.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="马蜂窝旅游图标">
+                                <p class="webcard-title" data-lang-key="mafengwo-title">Mafengwo Travel</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="mafengwo-desc">Mafengwo is a popular Chinese travel social network and travel guide website, offering user-generated content and trip planning tools.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="mafengwo-feature1">User-generated travel guides</li>
+                                    <li data-lang-key="mafengwo-feature2">Travel social network</li>
+                                    <li data-lang-key="mafengwo-feature3">Destination recommendations</li>
+                                    <li data-lang-key="mafengwo-feature4">Trip planning tools</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.traveldaily.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="环球旅讯图标">
+                                <p class="webcard-title" data-lang-key="traveldaily-title">Travel Daily China</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="traveldaily-desc">Travel Daily China is a leading online media and event platform for the Chinese travel industry, providing news, analysis, and insights.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="traveldaily-feature1">Chinese travel industry news</li>
+                                    <li data-lang-key="traveldaily-feature2">Market trends and analysis</li>
+                                    <li data-lang-key="traveldaily-feature3">Industry events</li>
+                                    <li data-lang-key="traveldaily-feature4">Focus on digital travel</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.lvjie.co/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="新旅界图标">
+                                <p class="webcard-title" data-lang-key="xinlvjie-title">Xinlvjie</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="xinlvjie-desc">Xinlvjie is a professional media platform focused on the travel industry, providing news, research, and data for Chinese travel professionals.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="xinlvjie-feature1">Professional travel industry news</li>
+                                    <li data-lang-key="xinlvjie-feature2">Market research and data</li>
+                                    <li data-lang-key="xinlvjie-feature3">Industry trends</li>
+                                    <li data-lang-key="xinlvjie-feature4">Travel enterprise insights</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="http://www.ctnews.com.cn/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="中国旅游新闻网图标">
+                                <p class="webcard-title" data-lang-key="ctnews-title">China Tourism News</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="ctnews-desc">China Tourism News is an official news portal providing comprehensive news and information on the Chinese tourism industry.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="ctnews-feature1">Official tourism news</li>
+                                    <li data-lang-key="ctnews-feature2">Industry policies and regulations</li>
+                                    <li data-lang-key="ctnews-feature3">Destination promotion</li>
+                                    <li data-lang-key="ctnews-feature4">Tourism statistics</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="foods-news-section">
+                <div class="section-header-container">
+                    <h2 class="section-title" data-lang-key="foods-news-section-title">Food News</h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-8 w-full max-w-6xl mx-auto">
+                    <button class="nav-button" data-section-id="foreign-foods" data-lang-key="foreign-foods-btn">Foreign Food</button>
+                    <button class="nav-button" data-section-id="china-foods" data-lang-key="china-foods-btn">China Food</button>
+                </div>
+                <div class="subtitle-header-card col-span-full text-center" id="foreign-foods">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="foreign-foods-subtitle">Foreign Food</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="foreign-foods-desc">Discover international culinary trends, recipes, and dining experiences from prominent food publications.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for Foreign Food -->
+                    <div class="webcard">
+                        <a href="https://www.relaischateaux.com/us/magazine" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="罗莱夏朵图标">
+                                <p class="webcard-title" data-lang-key="relaischateaux-title">Relais & Châteaux</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="relaischateaux-desc">A global collection of luxury hotels and restaurants, offering gastronomic experiences and unique travel.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="relaischateaux-feature1">Gastronomic dining experiences</li>
+                                    <li data-lang-key="relaischateaux-feature2">Luxury travel destinations</li>
+                                    <li data-lang-key="relaischateaux-feature3">Chef interviews</li>
+                                    <li data-lang-key="relaischateaux-feature4">Fine dining trends</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.saveur.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Saveur图标">
+                                <p class="webcard-title" data-lang-key="saveur-title">Saveur</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="saveur-desc">A food magazine and website celebrating food, travel, and authentic culinary traditions from around the globe.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="saveur-feature1">Authentic recipes</li>
+                                    <li data-lang-key="saveur-feature2">Food travel stories</li>
+                                    <li data-lang-key="saveur-feature3">Culinary traditions</li>
+                                    <li data-lang-key="saveur-feature4">Global food culture</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.tasteatlas.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="TasteAtlas图标">
+                                <p class="webcard-title" data-lang-key="tasteatlas-title">TasteAtlas</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="tasteatlas-desc">An encyclopedia of traditional dishes, local ingredients, and authentic restaurants from around the world.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="tasteatlas-feature1">Global food encyclopedia</li>
+                                    <li data-lang-key="tasteatlas-feature2">Traditional dishes and recipes</li>
+                                    <li data-lang-key="tasteatlas-feature3">Local ingredient guides</li>
+                                    <li data-lang-key="tasteatlas-feature4">Authentic restaurant recommendations</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://guide.michelin.com/en/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="米其林指南图标">
+                                <p class="webcard-title" data-lang-key="michelin-guide-title">Michelin Guide</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="michelin-guide-desc">The renowned international guide to the best restaurants and hotels, famous for its star ratings.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="michelin-guide-feature1">Restaurant ratings and reviews</li>
+                                    <li data-lang-key="michelin-guide-feature2">Hotel selections</li>
+                                    <li data-lang-key="michelin-guide-feature3">Fine dining insights</li>
+                                    <li data-lang-key="michelin-guide-feature4">Global culinary excellence</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.foodandwine.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="美食与美酒图标">
+                                <p class="webcard-title" data-lang-key="foodandwine-title">Food & Wine</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="foodandwine-desc">A magazine and website focused on the culinary arts, wine, and travel, offering recipes, restaurant reviews, and entertaining tips.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="foodandwine-feature1">Recipes and cooking tips</li>
+                                    <li data-lang-key="foodandwine-feature2">Restaurant reviews</li>
+                                    <li data-lang-key="foodandwine-feature3">Wine pairing guides</li>
+                                    <li data-lang-key="foodandwine-feature4">Food travel destinations</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.bonappetit.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Bon Appétit图标">
+                                <p class="webcard-title" data-lang-key="bonappetit-title">Bon Appétit</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="bonappetit-desc">A popular food magazine and website offering recipes, cooking advice, and stories from the world of food.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="bonappetit-feature1">Modern recipes</li>
+                                    <li data-lang-key="bonappetit-feature2">Cooking techniques</li>
+                                    <li data-lang-key="bonappetit-feature3">Food culture articles</li>
+                                    <li data-lang-key="bonappetit-feature4">Restaurant features</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.eater.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="Eater图标">
+                                <p class="webcard-title" data-lang-key="eater-title">Eater</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="eater-desc">A network of websites covering food and dining, with a focus on restaurant news, reviews, and city guides.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="eater-feature1">Restaurant news and reviews</li>
+                                    <li data-lang-key="eater-feature2">City dining guides</li>
+                                    <li data-lang-key="eater-feature3">Dining industry trends</li>
+                                    <li data-lang-key="eater-feature4">Chef interviews</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="subtitle-header-card col-span-full text-center" id="china-foods">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" data-lang-key="china-foods-subtitle">China Food</h3>
+                    <p class="text-sm text-gray-600 mb-0" data-lang-key="china-foods-desc">Explore Chinese culinary culture, traditional recipes, and local dining experiences.</p>
+                </div>
+                <div class="webcard-grid">
+                    <!-- Cards for China Food -->
+                    <div class="webcard">
+                        <a href="http://ganlanhuabao.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="橄榄画报图标">
+                                <p class="webcard-title" data-lang-key="olivechina-title">Olive China</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="olivechina-desc">The Chinese edition of Olive magazine, focusing on Chinese and international cuisine, fine dining, and culinary culture.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="olivechina-feature1">Food features</li>
+                                    <li data-lang-key="olivechina-feature2">Chinese fine dining</li>
+                                    <li data-lang-key="olivechina-feature3">Culinary culture insights</li>
+                                    <li data-lang-key="olivechina-feature4">Chef interviews</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.dianping.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="大众点评图标">
+                                <p class="webcard-title" data-lang-key="dianping-title">Dianping</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="dianping-desc">Dianping is China's leading local life information and trading platform, widely used for restaurant reviews and recommendations.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="dianping-feature1">Restaurant reviews and ratings</li>
+                                    <li data-lang-key="dianping-feature2">Local dining guides</li>
+                                    <li data-lang-key="dianping-feature3">Takeaway services</li>
+                                    <li data-lang-key="dianping-feature4">User-generated content</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.xiachufang.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="下厨房图标">
+                                <p class="webcard-title" data-lang-key="xiachufang-title">Xiachufang</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="xiachufang-desc">Xiachufang is a popular Chinese recipe and cooking community website, offering a vast collection of recipes and cooking tips.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="xiachufang-feature1">Extensive recipe collection</li>
+                                    <li data-lang-key="xiachufang-feature2">Cooking community</li>
+                                    <li data-lang-key="xiachufang-feature3">User-contributed recipes</li>
+                                    <li data-lang-key="xiachufang-feature4">Cooking tutorials</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="webcard">
+                        <a href="https://www.meishichina.com/" target="_blank" rel="noopener noreferrer">
+                            <div class="webcard-header-content">
+                                <img class="webcard-icon" alt="美食天下图标">
+                                <p class="webcard-title" data-lang-key="meishichina-title">Meishichina</p>
+                            </div>
+                            <div class="webcard-divider"></div>
+                            <div class="webcard-content">
+                                <p class="webcard-description" data-lang-key="meishichina-desc">Meishichina is a comprehensive Chinese food and recipe website, featuring traditional Chinese dishes and culinary culture.</p>
+                                <ul class="webcard-features">
+                                    <li data-lang-key="meishichina-feature1">Chinese recipe database</li>
+                                    <li data-lang-key="meishichina-feature2">Food culture articles</li>
+                                    <li data-lang-key="meishichina-feature3">Cooking videos</li>
+                                    <li data-lang-key="meishichina-feature4">Healthy eating tips</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <!-- Social Media Share Links -->
+                <a href="#" id="share-facebook" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800" title="Share on Facebook">
+                    <i class="fab fa-facebook-square"></i>
+                </a>
+                <a href="#" id="share-twitter" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-600" title="Share on Twitter">
+                    <i class="fab fa-twitter-square"></i>
+                </a>
+                <a href="#" id="share-linkedin" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:text-blue-900" title="Share on LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="#" id="share-reddit" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:text-orange-800" title="Share on Reddit">
+                    <i class="fab fa-reddit-square"></i>
+                </a>
+                <a href="#" id="share-email" class="text-gray-600 hover:text-gray-800" title="Share via Email">
+                    <i class="fas fa-envelope-square"></i>
+                </a>
+            </div>
+            <p data-lang-key="footer-copyright">© 2025 by Discovery Panel. Powered and secured by Discovery Panel. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'en'; // Default language set to English
+        let isNightMode = false;
+
+        // Translations object (content truncated for brevity)
+        const translations = {
+            home: { en: "Home", zh: "首页" },
+            aigc: { en: "AIGC Tools", zh: "AIGC工具" },
+            technology: { en: "Technology", zh: "科技" },
+            social: { en: "Social", zh: "社交" },
+            music: { en: "Music", zh: "音乐" },
+            video: { en: "Video", zh: "视频" },
+            finance: { en: "Finance", zh: "金融" },
+            news: { en: "News", zh: "新闻" },
+            learning: { en: "Learning", zh: "学习" },
+            lifestyle: { en: "Lifestyle", zh: "生活方式" },
+            shopping: { en: "Shopping", zh: "购物" },
+            tools: { en: "Tools", zh: "工具" },
+            resources: { en: "Resources", zh: "资源" },
+            'general-news': { en: "General News", zh: "综合新闻" },
+            'foreign-general-news': { en: "Foreign General News", zh: "海外综合新闻" },
+            'china-general-news': { en: "China General News", zh: "中国综合新闻" },
+            'technology-news': { en: "Technology News", zh: "科技新闻" },
+            'technology-products': { en: "Technology Products", zh: "科技产品" },
+            'ai-news': { en: "AI News", zh: "人工智能新闻" },
+            'finance-news': { en: "Finance News", zh: "金融新闻" },
+            'global-official': { en: "Global Official", zh: "全球官方" },
+            'crypto': { en: "Crypto", zh: "加密货币" },
+            'foreign-finance-news': { en: "Foreign Finance News", zh: "海外金融新闻" },
+            'china-finance-news': { en: "China Financial News", zh: "中国金融新闻" },
+            'travel-news': { en: "Travel News", zh: "旅游新闻" },
+            'foreign-travel': { en: "Foreign Travel", zh: "海外旅游" },
+            'china-travel': { en: "China Travel", zh: "国内旅游" },
+            'foods-news': { en: "Food News", zh: "美食新闻" },
+            'foreign-foods': { en: "Foreign Food", zh: "海外美食" },
+            'china-foods': { en: "China Food", zh: "国内美食" },
+            'newsPlatforms': { en: "News Platforms", zh: "新闻平台" },
+            'news-platform-overview': { en: "News Platform Overview", zh: "新闻平台概览" },
+            'news-platform-description': { en: "Explore a curated list of prominent news platforms, covering general, technology, finance, travel, and food news. Each card provides a direct link to the respective platform, along with its logo icon, a brief description of its purpose, and key features.", zh: "探索精选的知名新闻平台列表，涵盖综合、科技、金融、旅游和美食新闻。每张卡片都提供了指向相应平台的直接链接，以及其徽标图标、简要目的描述和主要功能。" },
+            'general-news-section-title': { en: "General News", zh: "综合新闻" },
+            'technology-news-section-title': { en: "Technology News", zh: "科技新闻" },
+            'finance-news-section-title': { en: "Finance News", zh: "金融新闻" },
+            'travel-news-section-title': { en: "Travel News", zh: "旅游新闻" },
+            'foods-news-section-title': { en: "Food News", zh: "美食新闻" },
+            // Add all other translations from the original file here...
+            'footer-copyright': {en: "© 2025 by Discovery Panel. Powered and secured by Discovery Panel. All Rights Reserved.", zh: "© 2025 Discovery Panel. 由 Discovery Panel 提供支持和保护。保留所有权利。"},
+        };
+
+
+        // Function to extract domain from URL for Clearbit Logo API
+        function getDomainFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                let hostname = urlObj.hostname;
+                hostname = hostname.replace(/^www\./, '');
+                return hostname;
+            } catch (e) {
+                console.error(`Invalid URL: ${url}`);
+                return '';
+            }
+        }
+
+        // Function to set logos dynamically from Clearbit or fallback to initial letter
+        function setWebcardLogos() {
+            document.querySelectorAll('.webcard > a').forEach(link => {
+                const url = link.href;
+                const domain = getDomainFromUrl(url);
+                const logoImg = link.querySelector('.webcard-icon');
+                const cardTitleElement = link.querySelector('.webcard-title');
+                const cardTitle = cardTitleElement ? cardTitleElement.innerText.trim() : '';
+                const initialLetter = cardTitle ? cardTitle.charAt(0).toUpperCase() : 'N';
+
+                if (logoImg) {
+                    if (domain) {
+                        const logoUrl = `https://logo.clearbit.com/${domain}`;
+                        logoImg.src = logoUrl;
+                        logoImg.onerror = () => {
+                            logoImg.src = `https://placehold.co/40x40/cccccc/333333?text=${initialLetter}`;
+                        };
+                    } else {
+                        logoImg.src = `https://placehold.co/40x40/cccccc/333333?text=${initialLetter}`;
+                    }
+                }
+            });
+        }
+
+        // Function to apply translations
+        function applyTranslations() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[key] && translations[key][currentLang]) {
+                    const hasArrow = element.querySelector('.arrow');
+                    if (hasArrow) {
+                        element.innerHTML = `${translations[key][currentLang]} <span class="arrow">▶</span>`;
+                    } else {
+                        element.innerText = translations[key][currentLang];
+                    }
+                }
+            });
+            setWebcardLogos();
+        }
+
+        // Function to switch language
+        function switchLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            applyTranslations();
+            const langButton = document.querySelector('.language-button');
+            langButton.innerText = currentLang === 'en' ? '中文/English' : 'English/中文';
+        }
+
+        // Function to toggle night mode
+        function toggleNightMode() {
+            isNightMode = !isNightMode;
+            document.body.classList.toggle('dark-mode');
+            const nightModeButton = document.querySelector('.night-mode-button');
+            nightModeButton.innerText = isNightMode ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // Function to toggle left navigation submenu visibility in the nav itself
+        function toggleLeftNavSubmenu(button) {
+            const parentItem = button.closest('.left-nav-menu-item');
+            if (parentItem) {
+                const submenu = parentItem.querySelector('.left-nav-submenu');
+                if (submenu) {
+                    if (submenu.style.display === 'block') {
+                        submenu.style.display = 'none';
+                    } else {
+                         // Close other open submenus for a cleaner accordion effect
+                        document.querySelectorAll('.left-nav .left-nav-submenu').forEach(sub => {
+                           if(sub !== submenu) sub.style.display = 'none';
+                        });
+                        submenu.style.display = 'block';
+                    }
+                }
+            }
+        }
+
+        // Mobile menu functions
+        function openMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileMenuContent = document.querySelector('.mobile-menu-content');
+            mobileMenuContent.innerHTML = '';
+            const clonedTopMenu = document.getElementById('top-menu').cloneNode(true);
+            clonedTopMenu.classList.add('mobile-top-menu');
+            mobileMenuContent.appendChild(clonedTopMenu);
+            const clonedLeftNav = document.getElementById('left-nav').cloneNode(true);
+            clonedLeftNav.classList.add('mobile-left-nav');
+            mobileMenuContent.appendChild(clonedLeftNav);
+            attachMobileMenuListeners(mobileMenuContent);
+            applyTranslations();
+            mobileMenu.classList.add('open');
+            mobileMenuOverlay.style.display = 'block';
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.remove('open');
+            document.getElementById('mobile-menu-overlay').style.display = 'none';
+        }
+        
+        function attachMobileMenuListeners(container) {
+             // Logic for handling clicks within the mobile menu
+        }
+
+
+        function resetShareLinks() {
+            const pageUrl = encodeURIComponent(window.location.href);
+            const pageTitle = encodeURIComponent(document.title);
+            document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+            document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}`;
+            document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${pageUrl}&title=${pageTitle}`;
+            document.getElementById('share-email').href = `mailto:?subject=${pageTitle}&body=${pageUrl}`;
+        }
+
+        // --- CORE CONTENT VISIBILITY LOGIC ---
+
+        function showContent(mainSectionId, subSectionId) {
+            const overviewSection = document.getElementById('overview-section');
+            if (overviewSection) overviewSection.style.display = 'none';
+            document.querySelectorAll('.right-content .section').forEach(s => s.style.display = 'none');
+
+            if (!mainSectionId && !subSectionId) {
+                if (overviewSection) overviewSection.style.display = 'block';
+                document.querySelectorAll('.right-content .section').forEach(s => {
+                    s.style.display = 'block';
+                    s.querySelectorAll('.subtitle-header-card').forEach(sub => sub.style.display = 'flex');
+                    s.querySelectorAll('.webcard-grid').forEach(sub => sub.style.display = 'grid');
+                });
+                return;
+            }
+
+            const mainSection = document.getElementById(mainSectionId);
+            if (!mainSection) return;
+
+            mainSection.style.display = 'block';
+
+            if (subSectionId) {
+                mainSection.querySelectorAll('.subtitle-header-card, .webcard-grid').forEach(s => s.style.display = 'none');
+                const subSectionHeader = document.getElementById(subSectionId);
+                if (subSectionHeader) {
+                    subSectionHeader.style.display = 'flex';
+                    const nextGrid = subSectionHeader.nextElementSibling;
+                    if (nextGrid && nextGrid.classList.contains('webcard-grid')) {
+                        nextGrid.style.display = 'grid';
+                    }
+                }
+            } else {
+                mainSection.querySelectorAll('.subtitle-header-card').forEach(s => s.style.display = 'flex');
+                mainSection.querySelectorAll('.webcard-grid').forEach(s => s.style.display = 'grid');
+            }
+        }
+
+        window.onload = function() {
+            // Initial setup calls
+            applyTranslations();
+            resetShareLinks();
+
+            // Mobile Menu Setup
+            document.getElementById('mobile-menu-toggle').addEventListener('click', openMobileMenu);
+            document.getElementById('mobile-menu-close').addEventListener('click', closeMobileMenu);
+            document.getElementById('mobile-menu-overlay').addEventListener('click', closeMobileMenu);
+
+            // Initially, show all content
+            showContent();
+
+            // Left Nav - Main Menu Items Listener
+            document.querySelectorAll('.left-nav .left-nav-menu-item > .nav-button').forEach(button => {
+                const controlledSectionId = button.getAttribute('data-controls-section');
+                if (controlledSectionId) {
+                    button.addEventListener('click', function() {
+                        showContent(controlledSectionId, null);
+                        toggleLeftNavSubmenu(this);
+                        document.querySelectorAll('.left-nav .nav-button').forEach(btn => btn.classList.remove('nav-button-active'));
+                        this.classList.add('nav-button-active');
+                    });
+                }
+            });
+            
+            // Left Nav - Sub Menu Items Listener
+            document.querySelectorAll('.left-nav .left-nav-submenu .nav-button').forEach(button => {
+                const subSectionId = button.getAttribute('data-section-id');
+                const mainSectionButton = button.closest('.left-nav-menu-item').querySelector('[data-controls-section]');
+                const mainSectionId = mainSectionButton ? mainSectionButton.getAttribute('data-controls-section') : null;
+
+                if (subSectionId && mainSectionId) {
+                    button.addEventListener('click', function() {
+                        showContent(mainSectionId, subSectionId);
+                        document.querySelectorAll('.left-nav .nav-button').forEach(btn => btn.classList.remove('nav-button-active'));
+                        this.classList.add('nav-button-active');
+                        if (mainSectionButton) mainSectionButton.classList.add('nav-button-active');
+                    });
+                }
+            });
+
+            // Right Content - Sub-section Buttons Listener (for scrolling)
+            document.querySelectorAll('.right-content .flex.flex-wrap .nav-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section-id');
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        const headerOffset = document.querySelector('header').offsetHeight + 20;
+                        const elementPosition = section.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                        
+                        const buttonGroup = this.parentElement;
+                        buttonGroup.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('nav-button-active'));
+                        this.classList.add('nav-button-active');
+                    }
+                });
+            });
+        };
+    </script>
+</body>
+</html>
