@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discovery Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* Universal box-sizing and font family */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', 'Inter', sans-serif;
+    }
+    /* Body styling for background, text color, and transitions */
+    body {
+      background: #fff;
+      color: #000000; /* Light mode text color: Black for all texts at main content areas, webcards, footer */
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+      overflow-x: hidden; /* Added to prevent horizontal scrollbar */
+    }
+    /* Dark mode body styling */
+    body.dark-mode {
+      background: #202124;
+      color: #e8eaed; /* General dark mode text color for non-specific elements */
+    }
+    /* Header styling for fixed position, background, and border */
+    header {
+      background: #e8eaed;
+      color: #202124;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 998;
+      border-bottom: 1px solid #dadce0;
+      transition: background 0.3s, border-color 0.3s;
+      padding: 0;
+    }
+    /* Dark mode header styling */
+    body.dark-mode header {
+      background: #303134;
+      border-bottom: 1px solid #5f6368;
+    }
+    /* Header top section layout */
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      width: 100%;
+    }
+    /* Header left controls for hamburger menu */
+    .header-left-controls {
+      flex: 1;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    /* Header brand section for logo and title */
+    .header-brand {
+      flex: 2; /* Allows it to take more space to center its content */
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Centers the logo and title within this div */
+      gap: 0.5rem; /* Space between logo and title */
+    }
+    /* Header logo container within brand section */
+    .header-brand .header-logo-img { /* Renamed for clarity within header-brand */
+      display: flex;
+      align-items: center;
+    }
+    /* Styling for the new logo image */
+    .header-brand .header-logo-img img {
+      height: 30px; /* Adjust size as needed */
+      width: auto;
+    }
+    /* Header title styling */
+    .header-brand .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: red; /* Changed to red as requested */
+      -webkit-background-clip: unset; /* Remove webkit clip if not using gradient */
+      background-clip: unset; /* Remove background gradient */
+      background: none; /* Remove background gradient */
+    }
+    /* Header right controls for language and night mode buttons */
+    .header-right-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1; /* Allows it to take up space on the right */
+      justify-content: flex-end;
+    }
+    /* Language and night mode button styling */
+    .language-button, .night-mode-button {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      border: none;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    /* Hover effects for language and night mode buttons */
+    .language-button:hover, .night-mode-button:hover {
+      background: #185abc;
+    }
+    /* Top menu styling */
+    .top-menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #1a73e8;
+      padding: 0.5rem 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-top: 1px solid #dadce0;
+      transition: background 0.3s, border-color 0.3s;
+      width: 100%;
+      z-index: 998;
+    }
+    /* Dark mode top menu styling */
+    body.dark-mode .top-menu {
+      background: #185abc;
+      border-top: 1px solid #5f6368;
+    }
+    /* Menu item positioning for submenus */
+    .top-menu .menu-item {
+      position: relative;
+    }
+    /* Top menu links and buttons styling */
+    .top-menu a, .top-menu .menu-item > button {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    /* Dark mode top menu links and buttons styling */
+    body.dark-mode .top-menu a, body.dark-mode .top-menu .menu-item > button {
+      color: white; /* Changed to white */
+    }
+    /* Hover effects for top menu links and buttons */
+    .top-menu a:hover, .top-menu .menu-item > button:hover {
+      background: #185abc;
+      color: #ffffff;
+      border-radius: 8px;
+    }
+    /* Active home menu item styling */
+    .top-menu .menu-item a[data-lang-key="home"] {
+      background: #185abc;
+      color: #ffffff;
+      border-radius: 8px;
+    }
+    /* Dark mode specific style for active main menu item link - now stands out */
+    body.dark-mode .top-menu .menu-item.active > a {
+        background: #1a73e8; /* Use the lighter blue to make it stand out in dark mode */
+        color: white; /* Explicitly set text to white in dark mode */
+    }
+
+    /* Submenu styling */
+    .top-menu .submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      min-width: 200px; /* Keep min-width for flexibility */
+      width: 300px; /* Fixed width to ensure consistency and fit all words */
+      padding: 0.5rem 0;
+      z-index: 1001;
+    }
+    /* Dark mode submenu styling */
+    body.dark-mode .top-menu .submenu {
+      background: #303134;
+      border-color: #5f6368;
+    }
+    /* Submenu display on hover */
+    .top-menu .menu-item:hover > .submenu {
+      display: block;
+    }
+    /* Submenu item button styling */
+    .top-menu .submenu .menu-item > button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #000000; /* Changed to black */
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    /* Dark mode submenu item button styling */
+    body.dark-mode .top-menu .submenu .menu-item > button {
+      color: #e8eaed;
+    }
+    /* Hover effects for submenu item buttons */
+    .top-menu .submenu .menu-item > button:hover {
+      background: #1a73e8;
+      color: #ffffff;
+    }
+    /* Nested submenu positioning */
+    .top-menu .submenu .submenu {
+      top: 0;
+      left: 100%;
+      min-width: 200px; /* Keep min-width for flexibility */
+      width: 300px; /* Fixed width to ensure consistency and fit all words */
+    }
+    /* Arrow styling for submenu items */
+    .arrow {
+      margin-left: auto;
+      font-size: 0.8rem;
+    }
+    /* New date-time display styling */
+    .new-datetime-display {
+      text-align: center;
+      padding: 1rem;
+      font-size: 1rem;
+      color: #000000; /* Changed to black */
+      /* Adjusted margin-top to remove space between header and this section */
+      margin-top: 100px; /* This value needs to be precisely the height of your fixed header */
+      /* Increased margin-bottom to add more space (approximately 2 lines) */
+      margin-bottom: 0; /* Changed to 0 to remove space with carousel */
+      background: linear-gradient(135deg, #e0f7fa, #e6e6fa);
+      border: 1px solid #d3d3f3;
+      border-radius: 0;
+      line-height: 1.6;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      position: relative;
+    }
+    /* Dark mode date-time display styling */
+    body.dark-mode .new-datetime-display {
+      background: linear-gradient(135deg, #37474f, #40416b);
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+    /* Datetime highlight styling - REMOVED */
+    /* Updated styling for current date and time */
+    #current-time, #current-date {
+      font-size: 1.2rem; /* Make text a little bigger */
+      font-weight: bold; /* Make text bold */
+      color: #1a73e8; /* Change color to blue */
+      padding: 0; /* Remove padding */
+      border-radius: 0; /* Remove border-radius */
+      display: inline; /* Keep inline display */
+    }
+    /* Image carousel styling */
+    .image-carousel {
+      width: 100vw; /* Full viewport width */
+      height: 300px; /* Fixed height for the carousel */
+      margin: 0; /* No margin to remove space with date-time and page edges */
+      overflow: hidden;
+      position: relative;
+      border-radius: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background-color: #f0f0f0; /* Fallback background */
+      left: 50%;
+      transform: translateX(-50%); /* Center the element for 100vw width */
+    }
+
+    .image-carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cover the area, cropping if necessary */
+      display: block;
+      transition: opacity 1s ease-in-out; /* Smooth fade transition */
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0; /* Start hidden */
+    }
+
+    .image-carousel img.active {
+      opacity: 1; /* Make active image visible */
+    }
+
+    /* Search bar styling */
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      gap: 0.5rem;
+      background: #fff;
+      transition: background 0.3s;
+    }
+    /* Dark mode search bar styling */
+    body.dark-mode .search-bar {
+      background: #202124;
+    }
+    /* Search input field styling */
+    .search-bar input {
+      width: 50%;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      transition: border-color 0.2s, background 0.3s, color 0.3s;
+    }
+    /* Dark mode search input styling */
+    body.dark-mode .search-bar input {
+      background: #303134;
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+    /* Search input focus styling */
+    .search-bar input:focus {
+      border-color: #1a73e8;
+      outline: none;
+    }
+    /* Search select dropdown styling */
+    .search-bar select {
+      padding: 0.6rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      transition: border-color 0.2s, background 0.3s, color 0.3s;
+    }
+    /* Dark mode search select styling */
+    body.dark-mode .search-bar select {
+      background: #303134;
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+    /* Search select focus styling */
+    .search-bar select:focus {
+      border-color: #1a73e8;
+      outline: none;
+    }
+    /* Search button styling */
+    .search-bar button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    /* Search button hover styling */
+    .search-bar button:hover {
+      background: #185abc;
+    }
+    /* Content section styling */
+    .content-section {
+      text-align: center;
+      padding: 2rem;
+      background: #fff;
+      transition: background 0.3s, color 0.3s;
+    }
+    /* Dark mode content section styling */
+    body.dark-mode .content-section {
+      background: #202124;
+      color: #e8eaed;
+    }
+    /* Content section h2 styling */
+    .content-section h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+    /* Dark mode content section h2 styling */
+    body.dark-mode .content-section h2 {
+      color: #e8eaed;
+    }
+    /* Content section h3 styling */
+    .content-section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #000000; /* Light mode: black */
+      margin: 2rem 0 1rem;
+      transition: color 0.3s;
+    }
+    /* Dark mode content section h3 styling */
+    body.dark-mode .content-section h3 {
+      color: white; /* Changed to white */
+    }
+    /* Specific h3 styling for features, why choose, and category containers */
+    .content-section .features-container h3, .content-section .why-choose-container h3, .content-section .category-container h3 {
+      color: #1a73e8;
+    }
+    /* Dark mode specific h3 styling */
+    body.dark-mode .content-section .features-container h3, body.dark-mode .content-section .why-choose-container h3, body.dark-mode .content-section .category-container h3 {
+      color: #8ab4f8;
+    }
+    /* Content section h4 styling */
+    .content-section h4 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #000000; /* Changed to black */
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+    /* Dark mode content section h4 styling */
+    body.dark-mode .content-section h4 {
+      color: #bdc1c6;
+    }
+    /* Content section paragraph and list item styling */
+    .content-section p, .content-section li {
+      font-size: 1rem;
+      color: #000000; /* Changed to black */
+      margin: 0.5rem 0;
+      transition: color 0.3s;
+    }
+    /* Dark mode content section paragraph and list item styling */
+    body.dark-mode .content-section p, body.dark-mode .content-section li {
+      color: white; /* Changed to white */
+    }
+    /* Updated: Make card purpose and features text slightly greyer */
+    .card-purpose, .card-features {
+      font-size: 0.9rem;
+      color: #000000; /* Changed to black */
+      margin-top: 0.5rem;
+      transition: color 0.3s;
+    }
+    /* Updated: Dark mode for card purpose and features text */
+    body.dark-mode .card-purpose, body.dark-mode .card-features {
+      color: white; /* Changed to white */
+    }
+
+    /* Emoji styling within content sections */
+    .content-section .emoji {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+    /* Features container styling */
+    .content-section .features-container {
+      margin: 1rem auto;
+      padding: 1rem;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      background: #f5fcf5; /* Updated background color */
+      text-align: center;
+      transition: background 0.3s, border-color 0.3s;
+      width: calc(100% - 4rem); /* Adjusted to match card grid width */
+      max-width: 1150px; /* Adjusted to match card grid max-width */
+    }
+    /* Dark mode features container styling */
+    body.dark-mode .content-section .features-container {
+      background: #303134;
+      border-color: #5f6368;
+    }
+    /* Removed .content-section .category-container styling as it's replaced by cards */
+
+    /* Content section table styling (kept for other potential tables) */
+    .content-section table {
+      width: calc(100% - 2rem);
+      max-width: 100%;
+      margin: 1rem auto;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f1f3f4;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    /* Dark mode content section table styling */
+    body.dark-mode .content-section table {
+      border-color: #5f6368;
+      background: #303134;
+    }
+    /* Content section table header and data cell styling */
+    .content-section th, .content-section td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #dadce0;
+      transition: border-color 0.3s;
+    }
+    /* Dark mode content section table header and data cell styling */
+    body.dark-mode .content-section th, body.dark-mode .content-section td {
+      border-bottom: 1px solid #5f6368;
+    }
+    /* Content section table header styling */
+    .content-section th {
+      background: #e8eaed;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #000000; /* Changed to black */
+      transition: background 0.3s, color 0.3s;
+    }
+    /* Dark mode content section table header and data cell styling */
+    body.dark-mode .content-section th {
+      background: #3c4043;
+      color: #e8eaed;
+    }
+    /* Content section table data cell styling */
+    .content-section td {
+      color: #000000; /* Changed to black */
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+    /* Dark mode content section table data cell styling */
+    body.dark-mode .content-section td {
+      color: #e8eaed; /* Changed to white */
+    }
+    /* Even row background in content section table */
+    .content-section tr:nth-child(even) {
+      background: #fafafa;
+    }
+    /* Dark mode even row background in content section table */
+    body.dark-mode .content-section tr:nth-child(even) {
+      background: #353639;
+    }
+    /* Hover effect for table rows */
+    .content-section tr:hover {
+      background: #e8f0fe;
+    }
+    /* Dark mode hover effect for table rows */
+    body.dark-mode .content-section tr:hover {
+      background: #4a4e53;
+    }
+    /* Category name styling */
+    .content-section .category-name {
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    /* Emoji styling within category name */
+    .content-section .category-name .emoji {
+      font-size: 1.1rem;
+      vertical-align: middle;
+    }
+    /* List container styling */
+    .content-section .list-container {
+      margin: 1rem auto;
+      padding: 0;
+      width: calc(100% - 2rem);
+      max-width: 100%;
+    }
+    /* Unordered list styling */
+    .content-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    /* List item styling */
+    .content-section li {
+      display: flex;
+      align-items: flex-start;
+    }
+    /* Highlight and why choose grid styling */
+    .highlight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Ensures 4 cards per row on larger screens */
+      gap: 1.5rem; /* Increased gap for better spacing */
+      margin: 1rem auto;
+      width: calc(100% - 4rem); /* Match padding of chatgpt section */
+      max-width: 1150px; /* Aligned with chatgpt-assistant-section and card-grid */
+    }
+    /* Highlight and tool container styling */
+    .highlight-container, .tool-container {
+      background: white;
+      border-radius: 8px;
+      padding: 0.8rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #dadce0; /* Updated to match Categories Overview card border */
+      transition: transform 0.2s, background 0.3s, color 0.3s, border-color 0.3s;
+      text-align: center;
+    }
+    /* Dark mode highlight and tool container styling */
+    body.dark-mode .highlight-container, body.dark-mode .tool-container {
+      background: #303134;
+      color: #e8eaed;
+      border-color: #5f6368; /* Updated to match Categories Overview card border in dark mode */
+    }
+    /* Hover effect for highlight and tool containers */
+    .highlight-container:hover, .tool-container:hover {
+      transform: translateY(-5px);
+    }
+    /* Highlight and tool container link styling */
+    .highlight-container a, .tool-container a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    /* Highlight title styling */
+    .highlight-title {
+      font-weight: 500;
+      font-size: 1rem;
+      margin: 0.5rem 0 0;
+      color: #000000; /* Changed to black */
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    /* Dark mode highlight title styling */
+    body.dark-mode .highlight-title {
+      color: #e8eaed;
+    }
+    /* Emoji styling within highlight title */
+    .highlight-title .emoji {
+      display: block;
+      font-size: 1.5rem;
+      margin: 0 auto 0.5rem;
+    }
+    /* Highlight description styling */
+    .highlight-desc {
+      font-size: 0.85rem;
+      color: #000000; /* Changed to black */
+      margin-top: 0.4rem;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    /* Dark mode highlight description styling */
+    body.dark-mode .highlight-desc {
+      color: white; /* Changed to white */
+    }
+    /* Tool grid styling */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 1rem auto;
+      width: calc(100% - 2rem);
+      max-width: 100%;
+    }
+    /* Tool title styling */
+    .tool-title {
+      font-weight: 500;
+      font-size: 1.1rem;
+      margin: 0;
+      color: #000000; /* Changed to black */
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    /* Dark mode tool title styling */
+    body.dark-mode .tool-title {
+      color: #e8eaed;
+    }
+    /* Tool description styling */
+    .tool-desc {
+      font-size: 0.9rem;
+      color: #000000; /* Changed to black */
+      margin-top: 0.5rem;
+      transition: color 0.3s;
+    }
+    /* Dark mode tool description styling */
+    body.dark-mode .tool-desc {
+      color: #e8eaed; /* Changed to white */
+    }
+    /* Tool logo styling */
+    .tool-logo {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
+    /* Tool features list styling */
+    .tool-features {
+      margin-top: 0.5rem;
+      list-style: none;
+      padding: 0;
+    }
+    /* Tool features list item styling */
+    .tool-features li {
+      font-size: 0.9rem;
+      color: #000000; /* Changed to black */
+      margin: 0.25rem 0;
+      display: block;
+    }
+    /* Dark mode tool features list item styling */
+    body.dark-mode .tool-features li {
+      color: #e8eaed; /* Changed to white */
+    }
+    /* Main container styling */
+    .container {
+      padding: 1rem 2rem 2rem 2rem;
+      flex: 1;
+      background: #fff;
+      transition: background 0.3s;
+    }
+    /* Dark mode main container styling */
+    body.dark-mode .container {
+      background: #202124;
+    }
+    /* Card grid styling */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Ensures 4 cards per row on larger screens */
+      gap: 1.5rem; /* Increased gap for better spacing */
+      width: calc(100% - 4rem); /* Match padding of chatgpt section */
+      max-width: 1150px; /* Aligned with chatgpt-assistant-section and highlight-grid */
+      margin: 1rem auto;
+    }
+    /* Card styling */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #dadce0; /* Added grey border */
+      transition: transform 0.2s, background 0.3s, color 0.3s, border-color 0.3s;
+      text-align: left; /* Align text left within cards */
+    }
+    /* Dark mode card styling */
+    body.dark-mode .card {
+      background: #303134;
+      color: white; /* Changed to white for all card texts */
+      border-color: #5f6368; /* Dark mode grey border */
+    }
+    /* Hover effect for cards */
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    /* Card header styling */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    /* Card header image styling */
+    .card-header img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    /* Card title styling */
+    .card-title {
+      font-weight: 500;
+      font-size: 1rem;
+      margin: 0;
+      color: #000000; /* Changed to black */
+      transition: color 0.3s;
+    }
+    /* Dark mode card title styling - changed to white for categories section */
+    body.dark-mode .card-grid .card-title {
+        color: white;
+    }
+    /* Card purpose and features styling (already updated above) */
+    /* Card features unordered list styling */
+    .card-features ul {
+      padding-left: 1rem;
+      margin-top: 0.5rem;
+    }
+    /* Footer styling */
+    .main-footer {
+      text-align: center;
+      padding: 2rem;
+      background: #f0f2f5; /* Light gray background from music.html */
+      transition: background 0.3s, color 0.3s;
+      margin-top: 4rem; /* Added margin-top from music.html footer */
+      width: 100%; /* Ensure it takes full width */
+    }
+    /* Dark mode footer styling */
+    body.dark-mode .main-footer {
+      background: #202124;
+      color: white; /* Changed to white */
+    }
+    /* Footer content styling */
+    .footer-content {
+      max-width: 1200px; /* From music.html footer */
+      margin: 0 auto; /* From music.html footer */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem; /* From music.html footer */
+    }
+    /* Social links container */
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px; /* Adjust as needed */
+    }
+
+    /* Styling for the copy link button */
+    .copy-link-button {
+      /* Inherit common button styles, then override for icon */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; /* Make it circular */
+      height: 32px; /* Make it circular */
+      border-radius: 50%; /* Make it circular */
+      padding: 0; /* Remove padding for better circular fit */
+      font-size: 1.2rem; /* Size of the emoji icon */
+      background: #f1f3f4; /* Match light mode background of social icons */
+      color: #202124; /* Match light mode color */
+      border: 1px solid #dadce0; /* Match light mode border */
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .copy-link-button:hover {
+      background: #e8eaed; /* Match light mode hover */
+      border-color: #c0c0c0;
+      transform: scale(1.1); /* Add hover effect */
+    }
+
+    body.dark-mode .copy-link-button {
+      background: #3c4043; /* Match dark mode background */
+      color: #e8eaed; /* Match dark mode color */
+      border-color: #5f6368; /* Match dark mode border */
+    }
+
+    body.dark-mode .copy-link-button:hover {
+      background: #4a4e53; /* Match dark mode hover */
+      border-color: #70757a;
+    }
+
+    /* Social icon styling */
+    .social-links a {
+        display: inline-block;
+        margin: 0 0.75rem; /* From music.html footer */
+        transition: transform 0.2s ease-in-out; /* From music.html footer */
+        font-size: 2.25rem; /* Adjusted size for icons from music.html footer */
+    }
+    .social-links a:hover {
+        transform: translateY(-3px); /* From music.html footer */
+    }
+    /* Added dark mode style for email icon */
+    body.dark-mode #share-email .fas {
+        color: white; /* Changed to white */
+    }
+    /* Footer note styling */
+    .footer-note {
+      font-size: 0.875rem; /* From music.html footer */
+      color: #000000; /* Changed to black */
+    }
+    /* Dark mode footer note styling */
+    body.dark-mode .footer-note {
+      color: white; /* Changed to white */
+    }
+
+    /* Styling for new empty sections */
+    .empty-row {
+      height: 1rem; /* Adjust as needed for desired spacing */
+      margin: 0;
+      padding: 0;
+      background: none;
+      border: none;
+    }
+
+    /* Styling for ChatGPT Assistant Section */
+    .chatgpt-assistant-section {
+      text-align: center;
+      padding: 2rem;
+      background: #f5fcf5; /* Updated background color */
+      margin: 2rem auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      max-width: 1150px; /* Extended width to align with 4 webcards */
+      width: calc(100% - 4rem); /* Maintain responsiveness */
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .chatgpt-assistant-section {
+      background: #282a2e;
+      color: #e8eaed;
+    }
+
+    .chatgpt-assistant-section h3 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem; /* Adjusted margin for description */
+      color: #1a73e8;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .chatgpt-assistant-section h3 {
+      color: #8ab4f8;
+    }
+
+    .chatgpt-assistant-section .description {
+      font-size: 0.95rem;
+      color: #000000; /* Changed to black */
+      margin-bottom: 0.5rem; /* Reduced margin to fit tips */
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .chatgpt-assistant-section .description {
+      color: white; /* Changed to white */
+    }
+
+    .chatgpt-assistant-section .tips {
+      font-size: 0.85rem;
+      color: #000000; /* Changed to black */
+      margin-bottom: 1.5rem; /* Space between tips and textarea */
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .chatgpt-assistant-section .tips {
+      color: white; /* Changed to white */
+    }
+
+    .chatgpt-assistant-section textarea {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      margin-bottom: 1rem;
+      resize: vertical;
+      min-height: 100px;
+      background: #ffffff;
+      color: #000000; /* Changed to black */
+      transition: border-color 0.2s, background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .chatgpt-assistant-section textarea {
+      background: #3c4043;
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+
+    .chatgpt-assistant-section textarea:focus {
+      border-color: #1a73e8;
+      outline: none;
+    }
+
+    .chatgpt-assistant-section button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 auto 1.5rem auto; /* Center the button */
+    }
+
+    .chatgpt-assistant-section button:hover {
+      background: #185abc;
+      transform: translateY(-2px);
+    }
+
+    .chatgpt-assistant-section button:disabled {
+      background: #aab0b6;
+      cursor: not-allowed;
+    }
+
+    .chatgpt-response {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #ffffff; /* Changed to white */
+      border: 1px solid #dadce0; /* Changed to grey edge */
+      border-radius: 8px;
+      text-align: left;
+      white-space: pre-wrap; /* Preserve whitespace and line breaks */
+      font-size: 0.95rem;
+      color: #000000; /* Changed to black */
+      min-height: 50px;
+      display: none; /* Hidden by default */
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    body.dark-mode .chatgpt-response {
+      background: #303134; /* Adjusted for dark mode consistency */
+      color: #e8eaed;
+      border-color: #5f6368;
+    }
+
+    .chatgpt-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #1a73e8;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Styling for Donation Section */
+    .donation-section {
+      text-align: center;
+      padding: 2rem;
+      background: #f5fcf5; /* Updated background color */
+      margin: 2rem auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      max-width: 1150px; /* Align with other main sections */
+      width: calc(100% - 4rem);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .donation-section {
+      background: #282a2e;
+      color: #e8eaed;
+    }
+
+    .donation-section h3 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #dc3545; /* Red color for donation title */
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .donation-section h3 {
+      color: #ff6b7a; /* Lighter red for dark mode */
+    }
+
+    .donation-section .description {
+      font-size: 0.95rem;
+      color: #000000; /* Changed to black */
+      margin-bottom: 1.5rem;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .donation-section .description {
+      color: white; /* Changed to white */
+    }
+
+    .paypal-button {
+      display: inline-block; /* Make it behave like a button */
+      background: #dc3545; /* Red color as requested */
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.1s;
+      cursor: pointer;
+    }
+
+    .paypal-button:hover {
+      background: #c82333; /* Darker red on hover */
+      transform: translateY(-2px);
+    }
+
+
+    /* Mobile-specific styles */
+    .hamburger-menu {
+      display: none; /* Hidden by default, shown on mobile */
+      cursor: pointer;
+      font-size: 1.8rem;
+      color: #202124; /* Default color */
+      transition: color 0.3s;
+      margin-left: 1rem;
+    }
+
+    body.dark-mode .hamburger-menu {
+      color: #e8eaed; /* Dark mode color */
+    }
+
+    .mobile-side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 250px; /* Width of the side menu */
+      height: 100%;
+      background: #ffffff;
+      box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+      transform: translateX(100%); /* Off-screen by default */
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+      padding-top: 60px; /* Space for close button */
+      overflow-y: auto; /* Enable scrolling for long menus */
+    }
+
+    body.dark-mode .mobile-side-menu {
+      background: #303134;
+    }
+
+    .mobile-side-menu.active {
+      transform: translateX(0); /* Slide into view */
+    }
+
+    .mobile-side-menu .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #202124;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    body.dark-mode .mobile-side-menu .close-btn {
+      color: #e8eaed;
+    }
+
+    .mobile-side-menu .menu-item {
+      position: relative; /* For nested submenus */
+    }
+
+    .mobile-side-menu .menu-item > a,
+    .mobile-side-menu .menu-item > button {
+      display: block; /* Make links/buttons take full width */
+      padding: 0.8rem 1.5rem;
+      color: #202124;
+      text-decoration: none;
+      font-size: 1rem;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s, color 0.2s;
+      background: none;
+      border-left: none; /* Remove border-left for mobile menu buttons */
+      border-right: none; /* Remove border-right for mobile menu buttons */
+      width: 100%; /* Ensure buttons take full width */
+      text-align: left; /* Align text to the left */
+    }
+
+    body.dark-mode .mobile-side-menu .menu-item > a,
+    body.dark-mode .mobile-side-menu .menu-item > button {
+      color: #e8eaed;
+      border-bottom: 1px solid #5f6368;
+    }
+
+    .mobile-side-menu .menu-item > a:hover,
+    body.dark-mode .mobile-side-menu .menu-item > button:hover {
+      background: #4a4e53;
+      color: #8ab4f8;
+    }
+
+    /* Nested submenu styling for mobile */
+    .mobile-side-menu .submenu {
+      display: block; /* Always display submenus in mobile side menu */
+      position: static; /* Remove absolute positioning */
+      background: #f8f9fa; /* Lighter background for nested menus */
+      border: none; /* Remove borders */
+      box-shadow: none; /* Remove shadow */
+      min-width: unset;
+      padding: 0;
+      margin-left: 1rem; /* Indent nested submenus */
+    }
+
+    body.dark-mode .mobile-side-menu .submenu {
+      background: #3c4043;
+    }
+
+    .mobile-side-menu .submenu .menu-item > button {
+      padding-left: 2rem; /* Further indent nested items */
+    }
+
+    .mobile-side-menu .submenu .submenu .menu-item > button {
+      padding-left: 3rem; /* Even further indent for deeper nesting */
+    }
+
+    /* Overlay for when mobile menu is active */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 1024px) {
+      .top-menu {
+        gap: 0.5rem; /* Reduce gap for slightly smaller screens */
+        padding: 0.5rem 0.5rem;
+      }
+      .top-menu a, .top-menu .menu-item > button {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.9rem;
+      }
+      .header-top {
+        padding: 0.8rem 1rem;
+      }
+      /* Adjust flex-grow to ensure centering still works well */
+      .header-left-controls { flex: 1; }
+      .header-brand { flex: 2; }
+      .header-right-controls { flex: 1; }
+
+      header h1 {
+        font-size: 1.3rem;
+      }
+      /* Adjust ChatGPT section and grids for smaller desktops */
+      .chatgpt-assistant-section,
+      .card-grid,
+      .highlight-grid,
+      .donation-section { /* Added donation-section to media query */
+        max-width: 900px; /* Adjust for 3 cards or slightly less */
+        width: calc(100% - 2rem); /* Adjust width to match padding */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-top {
+        padding: 0.6rem 1rem;
+        flex-wrap: wrap; /* Allow items to wrap */
+      }
+      /* Reset flex properties for mobile to allow more specific mobile styling */
+      .header-left-controls { flex: none; width: auto; order: 1; margin-right: auto; } /* Hamburger first, left */
+      .header-right-controls { flex: none; width: auto; order: 3; margin-left: auto; } /* Buttons last, right */
+      .header-brand {
+        flex: none; /* Disable flex-grow on brand for mobile */
+        width: 100%; /* Take full width */
+        order: 2; /* Put brand in the middle row */
+        justify-content: center; /* Ensure it stays centered within its row */
+        margin-top: 0.5rem; /* Add some space below hamburger/buttons */
+      }
+
+      .header-brand .header-title h1 {
+        font-size: 1.2rem;
+        width: auto; /* Allow content width */
+        text-align: center;
+        margin-bottom: 0;
+      }
+
+      .top-menu {
+        display: none; /* Hide desktop menu on smaller screens */
+      }
+
+      .hamburger-menu {
+        display: block; /* Show hamburger menu icon */
+      }
+
+      .language-button, .night-mode-button {
+        display: none; /* Hide these buttons in header on mobile, move to side menu */
+      }
+
+      .new-datetime-display {
+        margin-top: 80px; /* Adjust margin-top if header height changes */
+        padding: 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .image-carousel {
+        height: 200px; /* Smaller height for mobile carousel */
+      }
+
+      .search-bar {
+        flex-direction: column; /* Stack search elements vertically */
+        gap: 0.8rem;
+        padding: 0.8rem;
+      }
+      .search-bar input, .search-bar select, .search-bar button {
+        width: 90%; /* Make search elements take more width */
+        font-size: 0.95rem;
+        padding: 0.5rem;
+      }
+
+      .content-section {
+        padding: 1rem;
+      }
+      .content-section h2 {
+        font-size: 1.5rem;
+      }
+      .content-section h3 {
+        font-size: 1.3rem;
+      }
+      .content-section h4, .content-section p, .content-section li {
+        font-size: 0.9rem;
+      }
+
+      .highlight-grid, .tool-grid, .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 2 columns on mobile */
+        gap: 0.8rem;
+        width: 100%; /* Take full width */
+        max-width: 100%; /* Ensure it doesn't exceed */
+      }
+
+      .content-section table {
+        display: block; /* Make table scrollable */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent text wrapping in cells */
+        width: 100%; /* Ensure table takes full width */
+      }
+      .content-section thead, .content-section tbody, .content-section th, .content-section td, .content-section tr {
+        display: block; /* For "card" like layout if preferred, but here for scroll */
+      }
+      .content-section th, .content-section td {
+        white-space: normal; /* Allow text to wrap within cells if not using card layout */
+        width: auto; /* Reset width */
+      }
+      /* If you want a card-like layout for table rows on mobile: */
+      .content-section tr {
+        margin-bottom: 0.5rem;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        padding: 0.5rem;
+      }
+      .content-section th {
+        display: none; /* Hide table headers on mobile in card layout */
+      }
+      .content-section td:before {
+        content: attr(data-label); /* Show original header as label */
+        font-weight: bold;
+        display: inline-block;
+        width: 80px; /* Adjust as needed */
+        margin-right: 0.5rem;
+      }
+
+      .chatgpt-assistant-section,
+      .donation-section { /* Added donation-section to media query */
+        padding: 1.5rem;
+        margin: 1.5rem auto;
+        width: calc(100% - 2rem);
+        max-width: 90%; /* Adjust for mobile, perhaps 2 card widths */
+      }
+      .chatgpt-assistant-section h3, .donation-section h3 { /* Added donation-section h3 */
+        font-size: 1.4rem;
+      }
+      .chatgpt-assistant-section .description, .donation-section .description { /* Added donation-section description */
+        font-size: 0.9rem;
+      }
+      .chatgpt-assistant-section textarea {
+        font-size: 0.9rem;
+        min-height: 80px;
+      }
+      .chatgpt-assistant-section button {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+      }
+      .chatgpt-response {
+        font-size: 0.85rem;
+      }
+
+      .main-footer {
+        padding: 1.5rem;
+      }
+      .footer-note {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-top {
+        padding: 0.5rem 0.8rem;
+      }
+      /* Further mobile adjustments for very small screens */
+      .header-brand {
+        margin-top: 0.25rem;
+      }
+      .header-brand .header-title h1 {
+        font-size: 1rem;
+      }
+      .header-brand .header-logo-img img {
+        height: 25px;
+      }
+
+      .new-datetime-display {
+        margin-top: 70px; /* Adjust margin-top if header height changes */
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .image-carousel {
+        height: 150px; /* Even smaller height for very small screens */
+      }
+
+      .search-bar input, .search-bar select, .search-bar button {
+        width: 95%;
+      }
+
+      .highlight-grid, .tool-grid, .card-grid {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+        gap: 0.6rem;
+      }
+      /* Adjust ChatGPT section for very small mobile */
+      .chatgpt-assistant-section,
+      .donation-section { /* Added donation-section to media query */
+        max-width: 95%; /* Full width on smallest screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <div class="header-left-controls"> <!-- New container for hamburger menu -->
+        <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
+      </div>
+      <div class="header-brand"> <!-- New container for logo and title -->
+        <div class="header-logo-img"> <!-- Container for the logo image -->
+          <img src="images/metapanel-t.png" onerror="this.src='https://placehold.co/30x30/cccccc/333333?text=Logo'" alt="Discovery Panel Logo">
+        </div>
+        <div class="header-title">
+          <h1>Discovery Panel</h1>
+        </div>
+      </div>
+      <div class="header-right-controls"> <!-- Container for language and night mode buttons -->
+        <button class="language-button" onclick="switchLanguage()">中文/English</button>
+        <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+      </div>
+    </div>
+    <div class="top-menu" id="top-menu">
+      <div class="menu-item active"> <!-- Added 'active' class for Home to be highlighted on load -->
+        <a href="#" data-lang-key="home">Home</a>
+      </div>
+      <div class="menu-item">
+        <a href="aigc.html" data-lang-key="aigc">AIGC</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="intelligent-dialogue">Intelligent Dialogue</button></div>
+          <div class="menu-item"><button data-lang-key="art-generation">Art Generation</button></div>
+          <div class="menu-item"><button data-lang-key="audio-creation">Audio Creation</button></div>
+          <div class="menu-item"><button data-lang-key="video-creation">Video Creation</button></div>
+          <div class="menu-item"><button data-lang-key="smart-office">Smart Office</button></div>
+          <div class="menu-item"><button data-lang-key="creative-design">Creative Design</button></div>
+          <div class="menu-item"><button data-lang-key="learning-resources">Learning Resources</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="tech.html" data-lang-key="technology">Technology</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="code-hosting-collaboration">Code Hosting & Collaboration</button></div>
+          <div class="menu-item"><button data-lang-key="cloud-deployment-serverless">Cloud Deployment & Serverless</button></div>
+          <div class="menu-item"><button data-lang-key="automation-code-integration">Automation & Code Integration</button></div>
+          <div class="menu-item"><button data-lang-key="ci-cd-tools">CI/CD Tools</button></div>
+          <div class="menu-item"><button data-lang-key="edge-computing-network-optimization">Edge Computing & Network Optimization</button></div>
+          <div class="menu-item"><button data-lang-key="containers-cloud-native">Containers & Cloud Native</button></div>
+          <div class="menu-item"><button data-lang-key="other">Other</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="social.html" data-lang-key="social">Social</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="foreign-social">Foreign Social</button></div>
+          <div class="menu-item"><button data-lang-key="china-social">China Social</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="finance.html" data-lang-key="finance">Finance</a>
+        <div class="submenu">
+          <!-- Foreign Finance & Trade (main submenu item under Finance) -->
+          <div class="menu-item">
+            <button data-lang-key="foreign-finance-trade">Foreign Finance & Trade <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="finance-trade-sub">Finance & Trade</button></div>
+              <div class="menu-item"><button data-lang-key="retail-banks">Retail Banks</button></div>
+              <div class="menu-item"><button data-lang-key="digital-banks">Digital Banks</button></div>
+              <div class="menu-item"><button data-lang-key="p2p-payments">P2p Payments</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="china-finance-trade">China Finance & Trade</button>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="crypto-trade">Crypto Trade <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="crypto-investment">Crypto Investment</button></div>
+              <div class="menu-item"><button data-lang-key="blockchains">Blockchains</button></div>
+              <div class="menu-item"><button data-lang-key="swap">Swap</button></div>
+              <div class="menu-item"><button data-lang-key="defi">DeFi</button></div>
+              <div class="menu-item"><button data-lang-key="hot-cold-wallets">Hot & Cold Wallets</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="memes-nfts">Memes & NFTs <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="nft-investment">NFT Investment</button></div>
+              <div class="menu-item"><button data-lang-key="meme-coins-investment">Meme Coins Investment</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="music.html" data-lang-key="music">Music</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="foreign-music">Foreign Music</button></div>
+          <div class="menu-item"><button data-lang-key="china-music">China Music</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="video.html" data-lang-key="video">Video</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="foreign-video">Foreign Video</button></div>
+          <div class="menu-item"><button data-lang-key="china-video">China Video</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="news.html" data-lang-key="news">News</a>
+        <div class="submenu">
+          <div class="menu-item">
+            <button data-lang-key="general-news">General News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="foreign-general-news">Foreign General News</button></div>
+              <div class="menu-item"><button data-lang-key="china-general-news">China General News</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="technology-news">Technology News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="technology-products">Technology Products</button></div>
+              <div class="menu-item"><button data-lang-key="ai-news">AI News</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="finance-news">Finance News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="global-official">Global Official</button></div>
+              <div class="menu-item"><button data-lang-key="crypto">Crypto</button></div>
+              <div class="menu-item"><button data-lang-key="foreign-finance-news">Foreign Finance News</button></div>
+              <div class="menu-item"><button data-lang-key="china-finance-news">China Finance News</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="travel-news">Travel News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="foreign-travel">Foreign Travel</button></div>
+              <div class="menu-item"><button data-lang-key="china-travel">China Travel</button></div>
+            </div>
+          </div>
+          <div class="menu-item">
+            <button data-lang-key="foods-news">Foods News <span class="arrow">▶</span></button>
+            <div class="submenu">
+              <div class="menu-item"><button data-lang-key="foreign-foods">Foreign Foods</button></div>
+              <div class="menu-item"><button data-lang-key="china-foods">China Foods</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="learning.html" data-lang-key="learning">Learning</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="creative-skills">Creative Skills</button></div>
+          <div class="menu-item"><button data-lang-key="professional-skills">Professional Skills</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="lifestyle.html" data-lang-key="lifestyle">Lifestyle</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="lifestyle-home">Home Style</button></div>
+          <div class="menu-item"><button data-lang-key="wellness">Wellness</button></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a href="shops.html" data-lang-key="shopping">Shopping</a>
+        <div class="submenu">
+          <div class="menu-item"><button data-lang-key="usa-shops">USA Shops</button></div>
+          <div class="menu-item"><button data-lang-key="china-shops">China Shops</button></div>
+          <div class="menu-item"><button data-lang-key="europe-shops">Europe Shops</button></div>
+        </div>
+      </div>
+      <!-- Updated 'More' menu item to 'Tools' and 'Resources' -->
+      <div class="menu-item">
+        <a href="tools.html" data-lang-key="tools">Tools</a>
+      </div>
+      <div class="menu-item">
+        <a href="resources.html" data-lang-key="resources">Resources</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Side Menu -->
+  <div class="mobile-side-menu" id="mobileSideMenu">
+    <button class="close-btn" onclick="toggleMobileMenu()">✖</button>
+    <div class="menu-items-wrapper">
+      <!-- Language and Night Mode buttons for mobile -->
+      <div class="menu-item">
+        <button class="language-button" onclick="switchLanguage()">中文/English</button>
+      </div>
+      <div class="menu-item">
+        <button class="night-mode-button" onclick="toggleNightMode()">Dark Mode</button>
+      </div>
+      <!-- Existing top menu items will be cloned here by JavaScript -->
+    </div>
+  </div>
+  <!-- Overlay for mobile menu -->
+  <div class="overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
+  <div class="new-datetime-display" id="newDatetimeDisplay">
+    <div class="empty-row"></div>
+    <div id="chinese-zodiac" data-lang-key="chinese-zodiac-label"></div>
+    <div id="western-zodiac" data-lang-key="western-zodiac-label"></div>
+    <div id="week-info" data-lang-key="week-info"></div>
+    <br> <div id="current-time"></div>
+    <div id="current-date"></div>
+    <div class="empty-row"></div>
+  </div>
+
+  <div class="image-carousel" id="imageCarousel">
+    </div>
+
+  <div class="empty-row"></div>
+  <div class="empty-row"></div>
+  <div class="empty-row"></div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" data-lang-placeholder="search">
+    <select id="searchEngine">
+      <option value="internal" data-lang-key="internal">Internal Search</option>
+      <option value="google">Google</option>
+      <option value="bing">Bing</option>
+      <option value="baidu">Baidu</option>
+      <option value="360">360 Search</option>
+    </select>
+    <button onclick="performSearch()" data-lang-key="searchButton">Search</button>
+  </div>
+
+  <div class="container">
+    <section class="content-section">
+      <h2 data-lang-key="content-heading" style="color: #1a73e8;"></h2>
+      <p><span class="emoji"> </span><span data-lang-key="content-bullet1">Connects you to global tools, platforms, and inspiration.</span></p>
+      <p><span class="emoji"> </span><span data-lang-key="content-bullet2">From inspiration to productivity, your personalized smart navigation hub.</span></p>
+
+      <div class="features-container">
+        <h4><span class="emoji"> </span><span data-lang-key="features-subtitle" style="color: #1a73e8;">All you need. All in one place.</span></h4>
+        <p data-lang-key="features-desc">Curated resources covering trending digital domains: AIGC, tech, social, music, video, finance, news, learning & growth, and more.</p>
+      </div>
+
+      <h3 data-lang-key="categories-title">Categories</h3>
+      <!-- Categories will be rendered here as cards -->
+      <div class="card-grid" id="categoriesGrid"></div>
+
+      <h3 data-lang-key="highlights-title">Highlights</h3>
+      <div class="highlight-grid">
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">🚀</span><span data-lang-key="highlight-speed"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-speed-desc"></p>
+          </a>
+        </div>
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">🌍</span><span data-lang-key="highlight-lang"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-lang-desc"></p>
+          </a>
+        </div>
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">✏️</span><span data-lang-key="highlight-update"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-update-desc"></p>
+          </a>
+        </div>
+        <div class="highlight-container">
+          <a href="#">
+            <h3 class="highlight-title"><span class="emoji">🧩</span><span data-lang-key="highlight-contrib"></span></h3>
+            <p class="highlight-desc" data-lang-key="highlight-contrib-desc"></p>
+          </a>
+        </div>
+      </div>
+
+      <div id="category-sections"></div>
+    </section>
+
+    <div class="card-grid" id="websiteGrid"></div>
+  </div>
+
+  <!-- New PayPal Donation Section -->
+  <div class="donation-section">
+    <h3 data-lang-key="donation-title"></h3>
+    <p class="description" data-lang-key="donation-description"></p>
+    <a href="YOUR_PAYPAL_ME_LINK" target="_blank" class="paypal-button" data-lang-key="paypal-button-text"></a>
+  </div>
+
+  <div class="chatgpt-assistant-section">
+    <h3 data-lang-key="chatgpt-assistant-title"></h3>
+    <p class="description" data-lang-key="chatgpt-assistant-description"></p>
+    <p class="tips" data-lang-key="chatgpt-tips"></p>
+    <textarea id="chatgptPrompt" data-lang-placeholder="chatgpt-prompt-placeholder" rows="4"></textarea>
+    <button id="askChatGptButton" data-lang-key="ask-chatgpt-button"></button>
+    <div id="chatgptLoading" class="chatgpt-loading" style="display: none;">
+      <div class="spinner"></div>
+    </div>
+    <div id="chatgptResponse" class="chatgpt-response"></div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="social-links">
+        <!-- Social Media Share Links - Now using Font Awesome icons for consistency with Pro-Style Blog -->
+        <a href="#" id="share-facebook" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800" title="Share on Facebook">
+            <i class="fab fa-facebook-square"></i>
+        </a>
+        <a href="#" id="share-twitter" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-600" title="Share on Twitter">
+            <i class="fab fa-twitter-square"></i>
+        </a>
+        <a href="#" id="share-linkedin" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:text-blue-900" title="Share on LinkedIn">
+            <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" id="share-reddit" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:text-orange-800" title="Share on Reddit">
+            <i class="fab fa-reddit-square"></i>
+        </a>
+        <a href="#" id="share-email" class="text-gray-600 hover:text-gray-800" title="Share via Email">
+            <i class="fas fa-envelope-square"></i>
+        </a>
+      </div>
+      <p class="footer-note">© 2025 by Discovery Panel. Powered and secured by Discovery Panel. All Rights Reserved.</p>
+      <p class="footer-note" data-lang-key="footer-disclaimer">Disclaimer: This Discovery Panel provides links to external websites. We are not responsible for the content of external sites.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+  <script>
+    // Chinese Zodiac Cycle data
+    const chineseZodiac = [
+      { animal: { en: "Rat", zh: "鼠" }, start: "2020-01-25", end: "2021-02-11" },
+      { animal: { en: "Ox", zh: "牛" }, start: "2021-02-12", end: "2022-01-31" },
+      { animal: { en: "Tiger", zh: "虎" }, start: "2022-02-01", end: "2023-01-21" },
+      { animal: { en: "Rabbit", zh: "兔" }, start: "2023-01-22", end: "2024-02-09" },
+      { animal: { en: "Dragon", zh: "龙" }, start: "2024-02-10", end: "2025-01-28" },
+      { animal: { en: "Snake", zh: "蛇" }, start: "2025-01-29", end: "2026-02-16" },
+      { animal: { en: "Horse", zh: "马" }, start: "2026-02-17", end: "2027-02-05" },
+      { animal: { en: "Goat", zh: "羊" }, start: "2027-02-06", end: "2028-01-25" },
+      { animal: { en: "Monkey", zh: "猴" }, start: "2028-01-26", end: "2029-02-12" },
+      { animal: { en: "Rooster", zh: "鸡" }, start: "2029-02-13", end: "2030-02-02" },
+      { animal: { en: "Dog", zh: "狗" }, start: "2030-02-03", end: "2031-01-22" },
+      { animal: { en: "Pig", zh: "猪" }, start: "2031-01-23", end: "2032-02-10" }
+    ];
+
+    // Western Zodiac Ranges data
+    const westernZodiac = [
+      { sign: { en: "Capricorn", zh: "摩羯座" }, start: "12-22", end: "01-19" },
+      { sign: { en: "Aquarius", zh: "水瓶座" }, start: "01-20", end: "02-18" },
+      { sign: { en: "Pisces", zh: "双鱼座" }, start: "02-19", end: "03-20" },
+      { sign: { en: "Aries", zh: "白羊座" }, start: "03-21", end: "04-19" },
+      { sign: { en: "Taurus", zh: "金牛座" }, start: "04-20", end: "05-20" },
+      { sign: { en: "Gemini", zh: "双子座" }, start: "05-21", end: "06-21" },
+      { sign: { en: "Cancer", zh: "巨蟹座" }, start: "06-22", end: "07-22" },
+      { sign: { en: "Leo", zh: "狮子座" }, start: "07-23", end: "08-22" },
+      { sign: { en: "Virgo", zh: "处女座" }, start: "08-23", end: "09-22" },
+      { sign: "Libra", start: "09-23", end: "10-23" },
+      { sign: { en: "Scorpio", zh: "天蝎座" }, start: "10-24", end: "11-22" },
+      { sign: { en: "Sagittarius", zh: "射手座" }, start: "11-23", end: "12-21" }
+    ];
+
+    // Website Data (filtered to remove specific entries)
+    let websites = [
+        // AIGC
+        // ChatGPT and Midjourney removed
+        // Technology
+        // GitHub and AWS removed
+        // Social
+        // Twitter (X) and WeChat removed
+        // Music
+        // Spotify removed
+        // Video
+        // YouTube removed
+        // Finance
+        // CoinMarketCap removed
+        // News
+        // BBC News removed
+        // Learning
+        // Coursera removed
+        // Lifestyle
+        // Pinterest and Allrecipes removed
+        // More
+        // Wikipedia and Google Maps removed
+    ];
+
+    let currentLang = 'en';
+    let isNightMode = false;
+
+    // Translations for various elements
+    const translations = {
+      home: { en: "Home", zh: "首页" },
+      aigc: { en: "AIGC", zh: "AIGC工具" },
+      technology: { en: "Technology", zh: "科技" },
+      social: { en: "Social", zh: "社交" },
+      music: { en: "Music", zh: "音乐" },
+      video: { en: "Video", zh: "视频" },
+      finance: { en: "Finance", zh: "金融" },
+      news: { en: "News", zh: "新闻" },
+      learning: { en: "Learning", zh: "学习" },
+      lifestyle: { en: "Lifestyle", zh: "生活方式" },
+      tools: { en: "Tools", zh: "工具" }, /* Added new translation for Tools */
+      resources: { en: "Resources", zh: "资源" }, /* Added new translation for Resources */
+      shopping: { en: "Shopping", zh: "购物" },
+      'usa-shops': { en: "USA Shops", zh: "美国商店" },
+      'china-shops': { en: "China Shops", zh: "中国商店" },
+      'europe-shops': { en: "Europe Shops", zh: "欧洲商店" },
+      search: { en: "Search websites...", zh: "搜索网站..." },
+      searchButton: { en: "Search", zh: "搜索" },
+      internal: { en: "Internal Search", zh: "内部搜索" },
+      'chinese-zodiac-label': { en: "Chinese Zodiac: ", zh: "生肖: " },
+      'western-zodiac-label': { en: "Today's Horoscope Sign: ", zh: "今日星座: " },
+      'date-label': { en: "Today's Date: ", zh: "今日日期: " },
+      'week-info': { en: "", zh: "" },
+      'time-label': { en: "Current Time (US EST): ", zh: "当前时间 (美国东部时间): " },
+      'est-timezone': {en: " (US EST)", zh: " (美国东部时间)"}, // New translation for timezone
+      'content-heading': {
+        en: "Limitless space, Boundless possibilities, Infinite knowledge, Explore the Unbounded!",
+        zh: "无限空间，无尽可能，无穷知识，探索无界！"
+      },
+      'content-bullet1': {
+        en: "Connects you to global tools, platforms, and inspiration.",
+        zh: "连接全球工具、平台和灵感"
+      },
+      'content-bullet2': {
+        en: "From inspiration to productivity, your personalized smart navigation hub.",
+        zh: "从灵感到生产力，您的个性化智能导航中心"
+      },
+      'features-subtitle': {
+        en: "All you need. All in one place.",
+        zh: "一切所需，一站式平台"
+      },
+      'features-desc': {
+        en: "Curated resources covering trending digital domains: AIGC, tech, social, music, video, finance, news, learning & growth, and more.",
+        zh: "精选资源，涵盖热门数字领域：AIGC、科技、社交、音乐、视频、金融、新闻、学习与成长等"
+      },
+      'categories-title': {
+        en: "Categories",
+        zh: "分类"
+      }, /* Updated from "Categories Overview" to "Categories" */
+      category: { en: "Category", zh: "分类" },
+      description: { en: "Description", zh: "描述" },
+      'cat-aigc': { en: "AIGC", zh: "AIGC工具" },
+      'cat-aigc-desc': {
+        en: "Prompt tools, AI drawing, intelligent writing, speech-to-text, AI music, AI video, and more innovative tools.",
+        zh: "提示工具、AI绘画、智能写作、语音转文字、AI音乐、AI视频等创新工具"
+      },
+      'cat-tech': { en: "Technology", zh: "科技" },
+      'cat-tech-desc': {
+        en: "Latest tech products, AI platforms, development tools, automation, and productivity resources.",
+        zh: "最新科技产品、AI平台、开发工具、自动化和生产力资源"
+      },
+      'cat-social': { en: "Social", zh: "社交" },
+      'cat-social-desc': {
+        en: "Covers WeChat, Xiaohongshu, Weibo, Telegram, Discord, Twitter, and other global social platforms.",
+        zh: "涵盖微信、小红书、微博、Telegram、Discord、Twitter等全球社交平台"
+      },
+      'cat-music': { en: "Music", zh: "音乐" },
+      'cat-music-desc': {
+        en: "AI music generation, mixing platforms, royalty-free music libraries, composition tools, and Web3 music NFTs.",
+        zh: "AI音乐生成、混音平台、免版税音乐库、作曲工具和Web3音乐NFT"
+      },
+      'cat-video': { en: "Video", zh: "视频" },
+      'cat-video-desc': {
+        en: "Video editing, animation generation, auto-subtitles, film resources, and all-in-one video creation tools.",
+        zh: "视频编辑、动画生成、自动字幕、影视资源和一体化视频创作工具"
+      },
+      'cat-finance': { en: "Finance", zh: "金融" },
+      'cat-finance-desc': {
+        en: "Blockchain markets, stock data, crypto tools, investment platforms, and financial news.",
+        zh: "区块链市场、股票数据、加密工具、投资平台和金融新闻"
+      },
+      'cat-news': { en: "News", zh: "新闻" },
+      'cat-news-desc': {
+        en: "AI/tech trends, global news aggregation, professional blogs, and multilingual reading platforms.",
+        zh: "AI/科技趋势、全球新闻聚合、专业博客和多语言阅读平台"
+      },
+      'cat-lifestyle': { en: "Lifestyle", zh: "生活方式" },
+      'cat-lifestyle-desc': {
+        en: "Shopping, inspiration, and cozy lifestyle platforms for everyday moments.",
+        zh: "购物、灵感和日常温馨生活方式平台"
+      },
+      'cat-shopping': { en: "Shopping", zh: "购物" },
+      'cat-shopping-desc': { en: "Online stores, e-commerce platforms, and shopping resources from around the world.", zh: "全球在线商店、电子商务平台和购物资源。" },
+      'tools-desc': {
+        en: "Useful tools and utilities for various daily and professional tasks.",
+        zh: "各种日常和专业任务的实用工具和实用程序。"
+      },
+      'resources-desc': {
+        en: "Curated resources and learning materials for continuous growth.",
+        zh: "精选资源和学习材料，促进持续成长。"
+      },
+      learning: { en: "Learning", zh: "学习" },
+      'learning-desc': {
+        en: "Online courses, AI self-learning, reading lists, community resources, and personal growth tools.",
+        zh: "在线课程、AI自学、阅读清单、社区资源和个人成长工具"
+      },
+      'highlights-title': {
+        en: "Highlights",
+        zh: "亮点"
+      },
+      'highlight-speed': {
+        en: "Instant access, maximum efficiency",
+        zh: "即时访问，最高效率"
+      },
+      'highlight-speed-desc': {
+        en: "Get to your tools quickly and seamlessly.",
+        zh: "快速无缝地访问您的工具"
+      },
+      'highlight-lang': {
+        en: "Serves global users, language barrier-free",
+        zh: "服务全球用户，无语言障碍"
+      },
+      'highlight-lang-desc': {
+        en: "Accessible in multiple languages.",
+        zh: "支持多种语言访问"
+      },
+      'highlight-update': {
+        en: "Editorial team updates quality content daily",
+        zh: "编辑团队每日更新优质内容"
+      },
+      'highlight-update-desc': {
+        en: "Fresh content curated every day.",
+        zh: "每日精选新鲜内容"
+      },
+      'highlight-contrib': {
+        en: "Contribute your discoveries, build the smart info universe",
+        zh: "贡献您的发现，构建智能信息宇宙"
+      },
+      'highlight-contrib-desc': {
+        en: "Join our community and share insights.",
+        zh: "加入我们的社区，分享见解"
+      },
+      'why-title': {
+        en: "Why Choose Us?",
+        zh: "为何选择我们？"
+      },
+      'why-coverage': {
+        en: "Covers work, entertainment, interests, and growth",
+        zh: "涵盖工作、娱乐、兴趣和成长"
+      },
+      'why-nav': {
+        en: "Clear navigation, quick access to needs",
+        zh: "清晰导航，快速访问需求"
+      },
+      'why-design': {
+        en: "Responsive design for mobile and desktop",
+        zh: "响应式设计，适配移动和桌面"
+      },
+      'why-community': {
+        en: "Community-driven, grows with users",
+        zh: "社区驱动，与用户共同成长"
+      },
+      'foreign-social': { en: "Foreign Social", zh: "海外社交" },
+      'china-social': { en: "China Social", zh: "国内社交" },
+      'foreign-music': { en: "Foreign Music", zh: "海外音乐" },
+      'china-music': { en: "China Music", zh: "国内音乐" },
+      'china-video': { en: "China Video", zh: "国内视频" },
+      'foreign-video': { en: "Foreign Video", zh: "海外视频" },
+      'foreign-finance-trade': { en: "Foreign Finance & Trade", zh: "海外金融与贸易" },
+      'china-finance-trade': { en: "China Finance & Trade", zh: "国内金融与贸易" },
+      'crypto-trade': { en: "Crypto Trade", zh: "加密交易" },
+      'blockchains': { en: "Blockchains", zh: "区块链" },
+      'wallets': { en: "Wallets", zh: "钱包" },
+      'memes-nfts': { en: "Memes & NFTs", zh: "迷因与NFT" },
+      'nft-investment': { en: "NFT Investment", zh: "NFT投资" },
+      'meme-coins-investment': { en: "Meme Coins Investment", zh: "迷因币投资" },
+      'general-news': { en: "General News", zh: "综合新闻" },
+      'foreign-general-news': { en: "Foreign General News", zh: "海外综合新闻" },
+      'china-general-news': { en: "China General News", zh: "国内综合新闻" },
+      'technology-news': { en: "Technology News", zh: "科技新闻" },
+      'technology-products': { en: "Technology Products", zh: "科技产品" },
+      'ai-news': { en: "AI News", zh: "人工智能新闻" },
+      'finance-news': { en: "Finance News", zh: "金融新闻" },
+      'global-official': { en: "Global Official", zh: "全球官方" },
+      'crypto': { en: "Crypto", zh: "加密货币" },
+      'foreign-finance-news': { en: "Foreign Finance News", zh: "海外金融新闻" },
+      'china-finance-news': { en: "China Finance News", zh: "国内金融新闻" },
+      'travel-news': { en: "Travel News", zh: "旅游新闻" },
+      'foreign-travel': { en: "Foreign Travel", zh: "海外旅游" },
+      'china-travel': { en: "China Travel", zh: "国内旅游" },
+      'foods-news': { en: "Foods News", zh: "美食新闻" },
+      'foreign-foods': { en: "Foreign Foods", zh: "海外美食" },
+      'china-foods': { en: "China Foods", zh: "国内美食" },
+      'intelligent-dialogue': { en: "Intelligent Dialogue", zh: "智能对话" },
+      'art-generation': { en: "Art Generation", zh: "绘画生成" },
+      'audio-creation': { en: "Audio Creation", zh: "音频创作" },
+      'video-creation': { en: "Video Creation", zh: "视频创作" },
+      'smart-office': { en: "Smart Office", zh: "智能办公" },
+      'creative-design': { en: "Creative Design", zh: "创意设计" },
+      'learning-resources': { en: "Learning Resources", zh: "学习资讯" },
+      'code-hosting-collaboration': { en: "Code Hosting & Collaboration", zh: "代码托管与协作" },
+      'cloud-deployment-serverless': { en: "Cloud Deployment & Serverless", zh: "云部署与无服务器" },
+      'automation-code-integration': { en: "Automation & Code Integration", zh: "自动化与代码集成" },
+      'ci-cd-tools': { en: "CI/CD Tools", zh: "持续集成与交付工具" },
+      'edge-computing-network-optimization': { en: "Edge Computing & Network Optimization", zh: "边缘计算与网络优化" },
+      'containers-cloud-native': { en: "Containers & Cloud Native", zh: "容器与云原生" },
+      'other': { en: "Other", zh: "其他实用" },
+      'lifestyle-home': { en: "Home Style", zh: "家居风格" },
+      'wellness': { en: "Wellness", zh: "健康" },
+      'creative-skills': { en: "Creative Skills", zh: "创意技能" },
+      'professional-skills': { en: "Professional Skills", zh: "专业技能" },
+      // New translations for foreign finance & trade submenus
+      'finance-trade-sub': { en: "Finance & Trade", zh: "金融与贸易" }, /* New translation for sub-level */
+      'retail-banks': { en: "Retail Banks", zh: "零售银行" },
+      'digital-banks': { en: "Digital Banks", zh: "数字银行" },
+      'p2p-payments': { en: "P2p Payments", zh: "点对点支付" },
+      // New/updated translations for crypto trade submenus
+      'crypto-investment': { en: "Crypto Investment", zh: "加密投资" },
+      'blockchains': { en: "Blockchains", zh: "区块链" },
+      'swap': { en: "Swap", zh: "兑换" },
+      'defi': { en: "DeFi", zh: "DeFi" },
+      'hot-cold-wallets': { en: "Hot & Cold Wallets", zh: "冷热钱包" },
+      // Updated translations for ChatGPT feature
+      'chatgpt-assistant-title': { en: "AI Assistant", zh: "AI 助手" },
+      'chatgpt-assistant-description': { en: "Ask AI Assistant any question and get intelligent responses.", zh: "向 AI Assistant 提出任何问题，获取智能回复。" },
+      'chatgpt-tips': { en: "Double check the information accuracy.", zh: "请仔细检查信息的准确性。" },
+      'chatgpt-prompt-placeholder': { en: "Type your question here... / 在此输入您的问题...", zh: "在此输入您的问题..." },
+      'ask-chatgpt-button': { en: "Ask AI Assistant", zh: "问 AI Assistant" },
+      'chatgpt-error': { en: "Error: Could not get a response from AI. Please try again.", zh: "错误：无法从AI获取响应。请重试。" },
+      // New translations for donation feature
+      'donation-title': { en: "Support Discovery Panel", zh: "支持探索面板" }, // Updated to "Support Discovery Panel"
+      'donation-description': { en: "If you find this website helpful, consider buying me a drink to support its continuous development and improvement. Your generosity keeps the lights on!", zh: "如果您觉得这个网页很有用，请考虑给我买一杯饮料，支持它的持续开发和改进。您的慷慨让它保持运转！" },
+      'paypal-button-text': { en: "Buy me a drink ☕", zh: "给我买杯饮料 ☕" }
+    };
+
+    // Array of image paths for the carousel
+    const carouselImages = [
+      "images/just-do-it.png",
+      "images/wild-goose-island-saint-mary-lake-glacier-national-park-usa-3840x1080.jpg",
+      "images/seealpsee-lake-switzerland-rowing-boat-mirror-lake-mountain-3840x1080.jpg",
+      "images/peony-flowers-3840x1080.jpg",
+      "images/digital-flower-blue-3840x1080.jpg",
+      "images/color-3840x1080.jpg",
+      "images/colorful-abstract-3840x1080.png",
+      "images/colorful-background-3840x1080.jpg"
+    ];
+    let currentImageIndex = 0;
+
+    // Function to toggle the menu (though button is removed, keeping for other potential uses)
+    function toggleMenu() {
+      const toggleButton = document.querySelector('.menu-toggle');
+      if (toggleButton) { // Check if the button exists before toggling
+        toggleButton.classList.toggle('active');
+      }
+    }
+
+    // Function to navigate to a page (placeholder)
+    function navigateTo(page) {
+      console.log(`Maps to: (${page})`);
+    }
+
+    // Function to get the Chinese Zodiac sign
+    function getChineseZodiac() {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const zodiac = chineseZodiac.find(z => today >= z.start && today <= z.end);
+      if (zodiac) {
+        return `${translations['chinese-zodiac-label'][currentLang]}${zodiac.animal[currentLang]} (${zodiac.start} - ${zodiac.end})`;
+      }
+      return `${translations['chinese-zodiac-label'][currentLang]}${currentLang === 'en' ? 'Unknown' : '未知'}`;
+    }
+
+    // Function to get the Western Zodiac sign
+    function getWesternZodiac() {
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const dateStr = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      for (const zodiac of westernZodiac) {
+        const start = zodiac.start;
+        const end = zodiac.end;
+        if (start > end) { // Handles zodiac signs that cross year boundaries (e.g., Dec-Jan)
+          if (dateStr >= start || dateStr <= end) {
+            return `${translations['western-zodiac-label'][currentLang]}${zodiac.sign[currentLang]} (${start} - ${end})`;
+          }
+        } else {
+          if (dateStr >= start && dateStr <= end) {
+            return `${translations['western-zodiac-label'][currentLang]}${zodiac.sign[currentLang]} (${start} - ${end})`;
+          }
+        }
+      }
+      return `${translations['western-zodiac-label'][currentLang]}${currentLang === 'en' ? 'Unknown' : '未知'}`;
+    }
+
+    // Function to update date and time display
+    function updateDateTime() {
+      const now = new Date();
+      const options = { timeZone: 'America/New_York' }; // Set to US EST
+
+      let timeString;
+      let dateString;
+      let fullDateString;
+
+      if (currentLang === 'zh') {
+        // For Chinese, format time and date explicitly
+        const hour = now.toLocaleTimeString('en-US', { ...options, hour: '2-digit', hour12: false, minute: '2-digit', second: '2-digit' }).split(' ')[0];
+        timeString = `${hour}${translations['est-timezone'][currentLang]}`; // Manually append timezone for Chinese
+
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const weekday = new Date(now.toLocaleDateString('en-US', options)).getDay(); // Get weekday for EST
+        const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        fullDateString = `${year}年${month}月${day}日 ${weekdays[weekday]}`;
+        dateString = `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
+      } else {
+        // For English
+        timeString = now.toLocaleTimeString('en-US', { ...options, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        timeString = `${timeString}${translations['est-timezone'][currentLang]}`; // Append timezone
+        fullDateString = now.toLocaleDateString('en-US', { ...options, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        dateString = now.toLocaleDateString('en-US', { ...options, month: '2-digit', day: '2-digit', year: 'numeric' });
+      }
+
+      document.getElementById('current-time').innerHTML = timeString;
+      document.getElementById('current-date').innerHTML = `${fullDateString} (${dateString})`;
+
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const diffInDays = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+      const weekNumber = Math.ceil((now - startOfYear) / (1000 * 60 * 60 * 24 * 7));
+      document.getElementById('week-info').textContent = `${weekNumber} of 52 weeks, ${diffInDays} of 365 days`;
+
+      document.getElementById('chinese-zodiac').textContent = getChineseZodiac();
+      document.getElementById('western-zodiac').textContent = getWesternZodiac();
+    }
+
+    // Function to switch language
+    function switchLanguage() {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      updateLanguage();
+      renderCategorySections(); // Re-render categories with new language
+      updateDateTime(); // Ensure date/time updates with new language
+    }
+
+    // Function to toggle night mode
+    function toggleNightMode() {
+      isNightMode = !isNightMode; // Toggle the boolean state
+      document.body.classList.toggle('dark-mode', isNightMode); // Add/remove 'dark-mode' class
+      const nightModeButton = document.querySelector('.night-mode-button');
+      // Update button text for both desktop and mobile buttons
+      document.querySelectorAll('.night-mode-button').forEach(button => {
+        if (button) {
+          button.innerText = isNightMode ? 'Light Mode' : 'Dark Mode'; // Update button text
+        }
+      });
+      // Re-apply active class for 'Home' in top menu to reflect new color
+      const homeMenuItem = document.querySelector('.top-menu .menu-item a[data-lang-key="home"]');
+      if (homeMenuItem) {
+        const parentMenuItem = homeMenuItem.closest('.menu-item');
+        if (parentMenuItem.classList.contains('active')) {
+          parentMenuItem.classList.remove('active');
+          void parentMenuItem.offsetWidth; // Trigger reflow
+          parentMenuItem.classList.add('active');
+        }
+      }
+    }
+
+    // Function to update all language-dependent elements
+    function updateLanguage() {
+      document.querySelectorAll('[data-lang-key]').forEach(element => {
+        const key = element.getAttribute('data-lang-key');
+        if (translations[key]) {
+          // Skip date/time elements as they are updated by updateDateTime or intentionally left blank
+          if (element.id === 'chinese-zodiac' || element.id === 'western-zodiac' || element.id === 'current-date' || element.id === 'week-info' || element.id === 'current-time') {
+            return;
+          }
+          // Handle submenu buttons with conditional arrows
+          const isSubmenuItem = element.closest('.submenu');
+          if (isSubmenuItem && element.tagName === 'BUTTON') {
+            const hasNestedSubmenu = element.closest('.menu-item').querySelector('.submenu');
+            if (hasNestedSubmenu) {
+              element.innerHTML = `${translations[key][currentLang]} <span class="arrow">▶</span>`;
+            } else {
+              element.innerHTML = translations[key][currentLang];
+            }
+          } else {
+            element.innerText = translations[key][currentLang];
+          }
+        }
+      });
+
+      const searchInput = document.getElementById('searchInput');
+      // Special handling for placeholder as it's an attribute
+      const placeholderKey = searchInput.getAttribute('data-lang-placeholder');
+      if (placeholderKey && translations[placeholderKey]) {
+        searchInput.placeholder = translations[placeholderKey][currentLang];
+      }
+
+      const searchButton = document.querySelector('.search-bar button');
+      searchButton.innerText = translations.searchButton[currentLang];
+
+      document.querySelectorAll('#searchEngine option').forEach(option => {
+        const key = option.getAttribute('data-lang-key');
+        if (key && translations[key]) {
+          option.innerText = translations[key][currentLang];
+        }
+      });
+
+      // Update language for both desktop and mobile language buttons
+      document.querySelectorAll('.language-button').forEach(button => {
+        if (button) {
+          button.innerText = currentLang === 'en' ? '中文/English' : 'English/中文';
+        }
+      });
+    }
+
+    // Function to add websites (not directly used in this update, but kept for future extensibility)
+    function batchAddWebsites(newWebsites) {
+      newWebsites.forEach(website => {
+        websites.push({
+          name: website.name || { en: "Unknown", zh: "未知" },
+          purpose: website.purpose || { en: "No description", zh: "无描述" },
+          url: website.url || "#",
+          logo: website.logo || "",
+          features: website.features || { en: [], zh: [] },
+          category: website.category || "more"
+        });
+      });
+      renderCategorySections();
+    }
+
+    // Function to render category sections dynamically as cards
+    function renderCategorySections() {
+      const categoriesGrid = document.getElementById('categoriesGrid');
+      categoriesGrid.innerHTML = ''; // Clear existing content
+
+      // Define category data with icons and descriptions
+      const categoriesData = [
+        { key: 'cat-aigc', emoji: '🧠', link: 'aigc.html' },
+        { key: 'cat-tech', emoji: '💻', link: 'tech.html' },
+        { key: 'cat-social', emoji: '🌐', link: 'social.html' },
+        { key: 'cat-finance', emoji: '💰', link: 'finance.html' },
+        { key: 'cat-music', emoji: '🎵', link: 'music.html' },
+        { key: 'cat-video', emoji: '🎥', link: 'video.html' },
+        { key: 'cat-news', emoji: '📰', link: 'news.html' },
+        { key: 'learning', emoji: '📘', link: 'learning.html' },
+        { key: 'cat-lifestyle', emoji: '🛍️', link: 'lifestyle.html' },
+        { key: 'cat-shopping', emoji: '🛒', link: 'shops.html' },
+        { key: 'tools', emoji: '🛠️', link: 'tools.html' },
+        { key: 'resources', emoji: '📚', link: 'resources.html' },
+      ];
+
+      categoriesData.forEach(cat => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <a href="${cat.link}" style="text-decoration: none; color: inherit;">
+            <div class="card-header">
+              <span class="emoji" style="font-size: 2.5rem; line-height: 1;">${cat.emoji}</span>
+              <h4 class="card-title">${translations[cat.key][currentLang]}</h4>
+            </div>
+            <p class="card-purpose">${translations[`${cat.key}-desc`][currentLang]}</p>
+          </a>
+        `;
+        categoriesGrid.appendChild(card);
+      });
+    }
+
+
+    // Function to display the next image in the carousel
+    function showNextImage() {
+      const carousel = document.getElementById('imageCarousel');
+      if (!carousel) return;
+
+      const images = carousel.querySelectorAll('img');
+      images.forEach(img => img.classList.remove('active')); // Hide all images
+
+      currentImageIndex = (currentImageIndex + 1) % carouselImages.length; // Move to next image
+      const nextImage = images[currentImageIndex];
+      if (nextImage) {
+        nextImage.classList.add('active'); // Show the next image
+      }
+    }
+
+    // Function to initialize the image carousel
+    function initializeCarousel() {
+      const carousel = document.getElementById('imageCarousel');
+      if (!carousel) return;
+
+      // Create image elements and append them to the carousel
+      carouselImages.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.src = src; // Source already prepended with 'images/'
+        img.alt = `Carousel Image ${index + 1}`;
+        // Add onerror for fallback in case image path is incorrect during local testing
+        img.onerror = function() {
+          this.src = `https://placehold.co/1200x300/cccccc/333333?text=Image+${index+1}`;
+        };
+        carousel.appendChild(img);
+      });
+
+      // Show the first image initially
+      if (carouselImages.length > 0) {
+        carousel.querySelector('img').classList.add('active');
+      }
+
+      // Set interval for image rotation
+      setInterval(showNextImage, 10000); // Change image every 10 seconds (10000 ms)
+    }
+
+    // Function to perform search
+    function performSearch() {
+      const query = document.getElementById('searchInput').value.trim();
+      const engine = document.getElementById('searchEngine').value;
+
+      if (!query) {
+        // If query is empty, re-render all category cards
+        renderCategorySections();
+        return;
+      }
+
+      if (engine === 'internal') {
+        // For internal search, we need to filter the categories displayed
+        const categoriesGrid = document.getElementById('categoriesGrid');
+        categoriesGrid.innerHTML = ''; // Clear existing categories
+
+        const categoriesData = [
+          { key: 'cat-aigc', emoji: '🧠', link: 'aigctools.html' },
+          { key: 'cat-tech', emoji: '💻', link: 'tech.html' },
+          { key: 'cat-social', emoji: '🌐', link: 'social.html' },
+          { key: 'cat-finance', emoji: '💰', link: 'finance.html' },
+          { key: 'cat-music', emoji: '🎵', link: 'music.html' },
+          { key: 'cat-video', emoji: '🎥', link: 'video.html' },
+          { key: 'cat-news', emoji: '📰', link: 'news.html' },
+          { key: 'learning', emoji: ' ', link: 'learning.html' },
+          { key: 'cat-lifestyle', emoji: '🛍️', link: 'lifestyle.html' },
+          { key: 'cat-shopping', emoji: '🛒', link: 'shops.html' },
+          { key: 'tools', emoji: '🛠️', link: 'tools.html' },
+          { key: 'resources', emoji: '📚', link: 'resources.html' },
+        ];
+
+        const filteredCategories = categoriesData.filter(cat => {
+          const categoryName = translations[cat.key][currentLang].toLowerCase();
+          const categoryDesc = translations[`${cat.key}-desc`][currentLang].toLowerCase();
+          return categoryName.includes(query.toLowerCase()) || categoryDesc.includes(query.toLowerCase());
+        });
+
+        filteredCategories.forEach(cat => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <a href="${cat.link}" style="text-decoration: none; color: inherit;">
+              <div class="card-header">
+                <span class="emoji" style="font-size: 2.5rem; line-height: 1;">${cat.emoji}</span>
+                <h4 class="card-title">${translations[cat.key][currentLang]}</h4>
+              </div>
+              <p class="card-purpose">${translations[`${cat.key}-desc`][currentLang]}</p>
+            </a>
+          `;
+          categoriesGrid.appendChild(card);
+        });
+
+      } else {
+        let searchUrl;
+        switch (engine) {
+          case 'google':
+            searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case 'bing':
+            searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case 'baidu':
+            searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+            break;
+          case '360':
+            searchUrl = `https://www.so.com/s?q=${encodeURIComponent(query)}`;
+            break;
+        }
+        window.open(searchUrl, '_blank');
+      }
+    }
+
+    // Function to call OpenRouter AI LLM API (renamed from askGemini to askChatGpt)
+    async function askChatGpt() {
+      const prompt = document.getElementById('chatgptPrompt').value.trim();
+      const chatgptResponseDiv = document.getElementById('chatgptResponse');
+      const chatgptLoadingDiv = document.getElementById('chatgptLoading');
+      const askChatGptButton = document.getElementById('askChatGptButton');
+
+      if (!prompt) {
+        chatgptResponseDiv.style.display = 'block';
+        chatgptResponseDiv.textContent = currentLang === 'en' ? "Please enter a question." : "请输入一个问题。";
+        return;
+      }
+
+      chatgptResponseDiv.style.display = 'none';
+      chatgptLoadingDiv.style.display = 'flex';
+      askChatGptButton.disabled = true;
+
+      try {
+        // IMPORTANT: You are getting "401 Unauthorized" because you need to
+        // replace 'YOUR_OPENROUTER_API_KEY' with your actual, valid API key from OpenRouter.
+        // Go to https://openrouter.ai/ and generate your API key if you haven't already.
+        // Ensure your key has the necessary permissions.
+        const apiKey = "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";
+        const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+        const model = "openai/gpt-3.5-turbo"; // Using a common OpenRouter model
+
+        let messages = [];
+        messages.push({ role: "user", content: prompt });
+
+        const payload = {
+          model: model,
+          messages: messages,
+          stream: false
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            // Optional: Referer and X-Title for OpenRouter logging and analytics
+            'HTTP-Referer': window.location.href, // Replace with your actual app URL if deployed
+            'X-Title': 'Discovery Panel'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        // Check if the HTTP response was successful (status code 2xx)
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`LLM API error: Status ${response.status} - ${response.statusText}`, errorData);
+          chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang] + ` (Status: ${response.status})`;
+          return; // Exit the function if the response was not OK
+        }
+
+        const result = await response.json();
+
+        if (result.choices && result.choices.length > 0 &&
+            result.choices[0].message && result.choices[0].message.content) {
+          const text = result.choices[0].message.content;
+          chatgptResponseDiv.textContent = text;
+        } else {
+          chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang];
+          console.error("LLM API response structure unexpected:", result);
+        }
+      } catch (error) {
+        console.error("Error calling LLM API:", error);
+        chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang];
+      } finally {
+        chatgptLoadingDiv.style.display = 'none';
+        chatgptResponseDiv.style.display = 'block';
+        askChatGptButton.disabled = false;
+      }
+    }
+
+    // Function to toggle mobile side menu
+    function toggleMobileMenu() {
+      const mobileSideMenu = document.getElementById('mobileSideMenu');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      mobileSideMenu.classList.toggle('active');
+      overlay.classList.toggle('active');
+      document.body.style.overflow = mobileSideMenu.classList.contains('active') ? 'hidden' : ''; // Prevent scrolling when menu is open
+    }
+
+    // Function to clone and populate mobile menu
+    function populateMobileMenu() {
+      const topMenu = document.getElementById('top-menu');
+      const mobileSideMenuWrapper = document.querySelector('#mobileSideMenu .menu-items-wrapper');
+
+      // Clear existing cloned items (except language/night mode buttons)
+      // Assuming the first two children are the static language/night mode buttons
+      Array.from(mobileSideMenuWrapper.children).forEach((child, index) => {
+          if (index >= 2) { // Keep the first two (language and night mode buttons)
+              child.remove();
+          }
+      });
+
+      // Clone menu items from desktop menu
+      const menuItemsToClone = topMenu.querySelectorAll('.menu-item');
+      menuItemsToClone.forEach(item => {
+        const clonedItem = item.cloneNode(true); // Deep clone to get submenus
+        // Remove the 'submenu' class from the cloned top-level menu-item if it's a direct link
+        // This prevents the desktop hover behavior from interfering with mobile display
+        const submenuElement = clonedItem.querySelector('.submenu');
+        if (submenuElement && clonedItem.querySelector('a')) {
+          // If it's a top-level link that also has a submenu, ensure submenu is always visible in mobile
+          submenuElement.style.display = 'block';
+          submenuElement.style.position = 'static';
+          submenuElement.style.boxShadow = 'none';
+          submenuElement.style.border = 'none';
+          submenuElement.style.padding = '0';
+        }
+        mobileSideMenuWrapper.appendChild(clonedItem);
+      });
+    }
+
+    // Function to reset social media share links
+    function resetShareLinks() {
+        const pageUrl = encodeURIComponent(window.location.href);
+        const pageTitle = encodeURIComponent(document.title); // Or a specific title for sharing
+
+        document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+        document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=Check%20out%20this%20amazing%20page!`;
+        document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${pageTitle}&summary=Explore%20Discovery%20Panel%20Music.&source=${pageUrl}`; // Updated summary
+        document.getElementById('share-reddit').href = `https://reddit.com/submit?url=${pageUrl}&title=${pageTitle}`;
+        document.getElementById('share-email').href = `mailto:?subject=Check out this page&body=I found this amazing page: ${pageUrl}`;
+    }
+
+
+    // Event listener for Enter key on search input
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // DOMContentLoaded event listener to initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateDateTime(); // Initial update of date and time
+      setInterval(updateDateTime, 1000); // Update date and time every second
+      initializeCarousel(); // Initialize the image carousel
+      renderCategorySections(); // Render initial category sections
+      populateMobileMenu(); // Populate the mobile side menu
+      updateLanguage(); // Update language for all elements
+      document.getElementById('askChatGptButton').addEventListener('click', askChatGpt); // Add event listener for ChatGpt button
+
+      // Handle active state for top menu main items (links)
+      document.querySelectorAll('.top-menu > .menu-item > a').forEach(link => {
+          link.addEventListener('click', function() {
+              // Remove active from all main menu items
+              document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                  item.classList.remove('active');
+              });
+              // Add active to the parent menu-item of the clicked link
+              this.closest('.menu-item').classList.add('active');
+
+              // Also clear any active state from submenu items when a main menu item is clicked
+              document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(subButton => {
+                  subButton.classList.remove('active');
+              });
+          });
+      });
+
+      // Handle active state for top menu submenu items
+      document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(button => {
+          button.addEventListener('click', function() {
+              // Remove active from all submenu items
+              document.querySelectorAll('.top-menu .submenu .menu-item > button').forEach(subButton => {
+                  subButton.classList.remove('active');
+              });
+              // Add active to the clicked submenu button
+              this.classList.add('active');
+
+              // Ensure the parent main menu item is also active
+              const parentMenuItem = this.closest('.top-menu > .menu-item');
+              if (parentMenuItem) {
+                  document.querySelectorAll('.top-menu > .menu-item').forEach(item => {
+                      item.classList.remove('active');
+                  });
+                  parentMenuItem.classList.add('active');
+              }
+          });
+      });
+      resetShareLinks(); // Set the social media share links
+    });
+  </script>
+</body>
+</html>
