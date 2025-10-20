@@ -255,7 +255,18 @@
       color: #1a73e8; /* Change color to blue */
       padding: 0; /* Remove padding */
       border-radius: 0; /* Remove border-radius */
-      display: inline; /* Keep inline display */
+      display: block; /* Change to block display for separate lines */
+    }
+    
+    /* Specific styling for time to make it stand out */
+    #current-time {
+      font-size: 1.4rem; /* Slightly larger than date */
+      margin-bottom: 5px; /* Space between time and date */
+    }
+    
+    /* Dark mode styling for time and date */
+    body.dark-mode #current-time, body.dark-mode #current-date {
+      color: #8ab4f8; /* Lighter blue for dark mode */
     }
     /* Image carousel styling */
     .image-carousel {
@@ -1586,7 +1597,7 @@
     <div id="chinese-zodiac" data-lang-key="chinese-zodiac-label"></div>
     <div id="western-zodiac" data-lang-key="western-zodiac-label"></div>
     <div id="week-info" data-lang-key="week-info"></div>
-    <br> <div id="current-time"></div>
+    <div id="current-time" style="margin-bottom: 8px; font-size: 1.2em; font-weight: bold;"></div>
     <div id="current-date"></div>
     <div class="empty-row"></div>
   </div>
@@ -1659,24 +1670,9 @@
     <div class="card-grid" id="websiteGrid"></div>
   </div>
 
-  <!-- New PayPal Donation Section -->
-  <div class="donation-section">
-    <h3 data-lang-key="donation-title"></h3>
-    <p class="description" data-lang-key="donation-description"></p>
-    <a href="YOUR_PAYPAL_ME_LINK" target="_blank" class="paypal-button" data-lang-key="paypal-button-text"></a>
-  </div>
+  <!-- Donation Section Removed -->
 
-  <div class="chatgpt-assistant-section">
-    <h3 data-lang-key="chatgpt-assistant-title"></h3>
-    <p class="description" data-lang-key="chatgpt-assistant-description"></p>
-    <p class="tips" data-lang-key="chatgpt-tips"></p>
-    <textarea id="chatgptPrompt" data-lang-placeholder="chatgpt-prompt-placeholder" rows="4"></textarea>
-    <button id="askChatGptButton" data-lang-key="ask-chatgpt-button"></button>
-    <div id="chatgptLoading" class="chatgpt-loading" style="display: none;">
-      <div class="spinner"></div>
-    </div>
-    <div id="chatgptResponse" class="chatgpt-response"></div>
-  </div>
+  <!-- AI Assistant Section Removed -->
 
   <footer class="main-footer">
     <div class="footer-content">
@@ -1732,7 +1728,7 @@
       { sign: { en: "Cancer", zh: "巨蟹座" }, start: "06-22", end: "07-22" },
       { sign: { en: "Leo", zh: "狮子座" }, start: "07-23", end: "08-22" },
       { sign: { en: "Virgo", zh: "处女座" }, start: "08-23", end: "09-22" },
-      { sign: "Libra", start: "09-23", end: "10-23" },
+      { sign: { en: "Libra", zh: "天秤座" }, start: "09-23", end: "10-23" },
       { sign: { en: "Scorpio", zh: "天蝎座" }, start: "10-24", end: "11-22" },
       { sign: { en: "Sagittarius", zh: "射手座" }, start: "11-23", end: "12-21" }
     ];
@@ -2347,80 +2343,7 @@
       }
     }
 
-    // Function to call OpenRouter AI LLM API (renamed from askGemini to askChatGpt)
-    async function askChatGpt() {
-      const prompt = document.getElementById('chatgptPrompt').value.trim();
-      const chatgptResponseDiv = document.getElementById('chatgptResponse');
-      const chatgptLoadingDiv = document.getElementById('chatgptLoading');
-      const askChatGptButton = document.getElementById('askChatGptButton');
-
-      if (!prompt) {
-        chatgptResponseDiv.style.display = 'block';
-        chatgptResponseDiv.textContent = currentLang === 'en' ? "Please enter a question." : "请输入一个问题。";
-        return;
-      }
-
-      chatgptResponseDiv.style.display = 'none';
-      chatgptLoadingDiv.style.display = 'flex';
-      askChatGptButton.disabled = true;
-
-      try {
-        // IMPORTANT: You are getting "401 Unauthorized" because you need to
-        // replace 'YOUR_OPENROUTER_API_KEY' with your actual, valid API key from OpenRouter.
-        // Go to https://openrouter.ai/ and generate your API key if you haven't already.
-        // Ensure your key has the necessary permissions.
-        const apiKey = "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";
-        const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-        const model = "openai/gpt-3.5-turbo"; // Using a common OpenRouter model
-
-        let messages = [];
-        messages.push({ role: "user", content: prompt });
-
-        const payload = {
-          model: model,
-          messages: messages,
-          stream: false
-        };
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            // Optional: Referer and X-Title for OpenRouter logging and analytics
-            'HTTP-Referer': window.location.href, // Replace with your actual app URL if deployed
-            'X-Title': 'Discovery Panel'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        // Check if the HTTP response was successful (status code 2xx)
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error(`LLM API error: Status ${response.status} - ${response.statusText}`, errorData);
-          chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang] + ` (Status: ${response.status})`;
-          return; // Exit the function if the response was not OK
-        }
-
-        const result = await response.json();
-
-        if (result.choices && result.choices.length > 0 &&
-            result.choices[0].message && result.choices[0].message.content) {
-          const text = result.choices[0].message.content;
-          chatgptResponseDiv.textContent = text;
-        } else {
-          chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang];
-          console.error("LLM API response structure unexpected:", result);
-        }
-      } catch (error) {
-        console.error("Error calling LLM API:", error);
-        chatgptResponseDiv.textContent = translations['chatgpt-error'][currentLang];
-      } finally {
-        chatgptLoadingDiv.style.display = 'none';
-        chatgptResponseDiv.style.display = 'block';
-        askChatGptButton.disabled = false;
-      }
-    }
+    // AI Assistant function removed
 
     // Function to toggle mobile side menu
     function toggleMobileMenu() {
@@ -2491,7 +2414,6 @@
       renderCategorySections(); // Render initial category sections
       populateMobileMenu(); // Populate the mobile side menu
       updateLanguage(); // Update language for all elements
-      document.getElementById('askChatGptButton').addEventListener('click', askChatGpt); // Add event listener for ChatGpt button
 
       // Handle active state for top menu main items (links)
       document.querySelectorAll('.top-menu > .menu-item > a').forEach(link => {
@@ -2535,3 +2457,6 @@
   </script>
 </body>
 </html>
+
+
+
